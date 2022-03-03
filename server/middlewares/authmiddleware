@@ -1,0 +1,24 @@
+const user = require('../models/user')
+
+const authMiddleware = async (req, res, next) => {
+	if (!(req.session && req.session.userid)) {
+		console.error("login credentials not found");
+		res.status(401);
+		res.send("login credentials not found");
+	} else {
+		user.findOne({ email: userEmail }, (err, user) => {
+			if (err) {
+				return (err);
+			}
+			if (!user) {
+				console.error("login credentials not found");
+				res.status(401);
+				res.send("login credentials not found");
+			}
+			res.status(200)
+			next();
+		});
+	};
+};
+
+module.exports = authMiddleware;
