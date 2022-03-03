@@ -2,9 +2,22 @@
 
 const express = require('express');
 const router = express.Router();
-// const topic = require('./controller');
+const user = require('./controllers/usercontroller');
 
-// router.get('/topics', topic.getAll);
+//from login page
+router.post('/', user.createUser);
+router.post('/', user.loginUser);
 
+//from home page
+router.post('/home', user.logoutUser);
+
+//from watchlist page
+router.post('/watchlist', user.logoutUser);
+
+//from watched page
+router.post('/watched', user.logoutUser);
+
+//from collections page
+router.post('/collections', user.logoutUser);
 
 module.exports = router;
