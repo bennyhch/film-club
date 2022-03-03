@@ -51,9 +51,12 @@ const loginUser = async (req, res) => {
 		if (req.body.email && req.body.password) {
 			const userEmail = req.body.email;
 			const userPassword = req.body.password;
+			console.log(userEmail, userPassword)
 			const authenticate = await checkUser(userEmail, userPassword);
+			console.log(authenticate, 'auth')
 			if (authenticate) {
 				const sessionid = req.session;
+				console.log(req.session);
 				sessionid.userid = req.body.email
 				res.status(200);
 				res.send({ email: userEmail, password: userPassword });

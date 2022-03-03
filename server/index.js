@@ -1,14 +1,37 @@
 'use strict';
 
+require('dotenv').config();
 const express = require('express');
 const app = express()
-const port = 3000; // could replace this with "const PORT = process.env.PORT || 3001" and then set up a .env file
+const port = process.env.SERVER_PORT || 3001;
 const router = require('./router')
 const cors = require('cors');
+const cookieParser = require("cookie-parser");
+const session = require('express-session');
+const SECRETKEY = process.env.SECRETKEY || 'this is not very secure';
 
-app.use(cors())
+
+app.use(cors());
+app.use(
+	session({
+		name: 'sessionid',
+		saveUninitialized: false,
+		resave: false,
+		secret: SECRETKEY,
+		cookie: {
+			maxAge: 1000 * 60 * 60, // 1hr
+			sameSite: true,
+			httpOnly: false,
+			secure: false,
+		},
+	})
+);
+app.use(cookieParser());
 app.use(express.json());
+
 app.use(router);
+
+
 
 app.get('/', (req, res) => {
 	try {

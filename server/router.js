@@ -5,7 +5,7 @@ const router = express.Router();
 const user = require('./controllers/usercontroller');
 
 //from login page
-router.post('/', user.createUser);
+router.post('/register', user.createUser);
 router.post('/', user.loginUser);
 
 //from home page
