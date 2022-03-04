@@ -194,4 +194,29 @@ const addWatched = async (req, res) => {
   }
 };
 
-module.exports = { onLoad, addWatchlist, addWatched };
+const deleteMovie = async (req, res) => {
+  try {
+    const useremail = req.session.userEmail;
+    const movieid = req.body.id;
+    const filter = await movielist.updateOne({
+      email: useremail
+    }, { $pull: {movielist: { id: movieid } } });
+    const genreFilter = await movielist.updateMany({
+      email: useremail
+    }, { $pull: { genres: { movid: movieid } } });
+    const actorFilter = await movielist.updateMany({
+      email: useremail
+    }, { $pull: { actors: { movid: movieid } } });
+    const directorFilter = await movielist.updateMany({
+      email: useremail
+    }, { $pull: { directors: { movid: movieid } } });
+    res.status(200);
+    res.send(filter);
+  }
+  catch (e) {
+    console.error("deleteMovie is failing");
+    res.status(500);
+  }
+};
+
+module.exports = { onLoad, addWatchlist, addWatched, deleteMovie };
