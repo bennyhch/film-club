@@ -78,6 +78,7 @@ const loginUser = async (req, res) => {
 };
 
 const logoutUser = (req, res) => {
+// store.destroy needed?
 	req.session.destroy((error) => {
 		if (error) {
 			res
