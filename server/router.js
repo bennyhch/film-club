@@ -3,13 +3,17 @@
 const express = require('express');
 const router = express.Router();
 const user = require('./controllers/usercontroller');
+const user_movielist = require('./controllers/user_movielistcontroller');
+const user_collection = require('./controllers/user_collectionscontroller');
+const authMiddleware = require('./middlewares/authmiddleware');
 
 //from login page
 router.post('/register', user.createUser);
 router.post('/', user.loginUser);
 
 //from home page
-router.post('/home', user.logoutUser);
+router.get('/home', user_movielist.onLoad)
+router.post('/home', authMiddleware, user.logoutUser);
 
 //from watchlist page
 router.post('/watchlist', user.logoutUser);

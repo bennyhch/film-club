@@ -55,7 +55,6 @@ const loginUser = async (req, res) => {
 			if (authenticate) {
 				const sessionid = req.session;
 				sessionid.userid = req.body.email
-				console.log(req.session);
 				res.status(200);
 				res.send({ email: userEmail, password: userPassword });
 			} else {
