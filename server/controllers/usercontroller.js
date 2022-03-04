@@ -1,6 +1,7 @@
 'use strict';
 
 const user = require('../models/user')
+const movielist = require('../models/user_movielist')
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
@@ -27,8 +28,11 @@ const createUser = async (req, res) => {
 				email: req.body.email,
 				password: hashPassword,
 			});
+			const newMovielistUser = await movielist.create({
+				email: req.body.email,
+			});
 			res.status(201);
-			res.send(newUser);
+			res.send({ newUser, newMovielistUser });
 		} else {
 			console.error("parameter is missing");
 			res.status(400);

@@ -2,6 +2,7 @@
 
 require('dotenv').config();
 const user = require('../models/user');
+const movielist = require('../models/user_movielist')
 const axios = require('axios');
 const apiUrl = 'https://api.themoviedb.org/3/';
 const APIKEY = process.env.API_KEY
@@ -59,12 +60,26 @@ const onLoad = async (req, res) => {
       const apiResponse = await axios.get(`${apiUrl}trending/movie/day?api_key=${APIKEY}&page=${arr[i]}`);
       finalResponse.push(apiResponse.data.results);
     }
+    // add genre actor director lists if they exist in db here
     res.status(200);
     res.send(finalResponse);
   } catch (e) {
     console.error("onLoad is failing");
     res.status(500);
   }
-}
+};
 
-module.exports = { onLoad };
+const addWatchlist = async (req, res) => {
+  try {
+    const id = req.body.id;
+    const movie = await axios.get(`${apiUrl}movie/${id}?api_key=${APIKEY}&append_to_response=credits`);
+    const newMovie = await 
+    res.status(200);
+    res.send(movie.data);
+  } catch (e) {
+    console.error("addWatchlist is failing");
+    res.status(500);
+  }
+};
+
+module.exports = { onLoad, addWatchlist};
