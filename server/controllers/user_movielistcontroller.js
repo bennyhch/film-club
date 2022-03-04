@@ -52,11 +52,59 @@ const onLoadArrayGen = () => {
   return arr;
 }
 
+const directorCheck = async (arr) => {
+  try {
+    let directorName = '';
+    let directorRating = null;
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i].job === 'Director') {
+        directorName = arr[i].name;
+      }
+    }
+    return [{
+      name: directorName,
+      rating: directorRating
+    }];
+  } catch (e) {
+    console.error('directorCheck is failing');
+    res.status(500);
+  }
+};
+
+const actorCheck = async (arr) => {
+  try {
+    const result = [];
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i].order === 0 || arr[i].order === 1 || arr[i].order === 2 ) {
+        result.push({
+          name: arr[i].name,
+          rating: null
+        });
+      }
+    }
+    return result;
+  } catch (e) {
+    console.error('actorCheck is failing');
+    res.status(500);
+  }
+};
+
+const getMovieWithCredits = async (id) => {
+  try {
+    const movie = await axios.get(`${apiUrl}movie/${id}?api_key=${APIKEY}&append_to_response=credits`)
+    return movie;
+  } catch (e) {
+    console.error('getMovieWithCredits is failing');
+    res.status(500);
+  }
+};
+
 const onLoad = async (req, res) => {
   try {
     const arr = onLoadArrayGen()
     const finalResponse = [];
     for (let i = 0; i < arr.length; i++) {
+      // check out for ... await might need promise.all
       const apiResponse = await axios.get(`${apiUrl}trending/movie/day?api_key=${APIKEY}&page=${arr[i]}`);
       finalResponse.push(apiResponse.data.results);
     }
@@ -72,10 +120,24 @@ const onLoad = async (req, res) => {
 const addWatchlist = async (req, res) => {
   try {
     const id = req.body.id;
-    const movie = await axios.get(`${apiUrl}movie/${id}?api_key=${APIKEY}&append_to_response=credits`);
-    const newMovie = await 
+    const filter = { email: req.session.userEmail };
+    const movie = await getMovieWithCredits(id);
+    const crew = movie.data.credits.crew;
+    const director = await directorCheck(crew);
+    const cast = movie.data.credits.cast;
+    const actor = await actorCheck(cast);
+    const newdata = {
+      movielist: [movie.data],
+      genres: movie.data.genres,
+      directors: director,
+      actors: actor
+    }
+    console.log(newdata, 'data')
+    // let update = await movielist.findOneAndUpdate(filter, newdata);
+    let update = await movielist.findOneAndUpdate(filter, newdata);
+    update = await movielist.findOne(filter);
     res.status(200);
-    res.send(movie.data);
+    res.send(update);
   } catch (e) {
     console.error("addWatchlist is failing");
     res.status(500);

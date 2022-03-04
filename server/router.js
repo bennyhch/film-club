@@ -12,7 +12,7 @@ router.post('/register', user.createUser);
 router.post('/', user.loginUser);
 
 //from home page
-router.get('/home', user_movielist.onLoad)
+router.get('/home', authMiddleware, user_movielist.onLoad)
 router.post('/home/watchlist', user_movielist.addWatchlist)
 router.post('/home', authMiddleware, user.logoutUser);
 

@@ -1,11 +1,10 @@
 const user = require('../models/user')
 
 const authMiddleware = async (req, res, next) => {
-  try {
-		const userEmail = req.session.userid;
-		console.log(userEmail);
-		const authUser = await user.findOne({ email: userEmail });
-		console.log(authUser);
+	console.log('something')
+	try {
+		const id = req.session.cookie.userid;
+		const authUser = await user.findOne({ _id: id });
 		if (!authUser) {
 			console.error("login credentials not found");
 			res.status(401);

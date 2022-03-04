@@ -10,7 +10,7 @@ const checkUser = async (userEmail, userPassword) => {
 		const filter = await user.findOne({ email: userEmail })
 		const match = await bcrypt.compare(userPassword, filter.password);
 		if (match) {
-			return true;
+			return filter.email;
 		} else {
 			return false;
 		}
@@ -57,8 +57,8 @@ const loginUser = async (req, res) => {
 			const userPassword = req.body.password;
 			const authenticate = await checkUser(userEmail, userPassword);
 			if (authenticate) {
-				const sessionid = req.session;
-				sessionid.userid = req.body.email
+				console.log(authenticate)
+				req.session.userEmail = authenticate
 				res.status(200);
 				res.send({ email: userEmail, password: userPassword });
 			} else {
