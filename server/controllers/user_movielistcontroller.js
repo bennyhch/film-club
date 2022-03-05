@@ -153,7 +153,8 @@ const addWatched = async (req, res) => {
   try {
     const movieid = req.body.id;
     const userRating = req.body.user_rating;
-    const userList = await movielist.findOne({ email: req.session.userEmail });
+    const userEmail = req.session.userEmail;
+    const userList = await movielist.findOne({ email: userEmail });
     let inDB = false;
     for (let i = 0; i < userList.movielist.length; i++) {
       console.log(userList.movielist[i].id, 'user');
@@ -163,7 +164,18 @@ const addWatched = async (req, res) => {
     }
     console.log(inDB, 'indb')
     if (inDB === true) {
-      // delete from DB then run the rest of the function
+      const filter = await movielist.updateOne({
+        email: userEmail
+      }, { $pull: { movielist: { id: movieid } } });
+      const genreFilter = await movielist.updateMany({
+        email: userEmail
+      }, { $pull: { genres: { movid: movieid } } });
+      const actorFilter = await movielist.updateMany({
+        email: userEmail
+      }, { $pull: { actors: { movid: movieid } } });
+      const directorFilter = await movielist.updateMany({
+        email: userEmail
+      }, { $pull: { directors: { movid: movieid } } });
     }
     const movie = await getMovieWithCredits(movieid);
     movie.data.seen = true;
@@ -177,7 +189,7 @@ const addWatched = async (req, res) => {
     const director = await directorCheck(crew, movieid, userRating);
     const cast = movie.data.credits.cast;
     const actor = await actorCheck(cast, movieid, userRating);
-    let update = await movielist.findOneAndUpdate({ email: req.session.userEmail }, {
+    let update = await movielist.findOneAndUpdate({ email: userEmail }, {
       $push: {
         movielist: [movie.data],
         genres: genres,
@@ -185,7 +197,7 @@ const addWatched = async (req, res) => {
         actors: actor
       }
     });
-    update = await movielist.findOne({ email: req.session.userEmail });
+    update = await movielist.findOne({ email: userEmail });
     res.status(200);
     res.send(update);
   } catch (e) {
