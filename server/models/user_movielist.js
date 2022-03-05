@@ -64,16 +64,19 @@ const movielistSchema = new Schema({
 	}],
 	genres: [{
 		movid: Number,
+		id: Number,
 		name: String,
 		rating: Number
 	}],
 	directors: [{
 		movid: Number,
+		id: Number,
 		name: String,
 		rating: Number
 	}],
 	actors: [{
 		movid: Number,
+		id: Number,
 		name: String,
 		rating: Number
 	}],

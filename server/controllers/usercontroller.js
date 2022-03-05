@@ -3,7 +3,6 @@
 const user = require('../models/user')
 const movielist = require('../models/user_movielist')
 const bcrypt = require('bcrypt');
-const { Store } = require('express-session');
 const saltRounds = 10;
 
 const checkUser = async (userEmail, userPassword) => {
@@ -77,20 +76,6 @@ const loginUser = async (req, res) => {
 		res.status(500);
 	}
 };
-
-// const logoutUser = (req, res) => {
-// // store.destroy needed?
-// 	req.session.destroy((error) => {
-// 		if (error) {
-// 			res
-// 				.status(500)
-// 				.send({ error, message: 'Could not log out, please try again' });
-// 		} else {
-// 			res.clearCookie('sessionid');
-// 			res.status(200).send({ message: 'Logout successful' });
-// 		}
-// 	});
-// };
 
 const logoutUser = async (req, res) => {
 	try {

@@ -55,13 +55,16 @@ const onLoadArrayGen = () => {
 const directorCheck = async (arr, movieid, userRating) => {
   try {
     let directorName = '';
+    let directorID;
     for (let i = 0; i < arr.length; i++) {
       if (arr[i].job === 'Director') {
         directorName = arr[i].name;
+        directorID = arr[i].id;
       }
     }
     return [{
       movid: movieid,
+      id: directorID,
       name: directorName,
       rating: userRating
     }];
@@ -77,6 +80,7 @@ const actorCheck = async (arr, movieid, userRating) => {
       if (arr[i].order === 0 || arr[i].order === 1 || arr[i].order === 2 ) {
         result.push({
           movid: movieid,
+          id: arr[i].id,
           name: arr[i].name,
           rating: userRating
         });
@@ -97,15 +101,60 @@ const getMovieWithCredits = async (id) => {
   }
 };
 
+
+const genreSort = async (userEmail) => {
+  try {
+    const filter = await movielist.findOne({
+      email: userEmail
+    });
+    const genresNull = filter.genres;
+    const genres = genresNull.filter(genre => genre.rating)
+    const genreArray = [{
+      name: genres[0].name,
+      id: genres[0].id,
+      rating: genres[0].rating,
+      count: 1
+    }];
+    for (let i = 1; i < genres.length; i++) {
+      let len = genreArray.length;
+      for (let j = 0; j < len; j++) {
+        if (genres[i].name === genreArray[j].name) {
+          genreArray[j].rating = genreArray[j].rating + genres[i].rating;
+          genreArray[j].count++
+          if (i < genres.length - 1) {
+            i++;
+          }
+          else {
+            return genreArray;
+          }
+        } if (genres[i].name !== genreArray[j].name && j === (len - 1)) {
+          genreArray.push({
+            name: genres[i].name,
+            id: genres[i].id,
+            rating: genres[i].rating,
+            count: 1
+          });
+        }
+      }
+    }
+    return genreArray;
+  } catch (e) {
+    console.error('genreSort is failing');
+  }
+};
+
 const onLoad = async (req, res) => {
   try {
-    const arr = onLoadArrayGen()
+    const userEmail = req.session.userEmail;
+    const arr = onLoadArrayGen();
     const finalResponse = [];
-    for (let i = 0; i < arr.length; i++) {
-      // check out for ... await might need promise.all
-      const apiResponse = await axios.get(`${apiUrl}trending/movie/day?api_key=${APIKEY}&page=${arr[i]}`);
-      finalResponse.push(apiResponse.data.results);
-    }
+    // for (let i = 0; i < arr.length; i++) {
+    //   // check out for ... await might need promise.all
+    //   const apiResponse = await axios.get(`${apiUrl}trending/movie/day?api_key=${APIKEY}&page=${arr[i]}`);
+    //   finalResponse.push(apiResponse.data.results);
+    // }
+    const genre = await genreSort(userEmail);
+    console.log(genre)
     // add genre actor director lists if they exist in db here
     // will need to check all against db
     res.status(200);
