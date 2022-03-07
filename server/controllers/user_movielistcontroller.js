@@ -101,10 +101,9 @@ const getMovieWithCredits = async (id) => {
     const movie = await axios.get(`${apiUrl}movie/${id}?api_key=${APIKEY}&append_to_response=credits`)
     return movie;
   } catch (e) {
-    console.error('getMovieWithCredits is failing');
+    console.error(e, 'getMovieWithCredits is failing');
   }
 };
-
 
 const genreSort = async (userEmail) => {
   try {
@@ -144,7 +143,7 @@ const genreSort = async (userEmail) => {
     }
     return genreArray;
   } catch (e) {
-    console.error('genreSort is failing');
+    console.error(e, 'genreSort is failing');
   }
 };
 
@@ -187,7 +186,7 @@ const directorSort = async (userEmail) => {
     }
     return directorArray;
   } catch (e) {
-    console.error('directorSort is failing');
+    console.error(e, 'directorSort is failing');
   }
 };
 
@@ -230,7 +229,7 @@ const actorSort = async (userEmail) => {
     }
     return actorArray;
   } catch (e) {
-    console.error('actorSort is failing');
+    console.error(e, 'actorSort is failing');
   }
 };
 
@@ -495,9 +494,17 @@ const shuffle = (array) => {
 }
 
 const checkIfInDB = (userDB, array) => {
-  for (let i = 0; i < array.length; i++) {
-    const match = userDB.filter(movie => movie.id === array[i].id);
-    if (match) {}
+  let match;
+  for (let i = 0; i < userDB.length; i++) {
+    for (let j = 0; j < array.length; j++) {
+      for (let k = 0; k < array[j].length; k++) {
+        if (userDB[i].id === array[j][k].id) {
+          array[j][k].inWatchlist = userDB[i].inWatchlist;
+          array[j][k].seen = userDB[i].seen;
+          array[j][k].user_rating = userDB[i].user_rating
+        }
+      }
+    }
   }
 }
 
@@ -537,6 +544,10 @@ const onLoad = async (req, res) => {
       actorIDArr = await onLoadArrayActorWithDB(actor);
     }
     finalResponse.push(actorIDArr);
+    const user = await movielist.findOne({
+      email: userEmail
+    });
+    checkIfInDB(user.movielist, finalResponse)
     res.status(200);
     res.send(finalResponse);
   } catch (e) {
@@ -548,7 +559,6 @@ const onLoad = async (req, res) => {
 const onLoadWatchlist = async (req, res) => {
   try {
     const userEmail = req.session.userEmail;
-    console.log(userEmail)
     const user = await movielist.findOne({ email: userEmail });
     const userMovies = user.movielist
     const watchlistMovies = userMovies.filter(movie => movie.seen === false);
@@ -594,13 +604,14 @@ const onLoadWatchlist = async (req, res) => {
         finalResponse.push(array);
       }
     }
-    if (watchedMovies.length === 0 && watchlistMovies.length === 0) {
+    if (watchedMovies.length === 0) {
       const arr = onLoadArray();
       for (let i = 0; i < arr.length; i++) {
         const apiResponse = await axios.get(`${apiUrl}trending/movie/day?api_key=${APIKEY}&page=${arr[i]}`);
         finalResponse.push(apiResponse.data.results);
       }
     }
+    checkIfInDB(userMovies, finalResponse)
     res.status(200);
     res.send(finalResponse);
   } catch (e) {
@@ -655,6 +666,7 @@ const onLoadWatched = async (req, res) => {
         finalResponse.push(array);
       }
     }
+    checkIfInDB(userMovies, finalResponse)
     res.status(200);
     res.send(finalResponse);
   } catch (e) {
@@ -668,6 +680,7 @@ const addWatchlist = async (req, res) => {
     const id = req.body.id;
     const filter = { email: req.session.userEmail };
     const movie = await getMovieWithCredits(id);
+    movie.data.inWatchlist = true;
     movie.data.seen = false;
     movie.data.user_rating = null;
     const genres = movie.data.genres;
@@ -691,7 +704,7 @@ const addWatchlist = async (req, res) => {
     res.status(200);
     res.send(update);
   } catch (e) {
-    console.error("addWatchlist is failing");
+    console.error(e, "addWatchlist is failing");
     res.status(500);
   }
 };
@@ -723,6 +736,7 @@ const addWatched = async (req, res) => {
       }, { $pull: { directors: { movid: movieid } } });
     }
     const movie = await getMovieWithCredits(movieid);
+    movie.data.inWatchlist = false;
     movie.data.seen = true;
     movie.data.user_rating = userRating;
     const genres = movie.data.genres;
@@ -746,7 +760,7 @@ const addWatched = async (req, res) => {
     res.status(200);
     res.send(update);
   } catch (e) {
-    console.error("addWatched is failing");
+    console.error(e, "addWatched is failing");
     res.status(500);
   }
 };
@@ -771,7 +785,7 @@ const deleteMovie = async (req, res) => {
     res.send(filter);
   }
   catch (e) {
-    console.error("deleteMovie is failing");
+    console.error(e, "deleteMovie is failing");
     res.status(500);
   }
 };
