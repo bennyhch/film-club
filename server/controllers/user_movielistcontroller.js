@@ -262,7 +262,6 @@ const onLoadArrayGenreNoDB = async () => {
     return finalResponse;
   } catch (e) {
     console.error(e, "onLoadArrayGenreNoDB is failing");
-    res.status(500);
   }
 }
 
@@ -285,7 +284,6 @@ const onLoadDirectorNoDB = async () => {
     return finalResponse;
   } catch (e) {
     console.error(e, "onLoadDirectorNoDB is failing");
-    res.status(500);
   }
 }
 
@@ -308,7 +306,6 @@ const onLoadActorNoDB = async () => {
     return finalResponse;
   } catch (e) {
     console.error(e, "onLoadDirectorNoDB is failing");
-    res.status(500);
   }
 }
 
@@ -348,7 +345,6 @@ const onLoadArrayGenreWithDB = async (array) => {
     return finalResponse;
   } catch (e) {
     console.error(e, "onLoadArrayGenreWithDB is failing");
-    res.status(500);
   }
 }
 
@@ -394,7 +390,6 @@ const onLoadArrayDirectorWithDB = async (array) => {
     return finalResponse;
   } catch (e) {
     console.error(e, "onLoadArrayDirectorWithDB is failing");
-    res.status(500);
   }
 }
 
