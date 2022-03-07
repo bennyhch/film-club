@@ -262,7 +262,7 @@ const onLoadArrayGenreNoDB = async () => {
 
 const onLoadDirectorNoDB = async () => {
   try {
-    const arr = [5655, 488, 1032, 138, 578, 1223, 525, 108];
+    const arr = [55934, 488, 1032, 138, 578, 1223, 525, 108];
     const finalArr = []
     const finalResponse = [];
     while (finalArr.length < 2) {
@@ -376,7 +376,7 @@ const onLoadArrayDirectorWithDB = async (array) => {
       directorArray = [maxDirector, directorHighest];
     }
     else {
-      const arr = [5655, 488, 1032, 138, 578, 1223, 525, 108];
+      const arr = [55934, 488, 1032, 138, 578, 1223, 525, 108];
       directorArray = array;
       while (directorArray.length < 2) {
         let num = Math.floor(Math.random() * 8);

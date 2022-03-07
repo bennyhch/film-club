@@ -3,6 +3,7 @@
 const user = require('../models/user')
 const movielist = require('../models/user_movielist')
 const bcrypt = require('bcrypt');
+const moviecollection = require('../models/user_collections');
 const saltRounds = 10;
 
 const checkUser = async (userEmail, userPassword) => {
@@ -31,8 +32,11 @@ const createUser = async (req, res) => {
 			const newMovielistUser = await movielist.create({
 				email: req.body.email,
 			});
+			const newMovieCollectionUser = await moviecollection.create({
+				email: req.body.email,
+			});
 			res.status(201);
-			res.send({ newUser, newMovielistUser });
+			res.send({ newUser, newMovielistUser, newMovieCollectionUser });
 		} else {
 			console.error("parameter is missing");
 			res.status(400);
