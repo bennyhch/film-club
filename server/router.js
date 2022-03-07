@@ -12,16 +12,21 @@ router.post('/register', user.createUser);
 router.post('/', user.loginUser);
 
 //from home page
-router.get('/home', user_movielist.onLoad)
-router.post('/home/watchlist', user_movielist.addWatchlist)
-router.post('/home/watched', user_movielist.addWatched)
-router.delete('/home', user_movielist.deleteMovie)
+router.get('/home', user_movielist.onLoad);
+router.post('/home/watchlist', user_movielist.addWatchlist);
+router.post('/home/watched', user_movielist.addWatched);
+router.delete('/home', user_movielist.deleteMovie);
 router.post('/home', user.logoutUser);
 
 //from watchlist page
+router.get('/watchlist', user_movielist.onLoadWatchlist);
+router.post('/watchlist/watched', user_movielist.addWatched);
+router.delete('/watchlist', user_movielist.deleteMovie);
 router.post('/watchlist', user.logoutUser);
 
 //from watched page
+router.get('/watched', user_movielist.onLoadWatched);
+router.delete('/watched', user_movielist.deleteMovie);
 router.post('/watched', user.logoutUser);
 
 //from collections page

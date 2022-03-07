@@ -10,6 +10,7 @@ const movielistSchema = new Schema({
 		unique: true,
 	},
 	movielist: [{
+		inWatchlist: Boolean,
 		seen: Boolean,
 		user_rating: Number,
 		backdrop_path: String,

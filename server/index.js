@@ -11,7 +11,6 @@ const session = require('express-session');
 const SECRETKEY = process.env.SECRETKEY || 'this is not very secure';
 const SQLiteStore = require('connect-sqlite3')(session);
 
-
 app.use(cors());
 app.use(
 	session({
