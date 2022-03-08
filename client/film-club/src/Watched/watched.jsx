@@ -8,18 +8,16 @@ import {
 	Link,
 	NavLink
 } from "react-router-dom";
-
+import Header from "../Header/header";
 
 function Watched(props) {
 
 	return (
-		<div>
-			<div>login</div>
-			<NavLink to="/home">
-				<button>home</button>
-			</NavLink>
+		<div className="App">
+			<Header></Header>
 		</div>
 
+		
 		// onlogin button complete: <Link to="/home">
 		//on register button: <link to="/register">
 		//on register button complete: <Link to="/home">

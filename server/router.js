@@ -35,7 +35,7 @@ router.post('/collections/addactor', user_collection.addActorCollection);
 router.post('/collections/adddirector', user_collection.addDirectorCollection);
 router.post('/collections/watchlist', user_movielist.addWatchlist);
 router.post('/collections/watched', user_movielist.addWatched);
-router.delete('/collections/Collection', user_collection.deleteCollection);
+router.delete('/collections/collection', user_collection.deleteCollection);
 router.delete('/collections', user_movielist.deleteMovie);
 router.post('/collections', user.logoutUser);
 

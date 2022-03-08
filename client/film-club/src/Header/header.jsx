@@ -28,8 +28,8 @@ function Header(props) {
 				<NavLink to="/watchlist" className="header-text">
 					<h3>Watchlist</h3>
 				</NavLink>
-				<input onChange={props.searchMovies} value={props.searchVal} placeholder="Submit" />
-				<NavLink to="/">
+				<input className="search-bar" onChange={props.searchMovies} value={props.searchVal} placeholder="Search for movies" />
+				<NavLink to="/" className="header-text">
 					<h6>Logout</h6>
 				</NavLink>
 					<img className="App-logo" src={logo} alt="Film Club Logo" />
