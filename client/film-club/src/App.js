@@ -1,6 +1,6 @@
 
 import './App.css';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import logo from "./images/film-club-logos_black.png";
 import {
@@ -14,7 +14,8 @@ import Home from "./Home/home";
 import Watched from './Watched/watched';
 import Watchlist from './Watchlist/watchlist';
 import Collections from './Collections/collections';
-import { useCookies } from "react-cookie";
+import service from './service';
+
 import { Component } from 'react';
 import authAPI from './authAPI';
 
@@ -23,18 +24,19 @@ import authAPI from './authAPI';
 function App() {
 
 
-  const ProtectedRoute = ({ component: Component, ...rest }) => {
-    return (
-      <Route
-        {...rest}
-        render={() => (
-          <Component />
-        )}
-      />
-    )
-  }
-  const [cookies, setCookie] = useCookies();
-  const [auth, setAuth] = React.useState(false)
+
+  // const ProtectedRoute = ({ component: Component, ...rest }) => {
+  //   return (
+  //     <Route
+  //       {...rest}
+  //       render={() => (
+  //         <Component />
+  //       )}
+  //     />
+  //   )
+  // }
+
+  // const [auth, setAuth] = React.useState(false)
 
 
   return (
@@ -42,7 +44,7 @@ function App() {
       {/* <authAPI.Provider value={{auth, setAuth}}> */}
         <Router>
           <Routes>
-            <Route path="/" element={<Login />} />
+          <Route path="/" element={<Login />} />
             <Route path="/home" element={<Home />} />
             <Route path="/watchlist" element={<Watchlist />} />
             <Route path="/watched" element={<Watched />} />

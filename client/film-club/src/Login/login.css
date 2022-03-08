@@ -1,0 +1,84 @@
+.login-page-container {
+		height: 100vh;
+		width: 100vw;
+		display: flex;
+		justify-content: space-between;
+}
+
+.login-column-container {
+		height: 100vh;
+		width: 35vw;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+}
+
+.opener-logo {
+	height: 40vh;
+	width: 20vw;
+}
+
+.login-container {
+  display: flex;
+	justify-content: space-between;
+}
+
+.login-head {
+	color: white;
+  font-size: xxx-large;
+}
+
+.login-body-text {
+	color: white;
+	align-self: flex-start;
+	position: relative;
+	left: 3vw;
+	top: -5vh;
+}
+
+.login-box {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	color: #FFF1F2;
+	background-color: rgb(0, 0, 0);
+	height: 20vh;
+	width: 15vw;
+	border-radius: 6px;
+	filter: drop-shadow(5px 5px 4px rgba(0, 0, 0, 0.25));
+	margin: 5px;
+}
+
+.form-input {
+	background-color: #FFF1F2;
+  color: grey;
+  width: 13vw;
+  height: 3vh;
+  border: none;
+	margin: 5px;
+	border-radius: 3px;
+}
+
+.button-container {
+  display: flex;
+	justify-content: space-evenly;
+	width: 15vw;
+}
+
+.login-button {
+	background-color: #881337;;
+	min-width: 5vw;
+	color: white;
+	font-size: x-small;
+	font-weight: bold;
+	padding: 5px;
+	cursor: pointer;
+	border: 1px solid rgb(212, 212, 212);
+	border-radius: 5px;
+}
+
+.openimage {
+	height: 100vh;
+  width: 65vw;
+	filter: drop-shadow(10px 10px 4px rgba(0, 0, 0, 0.25));
+}

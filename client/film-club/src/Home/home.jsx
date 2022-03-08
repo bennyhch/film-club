@@ -15,6 +15,7 @@ import Header from "../Header/header";
 function Home(props) {
 
 	return (
+		
 		<div className = "App">
 		  <Header></Header>
 		</div>
