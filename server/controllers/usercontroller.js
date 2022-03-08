@@ -83,8 +83,8 @@ const loginUser = async (req, res) => {
 
 const logoutUser = async (req, res) => {
 	try {
-		req.session.destroy()
-		res.clearCookie('sessionid');
+		// req.session.destroy()
+		// res.clearCookie('sessionid');
 		res.status(200)
 		res.send('Logout successful')
 	} catch (e) {

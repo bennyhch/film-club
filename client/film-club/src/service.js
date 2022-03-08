@@ -25,8 +25,14 @@ const data = {
 		return response;
 	},
 
-	getOnLoadHome: async () => {
-		const response = await fetch(`${url}/home`)
+	getOnLoadHome: async (sessionid) => {
+		const response = await fetch(`${url}/home`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ email: sessionid})
+		})
 				.then(response => response.json());
 	  return response;
 	},
@@ -74,8 +80,14 @@ const data = {
 		return response;
 	},
 
-	getOnLoadWatchlist: async () => {
-		const response = await fetch(`${url}/watchlist`)
+	getOnLoadWatchlist: async (sessionid) => {
+		const response = await fetch(`${url}/watchlist`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ email: sessionid })
+		})
 			.then(response => response.json());
 		return response;
 	},
@@ -111,8 +123,14 @@ const data = {
 		return response;
 	},
 
-	getOnLoadWatched: async () => {
-		const response = await fetch(`${url}/watched`)
+	getOnLoadWatched: async (sessionid) => {
+		const response = await fetch(`${url}/watched`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ email: sessionid })
+		})
 			.then(response => response.json());
 		return response;
 	},
@@ -136,8 +154,14 @@ const data = {
 		return response;
 	},
 
-	getOnLoadCollections: async () => {
-		const response = await fetch(`${url}/collections`)
+	getOnLoadCollections: async (sessionid) => {
+		const response = await fetch(`${url}/collections`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ email: sessionid })
+		})
 			.then(response => response.json());
 		return response;
 	},

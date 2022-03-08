@@ -9,35 +9,48 @@ import {
 	NavLink
 } from "react-router-dom";
 import Header from "../Header/header";
+import service from "../service";
+import { useEffect, useState } from 'react';
+import { useCookies } from "react-cookie";
+
 
 function Watched(props) {
+
+	const [cookies, setCookie] = useCookies();
+	const [movies, setMovies] = useState([]);
+	const [genres, setGenres] = useState([]);
+	const [actors, setActors] = useState([]);
+	const [directors, setDirectors] = useState([]);
+
+	useEffect(() => {
+		service.getOnLoadWatched(cookies.sessionid)
+			.then(response => {
+				const genres = response[200];
+				const directors = response[201];
+				const actors = response[202];
+				setMovies(response);
+				setGenres(genres);
+				console.log(genres[3].map(el => el.id))
+				setActors(actors);
+				setDirectors(directors);
+			})
+			.catch(error => {
+				console.log(error, 'error occurred on load')
+			})
+	}, [])
 
 	return (
 		<div className="App">
 			<Header></Header>
+			{movies.length ?
+				<p>got movies</p>
+				:
+				<div className="watched-page">
+				  <div class-name="empty-watched-box">
+					  <p>Call yourself a film fan? Mark movies as watched to see them appear on your watched list.</p>
+					</div>
+				</div>}
 		</div>
-
-		
-		// onlogin button complete: <Link to="/home">
-		//on register button: <link to="/register">
-		//on register button complete: <Link to="/home">
-
-		// 	<div className="Discover">
-		// 		<h3 className="DiscoverTitle"> Discover</h3>
-		// 		<div className="horizontal-scroll-wrapper">
-		// 			<div>
-		// 				<ul className="DiscoverMovies">
-		// 					{props.movies.map(el =>
-		// 						<li key={el.id} >
-		// 							<span className="Movie-title">{el.title}</span>
-		// 							<img src={"https://image.tmdb.org/t/p/w300" + el.poster_path} alt="Not found." />
-		// 							{buttonToggle(el)}
-		// 						</li>
-		// 					)}
-		// 				</ul>
-		// 			</div>
-		// 		</div>
-		// 	</div>
 	);
 }
 

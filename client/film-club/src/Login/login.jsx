@@ -27,8 +27,8 @@ function Login(props) {
 		event.preventDefault();
 		await service.registerUser(registerEmail, registerPassword);
 		setCookie('sessionid', registerEmail, { path: '/'})
-		setRegisterEmail(registerEmail => registerEmail = '');
-		setRegisterPassword(registerPassword => registerPassword = '');
+		setRegisterEmail('');
+		setRegisterPassword('');
 		navigate('/home', { replace: true });
 	};
 
@@ -36,8 +36,8 @@ function Login(props) {
 		event.preventDefault();
 		const response = await service.loginUser(newEmail, newPassword);
 		setCookie('sessionid', newEmail, { path: '/' })
-		setNewEmail(newEmail => newEmail = '');
-		setRegisterPassword(newPassword => newPassword = '');
+		setNewEmail('');
+		setRegisterPassword('');
 		navigate('/home', { replace: true })
 	}
 
@@ -57,7 +57,7 @@ function Login(props) {
 					<form className="login-box" onSubmit={handleLogin}>
 						<p>Sign In Here:</p>
 						<input className='form-input' type='text' name='title' value={newEmail} onChange={(event) => setNewEmail(event.target.value)} placeholder='Enter your email...' required />
-						<input className='form-input' type='password' name='title' value={newPassword} onChange={(event) => setNewPassword(event.target.value)}placeholder='Enter your password...' required />
+						<input className='form-input' type='password' name='title' value={newPassword} onChange={(event) => setNewPassword(event.target.value)} placeholder='Enter your password...' required />
 						<div className="button-container">
 						  <button className="login-button" type="submit">Sign In</button>
 						</div>

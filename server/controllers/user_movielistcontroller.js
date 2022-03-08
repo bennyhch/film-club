@@ -235,6 +235,60 @@ const actorSort = async (userEmail) => {
 
 const genreIDlist = [28, 12, 16, 35, 80, 99, 18, 10751, 14, 36, 27, 10402, 9648, 10749, 878, 10770, 53, 10752, 37];
 
+const genreIDlookup = {
+  28: 'Action',
+  12: 'Adventure',
+  16: 'Animation',
+  35: 'Comedy',
+  80: 'Crime',
+  99: 'Documentary',
+  18: 'Drama',
+  10751: 'Family',
+  14: 'Fantasy',
+  36: 'History',
+  27: 'Horror',
+  10402: 'Music',
+  9648: 'Mystery',
+  10749: 'Romance',
+  878: 'Science Fiction',
+  10770: 'TV Movie',
+  53: 'Thriller',
+  10752: 'War',
+  37: 'Western'
+}
+
+const directorsIDlist = {
+  55934: 'Taika Waititi',
+  488: 'Steven Spielberg',
+  1032: 'Martin Scorsese',
+  138: 'Quentin Tarantino',
+  578: 'Ridley Scott',
+  1223: 'The Coen Brothers',
+  525: 'Christopher Nolan',
+  108: 'Peter Jackson'
+};
+
+const actorsIDlist = {
+  287: 'Brad Pitt',
+  1283: 'Helena Bonham Carter',
+  71580: 'Benedict Cumberbatch',
+  1136406: 'Tom Holland',
+  62: 'Bruce Willis',
+  6193: 'Leo DiCaprio',
+  3896: 'Liam Neeson',
+  31: 'Tom Hanks',
+  2888: 'Will Smith',
+  505710: 'Zendaya',
+  18918: 'Dwayne Johnson',
+  10859: 'Ryan Reynolds',
+  1245: 'Scarlett Johansson',
+  139: 'Uma Thurman',
+  204: 'Kate Winslet',
+  1813: 'Anne Hathaway',
+  83002: 'Jessica Chastain',
+  18973: 'Mila Kunis'
+};
+
 const onLoadArrayGenreNoDB = async () => {
   try {
     const arr = [];
@@ -249,6 +303,10 @@ const onLoadArrayGenreNoDB = async () => {
     const genreIDArr = [];
     for (let i = 0; i < arr.length; i++) {
       genreIDArr.push(genreIDlist[arr[i]]);
+    }
+    for (let i = 0; i < genreIDArr.length; i++) {
+      const genreName = genreIDlookup[genreIDArr[i]];
+      finalResponse.push(genreName);
     }
     for (let i = 0; i < genreIDArr.length; i++) {
       const apiResponse = await axios.get(`${apiUrl}discover/movie?api_key=${APIKEY}&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_genres=${genreIDArr[i]}`);
@@ -271,6 +329,10 @@ const onLoadDirectorNoDB = async () => {
       if (check) {
         finalArr.push(arr[num]);
       }
+    }
+    for (let i = 0; i < finalArr.length; i++) {
+      const directorName = directorsIDlist[finalArr[i]];
+      finalResponse.push(directorName);
     }
     for (let i = 0; i < finalArr.length; i++) {
       const apiResponse = await axios.get(`${apiUrl}person/${finalArr[i]}/movie_credits?api_key=${APIKEY}&language=en-US`);
@@ -298,6 +360,10 @@ const onLoadActorNoDB = async () => {
       if (check) {
         finalArr.push(arr[num]);
       }
+    }
+    for (let i = 0; i < finalArr.length; i++) {
+      const actorName = actorsIDlist[finalArr[i]];
+      finalResponse.push(actorName);
     }
     for (let i = 0; i < finalArr.length; i++) {
       const apiResponse = await axios.get(`${apiUrl}person/${finalArr[i]}/movie_credits?api_key=${APIKEY}&language=en-US`);
@@ -510,12 +576,13 @@ const checkIfInDB = (userDB, array) => {
 
 const onLoad = async (req, res) => {
   try {
-    const userEmail = req.session.userEmail;
+    const userEmail = req.body.email;
     const arr = onLoadArray();
     const finalResponse = [];
     for (let i = 0; i < arr.length; i++) {
       const apiResponse = await axios.get(`${apiUrl}trending/movie/day?api_key=${APIKEY}&page=${arr[i]}`);
-      finalResponse.push(apiResponse.data.results);
+      const shuffled = shuffle(apiResponse.data.results);
+      finalResponse.push(...shuffled);
     }
     const genre = await genreSort(userEmail);
     let genreIDArr;
@@ -558,7 +625,7 @@ const onLoad = async (req, res) => {
 
 const onLoadWatchlist = async (req, res) => {
   try {
-    const userEmail = req.session.userEmail;
+    const userEmail = req.body.email;
     const user = await movielist.findOne({ email: userEmail });
     const userMovies = user.movielist
     const watchlistMovies = userMovies.filter(movie => movie.seen === false);
@@ -608,7 +675,8 @@ const onLoadWatchlist = async (req, res) => {
       const arr = onLoadArray();
       for (let i = 0; i < arr.length; i++) {
         const apiResponse = await axios.get(`${apiUrl}trending/movie/day?api_key=${APIKEY}&page=${arr[i]}`);
-        finalResponse.push(apiResponse.data.results);
+        const shuffled = shuffle(apiResponse.data.results);
+        finalResponse.push(...shuffled);
       }
     }
     checkIfInDB(userMovies, finalResponse)
@@ -622,7 +690,7 @@ const onLoadWatchlist = async (req, res) => {
 
 const onLoadWatched = async (req, res) => {
   try {
-    const userEmail = req.session.userEmail;
+    const userEmail = req.body.email;
     const user = await movielist.findOne({ email: userEmail });
     const userMovies = user.movielist
     const watchedMovies = userMovies.filter(movie => movie.seen === true);

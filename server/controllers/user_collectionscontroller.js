@@ -33,7 +33,7 @@ const checkIfInDB = (userDB, array) => {
 
 const onLoadCollections = async (req, res) => {
 	try {
-		const userEmail = req.session.userEmail;
+		const userEmail = req.body.email;
 		const user = await moviecollection.findOne({ email: userEmail });
 		const usermovies = user.moviecoll;
 		const userperson = user.person
