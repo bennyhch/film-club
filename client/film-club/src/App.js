@@ -1,24 +1,34 @@
 
 import './App.css';
-import logo from "./images/film_club-logo_black.png";
+import logo from "./images/film-club-logos_black.png";
 import {
   BrowserRouter as Router,
+  Routes,
   Switch,
   Route,
   Link
 } from "react-router-dom";
+import Login from "./Login/login";
+import Home from "./Home/home";
+import Watched from './Watched/watched';
+import Watchlist from './Watchlist/watchlist';
+import Collections from './Collections/collections';
+
 
 function App() {
 
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img className="App-logo" src={{ logo }} alt="Film Club Logo" />
-        <p>hello</p>
-        {/* <Search searchVal={searchVal} searchMovies={searchMovies}></Search> */}
-      </header>
-    </div>
+
+    <Router>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/watchlist" element={<Watchlist />} />
+        <Route path="/watched" element={<Watched />} />
+        <Route path="/collections" element={<Collections />} />
+      </Routes>
+    </Router>
   );
 }
 
