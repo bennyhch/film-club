@@ -12,31 +12,12 @@ import Header from "../Header/header";
 import service from "../service";
 import { useEffect, useState } from 'react';
 import { useCookies } from "react-cookie";
+import image1 from '../images/btn-add.svg';
+import image2 from '../images/btn-added.svg';
 
 function Home(props) {
 
 	const [cookies, setCookie] = useCookies();
-	// const [movies, setMovies] = useState([]);
-	// const [genres, setGenres] = useState([]);
-	// const [actors, setActors] = useState([]);
-	// const [directors, setDirectors] = useState([]);
-
-	// useEffect(() => {
-	// 	service.getOnLoadHome(cookies.sessionid)
-	// 		.then(response => {
-	// 			const genres = response[200];
-	// 	    const directors = response[201];
-	// 	    const actors = response[202];
-	// 			setMovies(response);
-	// 			setGenres(genres);
-	// 			console.log(genres[3].map(el => el.id))
-	// 			setActors(actors);
-	// 			setDirectors(directors);
-	// 		})
-	// 		.catch(error => {
-	// 			console.log(error, 'error occurred on load')
-	// 		})
-	// }, [])
 
 
 	const firstMovies = props.movies.slice(0, 99);
@@ -49,6 +30,33 @@ function Home(props) {
 	const directors2 = props.directors.slice(2, 3);
 	const directors3 = props.directors.slice(3, 4);
 
+
+	const watchlistToggle = (element) => {
+		if (element.inWatchlist === true) {
+			return <img className="infinity-button" src={image2} onClick={() => props.deleteMovieFromHome(element)} />
+
+		} else {
+			return <img className="infinity-button" src={image1} onClick={() => service.addWatchlistFromHome(element)} />
+		}
+	};
+
+	const watchedToggle = (element) => {
+		if (element.seen === true) {
+			return <img className="seen-button" src={image2} onClick={() => props.deleteMovieFromHome(element)} />
+
+		} else {
+			return <img className="seen-button" src={image1} onClick={() => service.addWatchedFromHome(element)} />
+		}
+	};
+
+	const ratingToggle = (element) => {
+		if (element.seen === true) {
+			return <p className="rating-text">Your rating: {element.user_rating}</p>
+		} else {
+			return<p className="rating-text">Public rating: {element.vote_average}</p>
+		}
+	};
+
 	return (
 
 		<div className = "App">
@@ -57,9 +65,15 @@ function Home(props) {
 				<h3 className="infinity-title">To Infinity... and Beyond!</h3>
 					<div className="movielist-container">
 						<ul className="infinity-movies">
-							{firstMovies.map(el =>
-								<li key={el.id} >
+							{firstMovies.map((el, index) =>
+								<li key={index} >
 									<img className="movie-image" src={"https://image.tmdb.org/t/p/w300" + el.poster_path} alt="Not found." />
+									<p className="movie-title-text">{el.title}</p>
+									<p className="watchlist-text">Watchlist</p>
+									<p className="watched-text">Watched</p>
+									{watchlistToggle(el)}
+									{watchedToggle(el)}
+									{ratingToggle(el)}
 								</li>
 							)}
 						</ul>
@@ -69,7 +83,13 @@ function Home(props) {
 						{secondMovies.map(el => {
 							return (
 								<li key={el.id} >
-								<img className="movie-image" src={"https://image.tmdb.org/t/p/w300" + el.poster_path} alt="Not found." />
+									<img className="movie-image" src={"https://image.tmdb.org/t/p/w300" + el.poster_path} alt="Not found." />
+									<p className="movie-title-text">{el.title}</p>
+									<p className="watchlist-text">Watchlist</p>
+									<p className="watched-text">Watched</p>
+									{watchlistToggle(el)}
+									{watchedToggle(el)}
+									{ratingToggle(el)}
 							</li>
 								)
 							}
@@ -86,6 +106,12 @@ function Home(props) {
 								return (
 									<li key={e.id} >
 										<img className="movie-image" src={"https://image.tmdb.org/t/p/w300" + e.poster_path} alt="Not found." />
+										<p className="movie-title-text">{e.title}</p>
+										<p className="watchlist-text">Watchlist</p>
+										<p className="watched-text">Watched</p>
+										{watchlistToggle(e)}
+										{watchedToggle(e)}
+										{ratingToggle(e)}
 									</li>
 								)
 							})
@@ -102,7 +128,12 @@ function Home(props) {
 							return el.map(e => {
 								return (
 									<li key={e.id} >
-										<img className="movie-image" src={"https://image.tmdb.org/t/p/w300" + e.poster_path} alt="Not found." />
+										<img className="movie-image" src={"https://image.tmdb.org/t/p/w300" + e.poster_path} alt="Not found." /><p className="movie-title-text">{e.title}</p>
+										<p className="watchlist-text">Watchlist</p>
+										<p className="watched-text">Watched</p>
+										{watchlistToggle(e)}
+										{watchedToggle(e)}
+										{ratingToggle(e)}
 									</li>
 								)
 							})
@@ -116,10 +147,16 @@ function Home(props) {
 				<div className="movielist-container">
 					<ul className="infinity-movies">
 						{directors2.map(el => {
+							console.log(el)
 							return el.map(e => {
 								return (
 									<li key={e.id} >
-										<img className="movie-image" src={"https://image.tmdb.org/t/p/w300" + e.poster_path} alt="Not found." />
+										<img className="movie-image" src={"https://image.tmdb.org/t/p/w300" + e.poster_path} alt="Not found." /><p className="movie-title-text">{e.title}</p>
+										<p className="watchlist-text">Watchlist</p>
+										<p className="watched-text">Watched</p>
+										{watchlistToggle(e)}
+										{watchedToggle(e)}
+										{ratingToggle(e)}
 									</li>
 								)
 							})
@@ -136,7 +173,12 @@ function Home(props) {
 							return el.map(e => {
 								return (
 									<li key={e.id} >
-										<img className="movie-image" src={"https://image.tmdb.org/t/p/w300" + e.poster_path} alt="Not found." />
+										<img className="movie-image" src={"https://image.tmdb.org/t/p/w300" + e.poster_path} alt="Not found." /><p className="movie-title-text">{e.title}</p>
+										<p className="watchlist-text">Watchlist</p>
+										<p className="watched-text">Watched</p>
+										{watchlistToggle(e)}
+										{watchedToggle(e)}
+										{ratingToggle(e)}
 									</li>
 								)
 							})
@@ -153,7 +195,12 @@ function Home(props) {
 							return el.map(e => {
 								return (
 									<li key={e.id} >
-										<img className="movie-image" src={"https://image.tmdb.org/t/p/w300" + e.poster_path} alt="Not found." />
+										<img className="movie-image" src={"https://image.tmdb.org/t/p/w300" + e.poster_path} alt="Not found." /><p className="movie-title-text">{e.title}</p>
+										<p className="watchlist-text">Watchlist</p>
+										<p className="watched-text">Watched</p>
+										{watchlistToggle(e)}
+										{watchedToggle(e)}
+										{ratingToggle(e)}
 									</li>
 								)
 							})
@@ -170,7 +217,12 @@ function Home(props) {
 							return el.map(e => {
 								return (
 									<li key={e.id} >
-										<img className="movie-image" src={"https://image.tmdb.org/t/p/w300" + e.poster_path} alt="Not found." />
+										<img className="movie-image" src={"https://image.tmdb.org/t/p/w300" + e.poster_path} alt="Not found." /><p className="movie-title-text">{e.title}</p>
+										<p className="watchlist-text">Watchlist</p>
+										<p className="watched-text">Watched</p>
+										{watchlistToggle(e)}
+										{watchedToggle(e)}
+										{ratingToggle(e)}
 									</li>
 								)
 							})
@@ -187,7 +239,12 @@ function Home(props) {
 							return el.map(e => {
 								return (
 									<li key={e.id} >
-										<img className="movie-image" src={"https://image.tmdb.org/t/p/w300" + e.poster_path} alt="Not found." />
+										<img className="movie-image" src={"https://image.tmdb.org/t/p/w300" + e.poster_path} alt="Not found." /><p className="movie-title-text">{e.title}</p>
+										<p className="watchlist-text">Watchlist</p>
+										<p className="watched-text">Watched</p>
+										{watchlistToggle(e)}
+										{watchedToggle(e)}
+										{ratingToggle(e)}
 									</li>
 								)
 							})

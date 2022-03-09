@@ -28,23 +28,109 @@ function App() {
   const [genres, setGenres] = useState([]);
   const [actors, setActors] = useState([]);
   const [directors, setDirectors] = useState([]);
+  const [userMovielist, setUserMovielist] = useState([]);
+  const [userGenrelist, setUserGenrelist] = useState([]);
+  const [userActorlist, setUserActorlist] = useState([]);
+  const [userDirectorlist, setUserDirectorlist] = useState([]);
 
   useEffect(() => {
     service.getOnLoadHome(cookies.sessionid)
       .then(response => {
+        console.log(response)
         const genres = response[200];
         const directors = response[201];
         const actors = response[202];
+        const user = response[203];
+        const userMovielist = user.movielist;
+        const userGenrelist = user.genres;
+        const userActorlist = user.actors;
+        const userDirectorlist = user.directors;
         setMovies(response);
         setGenres(genres);
-        console.log(genres[3].map(el => el.id))
         setActors(actors);
         setDirectors(directors);
+        setUserMovielist(userMovielist);
+        setUserGenrelist(userGenrelist);
+        setUserActorlist(userActorlist);
+        setUserDirectorlist(userDirectorlist);
       })
       .catch(error => {
         console.log(error, 'error occurred on load')
       })
   }, [])
+
+  const deleteMovieFromHome = async (element) => {
+    element.sessionid = cookies.sessionid;
+    const response = await service.deleteMovieFromHome(element);
+    console.log(response)
+    let usermovielist = userMovielist.slice();
+    for (const el of usermovielist) {
+      if (el.id === element.id) {
+        el.seen = false;
+        el.inWatchlist = false;
+        el.user_rating = null;
+        const newUserMovieList = usermovielist.filter(movie => movie.id !== element.id);
+        setUserMovielist(newUserMovieList)
+      }
+    }
+    let newMovies = movies.slice();
+    for (const el of newMovies) {
+      if (el.id === element.id) {
+        el.seen = false;
+        el.inWatchlist = false;
+        el.user_rating = null;
+        setMovies(newMovies)
+      }
+    }
+    let newGenres = genres.slice();
+    for (const el of newGenres) {
+      if (el.length > 0) {
+        for (const e of el) {
+          if (e.id === element.id) {
+            e.seen = false;
+            e.inWatchlist = false;
+            e.user_rating = null;
+          }
+        }
+        setGenres(newGenres)
+      }
+    }
+    let newDirectors = directors.slice();
+    for (const el of newDirectors) {
+      if (el.length > 0) {
+        for (const e of el) {
+          if (e.id === element.id) {
+            e.seen = false;
+            e.inWatchlist = false;
+            e.user_rating = null;
+          }
+        }
+        setDirectors(newDirectors)
+      }
+    }
+    let newActors = actors.slice();
+    for (const el of newActors) {
+      if (el.length > 0) {
+        for (const e of el) {
+          if (e.id === element.id) {
+            e.seen = false;
+            e.inWatchlist = false;
+            e.user_rating = null;
+          }
+        }
+        setActors(newActors)
+      }
+    }
+    let usergenrelist = userGenrelist.slice();
+    const newUserGenreList = usergenrelist.filter(genre => genre.movid !== element.id);
+    setUserGenrelist(newUserGenreList)
+    let useractorlist = userActorlist.slice();
+    const newUserActorList = useractorlist.filter(actor => actor.movid !== element.id);
+    setUserActorlist(newUserActorList)
+    let userdirectorlist = userDirectorlist.slice();
+    const newUserDirectorList = userdirectorlist.filter(director => director.movid !== element.id);
+    setUserDirectorlist(newUserDirectorList);
+  }
 
   return (
     <div>
@@ -52,7 +138,7 @@ function App() {
         <Router>
           <Routes>
           <Route path="/" element={<Login />} />
-          <Route path="/home" element={<Home actors={actors} directors={directors} genres={genres} movies={movies}/>} />
+          <Route path="/home" element={<Home actors={actors} directors={directors} genres={genres} movies={movies} userMovielist={[userMovielist, setUserMovielist]} userActorlist={userActorlist} userDirectorlist={userDirectorlist} userGenrelist={userGenrelist} deleteMovieFromHome={deleteMovieFromHome}/>} />
             <Route path="/watchlist" element={<Watchlist />} />
             <Route path="/watched" element={<Watched />} />
             <Route path="/collections" element={<Collections />} />

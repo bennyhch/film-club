@@ -12,6 +12,8 @@ import Header from "../Header/header";
 import service from "../service";
 import { useEffect, useState } from 'react';
 import { useCookies } from "react-cookie";
+import image1 from '../images/btn-add.svg';
+import image2 from '../images/btn-added.svg';
 
 function Watchlist(props) {
 
@@ -46,6 +48,29 @@ function Watchlist(props) {
 	const sixthMovies = movies.slice(125, 149);
 	const seventhMovies = movies.slice(150, 174);
 	const eighthMovies = movies.slice(175, 199);
+
+	const watchlistToggle = (element) => {
+		if (element.inWatchlist === true) {
+			return <img className="infinity-button" src={image2} onClick={() => service.deleteMovieFromWatchlist(element)} />
+		}
+	};
+
+	const watchedToggle = (element) => {
+		if (element.seen === true) {
+			return <img className="seen-button" src={image2} onClick={() => service.deleteMovieFromWatchlist(element)} />
+
+		} else {
+			return <img className="seen-button" src={image1} onClick={() => service.addWatchedFromWatchlist(element)} />
+		}
+	};
+
+	const ratingToggle = (element) => {
+		if (element.seen === true) {
+			return <p className="rating-text">Your rating: {element.user_rating}</p>
+		} else {
+			return <p className="rating-text">Public rating: {element.vote_average}</p>
+		}
+	};
 
 	return (
 

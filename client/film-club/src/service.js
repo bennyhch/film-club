@@ -67,8 +67,7 @@ const data = {
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify(movie)
-		})
+			body: JSON.stringify(movie)})
 			.then(response => response.json());
 		return response;
 	},
