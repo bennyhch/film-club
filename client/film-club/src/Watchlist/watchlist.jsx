@@ -130,7 +130,7 @@ function Watchlist(props) {
 				</div>
 				:
 				null}
-			{props.genres.length ?
+			{props.watchlistMovies.length ?
 				<div className="infinity">
 					<h3 className="infinity-title">Based on your Fave Genres</h3>
 					<div className="movielist-container">
@@ -155,7 +155,7 @@ function Watchlist(props) {
 				</div>
 				:
 				null}
-			{props.actors.length ?
+			{props.watchlistMovies.length ?
 				<div className="infinity">
 					<h3 className="infinity-title">Based on your Fave Actors</h3>
 					<div className="movielist-container">
@@ -180,7 +180,7 @@ function Watchlist(props) {
 				</div>
 				:
 				null}
-			{props.directors.length ?
+			{props.watchlistMovies.length ?
 				< div className="infinity">
 			<h3 className="infinity-title">Based on your Fave Directors</h3>
 			<div className="movielist-container">
