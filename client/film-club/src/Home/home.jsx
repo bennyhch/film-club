@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react';
 import { useCookies } from "react-cookie";
 import image1 from '../images/btn-add.svg';
 import image2 from '../images/btn-added.svg';
+import Modal from "../Modal/modal";
 
 function Home(props) {
 
@@ -30,13 +31,20 @@ function Home(props) {
 	const directors2 = props.directors.slice(2, 3);
 	const directors3 = props.directors.slice(3, 4);
 
+	const [addWatch, setAddWatch] = useState({})
+	const [show, setShow] = useState(false);
+	const openModal = (element) => {
+		setAddWatch(element)
+		setShow(true);
+	}
+	const closeModal = () => setShow(false);
 
 	const watchlistToggle = (element) => {
 		if (element.inWatchlist === true) {
 			return <img className="infinity-button" src={image2} onClick={() => props.deleteMovieFromHome(element)} />
 
 		} else {
-			return <img className="infinity-button" src={image1} onClick={() => service.addWatchlistFromHome(element)} />
+			return <img className="infinity-button" src={image1} onClick={() => props.addWatchlistFromHome(element)} />
 		}
 	};
 
@@ -45,7 +53,7 @@ function Home(props) {
 			return <img className="seen-button" src={image2} onClick={() => props.deleteMovieFromHome(element)} />
 
 		} else {
-			return <img className="seen-button" src={image1} onClick={() => service.addWatchedFromHome(element)} />
+			return <img className="seen-button" src={image1} value={element} onClick={() => openModal(element)} />
 		}
 	};
 
@@ -61,7 +69,11 @@ function Home(props) {
 
 		<div className = "App">
 			<Header></Header>
-			<div className="infinity">
+			<div className= 'modal-container'>
+				{show ? <Modal closeModal={closeModal} addWatchedFromHome={props.addWatchedFromHome} addWatch={addWatch}
+					show={show} /> : null}
+			</div>
+				<div className="infinity">
 				<h3 className="infinity-title">To Infinity... and Beyond!</h3>
 					<div className="movielist-container">
 						<ul className="infinity-movies">
@@ -80,9 +92,9 @@ function Home(props) {
 				</div>
 				<div className="movielist-container">
 					<ul className="infinity-movies">
-						{secondMovies.map(el => {
+						{secondMovies.map((el, index) => {
 							return (
-								<li key={el.id} >
+								<li key={index} >
 									<img className="movie-image" src={"https://image.tmdb.org/t/p/w300" + el.poster_path} alt="Not found." />
 									<p className="movie-title-text">{el.title}</p>
 									<p className="watchlist-text">Watchlist</p>
@@ -102,9 +114,9 @@ function Home(props) {
 				<div className="movielist-container">
 					<ul className="infinity-movies">
 						{genres3.map(el => {
-							return el.map(e => {
+							return el.map((e, index) => {
 								return (
-									<li key={e.id} >
+									<li key={index} >
 										<img className="movie-image" src={"https://image.tmdb.org/t/p/w300" + e.poster_path} alt="Not found." />
 										<p className="movie-title-text">{e.title}</p>
 										<p className="watchlist-text">Watchlist</p>
@@ -125,9 +137,9 @@ function Home(props) {
 				<div className="movielist-container">
 					<ul className="infinity-movies">
 						{actors2.map(el => {
-							return el.map(e => {
+							return el.map((e, index) => {
 								return (
-									<li key={e.id} >
+									<li key={index} >
 										<img className="movie-image" src={"https://image.tmdb.org/t/p/w300" + e.poster_path} alt="Not found." /><p className="movie-title-text">{e.title}</p>
 										<p className="watchlist-text">Watchlist</p>
 										<p className="watched-text">Watched</p>
@@ -148,9 +160,9 @@ function Home(props) {
 					<ul className="infinity-movies">
 						{directors2.map(el => {
 							console.log(el)
-							return el.map(e => {
+							return el.map((e, index) => {
 								return (
-									<li key={e.id} >
+									<li key={index} >
 										<img className="movie-image" src={"https://image.tmdb.org/t/p/w300" + e.poster_path} alt="Not found." /><p className="movie-title-text">{e.title}</p>
 										<p className="watchlist-text">Watchlist</p>
 										<p className="watched-text">Watched</p>
@@ -170,75 +182,9 @@ function Home(props) {
 				<div className="movielist-container">
 					<ul className="infinity-movies">
 						{genres4.map(el => {
-							return el.map(e => {
+							return el.map((e, index) => {
 								return (
-									<li key={e.id} >
-										<img className="movie-image" src={"https://image.tmdb.org/t/p/w300" + e.poster_path} alt="Not found." /><p className="movie-title-text">{e.title}</p>
-										<p className="watchlist-text">Watchlist</p>
-										<p className="watched-text">Watched</p>
-										{watchlistToggle(e)}
-										{watchedToggle(e)}
-										{ratingToggle(e)}
-									</li>
-								)
-							})
-						}
-						)}
-					</ul>
-				</div>
-			</div>
-			<div className="infinity">
-				<h3 className="infinity-title">{props.actors[1]}</h3>
-				<div className="movielist-container">
-					<ul className="infinity-movies">
-						{actors3.map(el => {
-							return el.map(e => {
-								return (
-									<li key={e.id} >
-										<img className="movie-image" src={"https://image.tmdb.org/t/p/w300" + e.poster_path} alt="Not found." /><p className="movie-title-text">{e.title}</p>
-										<p className="watchlist-text">Watchlist</p>
-										<p className="watched-text">Watched</p>
-										{watchlistToggle(e)}
-										{watchedToggle(e)}
-										{ratingToggle(e)}
-									</li>
-								)
-							})
-						}
-						)}
-					</ul>
-				</div>
-			</div>
-			<div className="infinity">
-				<h3 className="infinity-title">{props.directors[1]}</h3>
-				<div className="movielist-container">
-					<ul className="infinity-movies">
-						{directors3.map(el => {
-							return el.map(e => {
-								return (
-									<li key={e.id} >
-										<img className="movie-image" src={"https://image.tmdb.org/t/p/w300" + e.poster_path} alt="Not found." /><p className="movie-title-text">{e.title}</p>
-										<p className="watchlist-text">Watchlist</p>
-										<p className="watched-text">Watched</p>
-										{watchlistToggle(e)}
-										{watchedToggle(e)}
-										{ratingToggle(e)}
-									</li>
-								)
-							})
-						}
-						)}
-					</ul>
-				</div>
-			</div>
-			<div className="infinity">
-				<h3 className="infinity-title">{props.genres[2]}</h3>
-				<div className="movielist-container">
-					<ul className="infinity-movies">
-						{genres5.map(el => {
-							return el.map(e => {
-								return (
-									<li key={e.id} >
+									<li key={index} >
 										<img className="movie-image" src={"https://image.tmdb.org/t/p/w300" + e.poster_path} alt="Not found." /><p className="movie-title-text">{e.title}</p>
 										<p className="watchlist-text">Watchlist</p>
 										<p className="watched-text">Watched</p>

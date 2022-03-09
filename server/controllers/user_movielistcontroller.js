@@ -766,7 +766,7 @@ const onLoadWatched = async (req, res) => {
 const addWatchlist = async (req, res) => {
   try {
     const id = req.body.id;
-    const filter = { email: req.session.userEmail };
+    const filter = { email: req.body.sessionid };
     const movie = await getMovieWithCredits(id);
     movie.data.inWatchlist = true;
     movie.data.seen = false;
@@ -801,7 +801,7 @@ const addWatched = async (req, res) => {
   try {
     const movieid = req.body.id;
     const userRating = req.body.user_rating;
-    const userEmail = req.session.userEmail;
+    const userEmail = req.body.sessionid
     const userList = await movielist.findOne({ email: userEmail });
     let inDB = false;
     for (let i = 0; i < userList.movielist.length; i++) {
