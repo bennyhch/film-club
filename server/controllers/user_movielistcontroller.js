@@ -826,7 +826,7 @@ const onLoadWatchlist = (req, res) => __awaiter(void 0, void 0, void 0, function
         }
         /*
           TODO factor out into separate helpers.
-          Finds the user's highest rating on any film
+          Finds the user's highest rating on any film they've watched
         */
         if (watchedMovies.length > 0) {
             let max = 0;
@@ -849,6 +849,9 @@ const onLoadWatchlist = (req, res) => __awaiter(void 0, void 0, void 0, function
               TODO comma sep, separate at front
       
             */
+            /*
+              Returns genre ids for fave genres.
+            */
             const genres = findFaveGenre(user, max);
             const shuffleGenres = shuffle(genres);
             const faveGenres = shuffleGenres.slice(0, 2);
@@ -856,6 +859,7 @@ const onLoadWatchlist = (req, res) => __awaiter(void 0, void 0, void 0, function
                 const apiResponse = yield axios.get(`${apiUrl}discover/movie?api_key=${APIKEY}&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_genres=${faveGenres[i]}`);
                 finalResponse.push(apiResponse.data.results);
             }
+            /////////////////////////////////////////////
             const directors = findFaveDirector(user, max);
             const shuffleDirectors = shuffle(directors);
             const faveDirectors = shuffleDirectors.slice(0, 2);
@@ -870,6 +874,7 @@ const onLoadWatchlist = (req, res) => __awaiter(void 0, void 0, void 0, function
                 });
                 finalResponse.push(array);
             }
+            /////////////////////////////////////////
             const actors = findFaveActor(user, max);
             const shuffleActors = shuffle(actors);
             const faveActors = shuffleActors.slice(0, 2);

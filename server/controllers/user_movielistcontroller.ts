@@ -32,7 +32,7 @@ const numGenTo1000 = () => {
 /*
   TODO Refactor, in built method.
 */
-const duplicateCheck = (num: Number, array: Array<Number>) => {
+const duplicateCheck = (num: number, array: Array<number>) => {
   for (let i = 0; i < array.length; i++) {
     if (array[i] === num) return false;
   }
@@ -46,21 +46,21 @@ const duplicateCheck = (num: Number, array: Array<Number>) => {
 const onLoadArray = () => {
   const arr = [1, 2, 3];
   while (arr.length < 6) {
-    let num = numGenTo10();
+    const num = numGenTo10();
     const check = duplicateCheck(num, arr);
     if (check && num !== 0) {
       arr.push(num);
     }
   }
   while (arr.length < 8) {
-    let num = numGenTo100();
+    const num = numGenTo100();
     const check = duplicateCheck(num, arr);
     if (check && num !== 0) {
       arr.push(num);
     }
   }
   while (arr.length < 10) {
-    let num = numGenTo1000();
+    const num = numGenTo1000();
     const check = duplicateCheck(num, arr);
     if (check && num !== 0) {
       arr.push(num);
@@ -154,7 +154,7 @@ const getMovieWithCredits = async (
   genres = The genres associated with a user's movielist: [UserGenre]
     - that have a rating of not null.
 */
-const genreSort = async (userEmail: String) => {
+const genreSort = async (userEmail: string) => {
   try {
     const filter: UserMovieList = await movielist.findOne({
       email: userEmail,
@@ -180,7 +180,7 @@ const genreSort = async (userEmail: String) => {
       Otherwise add the next genre and set count to one.
     */
     for (let i = 1; i < genres.length; i++) {
-      let len = genreArray.length;
+      const len = genreArray.length;
       for (let j = 0; j < len; j++) {
         if (genres[i].name === genreArray[j].name) {
           genreArray[j].rating =
@@ -217,7 +217,7 @@ const genreSort = async (userEmail: String) => {
  * @param {*} userEmail
  * @returns Similar to above, collates ratings.
  */
-const directorSort = async (userEmail: String) => {
+const directorSort = async (userEmail: string) => {
   try {
     const filter: UserMovieList = await movielist.findOne({
       email: userEmail,
@@ -235,7 +235,7 @@ const directorSort = async (userEmail: String) => {
     ];
 
     for (let i = 1; i < directors.length; i++) {
-      let len = directorArray.length;
+      const len = directorArray.length;
       for (let j = 0; j < len; j++) {
         if (directors[i].name === directorArray[j].name) {
           directorArray[j].rating =
@@ -264,7 +264,7 @@ const directorSort = async (userEmail: String) => {
 };
 
 const actorSort = async (
-  userEmail: String
+  userEmail: string
 ): Promise<Array<ActorRating> | undefined> => {
   try {
     const filter: UserMovieList = await movielist.findOne({
@@ -283,7 +283,7 @@ const actorSort = async (
     ];
 
     for (let i = 1; i < actors.length; i++) {
-      let len = actorArray.length;
+      const len = actorArray.length;
       for (let j = 0; j < len; j++) {
         if (actors[i].name === actorArray[j].name) {
           actorArray[j].rating =
@@ -383,7 +383,7 @@ const onLoadArrayGenreNoDB = async () => {
     const arr = [];
     const finalResponse = [];
     while (arr.length < 3) {
-      let num = numGenTo18();
+      const num = numGenTo18();
       const check = duplicateCheck(num, arr);
       if (check) {
         arr.push(num);
@@ -432,7 +432,7 @@ const onLoadDirectorNoDB = async (): Promise<
     const finalArr = [];
     const finalResponse: Array<NewDirectorList> = [];
     while (finalArr.length < 2) {
-      let num = Math.floor(Math.random() * 8);
+      const num = Math.floor(Math.random() * 8);
       const check = duplicateCheck(arr[num], finalArr);
       if (check) {
         finalArr.push(arr[num]);
@@ -475,7 +475,7 @@ const onLoadActorNoDB = async (): Promise<Array<NewActorList> | undefined> => {
     const finalArr = [];
     const finalResponse: Array<NewActorList> = [];
     while (finalArr.length < 2) {
-      let num = Math.floor(Math.random() * 18);
+      const num = Math.floor(Math.random() * 18);
       const check = duplicateCheck(arr[num], finalArr);
       if (check) {
         finalArr.push(arr[num]);
@@ -526,14 +526,14 @@ const onLoadArrayGenreWithDB = async (
     });
     const newhighest = highest.slice(0, 3);
     const shuffled = shuffle(newhighest);
-    let maxGenre = shuffledMax[0].id;
+    const maxGenre = shuffledMax[0].id;
     let maxHighest = shuffled[0].id;
     if (maxHighest === maxGenre) maxHighest = shuffled[1].id;
-    let genreArray = [maxGenre, maxHighest];
+    const genreArray = [maxGenre, maxHighest];
     const finalResponse = [];
     while (genreArray.length < 3) {
-      let num = numGenTo18();
-      let randomGenre = genreIDlist[num];
+      const num = numGenTo18();
+      const randomGenre = genreIDlist[num];
       const check = duplicateCheck(randomGenre, genreArray);
       if (check) {
         genreArray.push(randomGenre);
@@ -580,7 +580,7 @@ const onLoadArrayDirectorWithDB = async (
       });
       const newhighest = highest.slice(0, 3);
       const shuffled = shuffle(newhighest);
-      let maxDirector = shuffledMax[0].id;
+      const maxDirector = shuffledMax[0].id;
       finalResponse.push({
         directorName: shuffledMax[0].name,
         movies: [],
@@ -597,9 +597,9 @@ const onLoadArrayDirectorWithDB = async (
       directorIdArray = [maxDirector, directorHighest];
     } else {
       const arr = [55934, 488, 1032, 138, 578, 1223, 525, 108];
-      let directorIdArray = [array[0].id];
+      const directorIdArray = [array[0].id];
       while (directorIdArray.length < 2) {
-        let num = Math.floor(Math.random() * 8);
+        const num = Math.floor(Math.random() * 8);
         const check = duplicateCheck(arr[num], directorIdArray);
         if (check) {
           directorIdArray.push(arr[num]);
@@ -662,7 +662,7 @@ const onLoadArrayActorWithDB = async (
       });
       const newhighest = highest.slice(0, 3);
       const shuffled = shuffle(newhighest);
-      let maxActor = shuffledMax[0].id;
+      const maxActor = shuffledMax[0].id;
       finalResponse.push({
         actorName: shuffledMax[0].name,
         movies: [],
@@ -685,7 +685,7 @@ const onLoadArrayActorWithDB = async (
       ];
       actorIdArray = [array[0].id];
       while (actorIdArray.length < 2) {
-        let num = Math.floor(Math.random() * 18);
+        const num = Math.floor(Math.random() * 18);
         const check = duplicateCheck(arr[num], actorIdArray);
         if (check) {
           actorIdArray.push(arr[num]);
