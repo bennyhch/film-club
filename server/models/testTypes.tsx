@@ -13,16 +13,16 @@ type UserMovieList = {
   movielist: Array<MovieExtended>;
   genres: Array<MovieGenreRating>;
   directors: Array<UserDirector>;
-  actors: Array<UserActors>;
+  actors: Array<UserActor>;
   __v: number;
 };
 
 // The type in the collection
 type Movie = {
   collectionID: number;
-  inWatchlist: Boolean;
-  seen: Boolean;
-  user_rating: number;
+  inWatchlist: boolean;
+  seen: boolean;
+  user_rating: number | null;
   poster_path: string;
   vote_average: number;
   overview: string;
@@ -38,7 +38,7 @@ interface MovieExtended extends Movie {
   backdrop_path: string;
   belongs_to_collection: TMDBCollection;
   budget: number;
-  genres: Array<Genre>;
+  genres: Array<GenreRating>;
   homepage: string;
   id: number;
   imdb_id: string;
@@ -51,7 +51,7 @@ interface MovieExtended extends Movie {
   runtime: number;
   tagline: string;
   title: string;
-  video: Boolean;
+  video: boolean;
   vote_count: number;
   credits: Credits;
 }
@@ -59,14 +59,21 @@ interface MovieExtended extends Movie {
 interface GenreRating {
   name: string;
   id: number;
-  rating: number;
+  rating: number | null;
   count: number;
 }
 
 interface DirectorRating {
   name: string;
   id: number;
-  rating: number;
+  rating: number | null;
+  count?: number;
+}
+
+interface ActorRating {
+  name: string;
+  id: number;
+  rating: number | null;
   count: number;
 }
 
@@ -90,7 +97,7 @@ interface UserDirector {
   rating: number;
 }
 
-interface UserActors {
+interface UserActor {
   movid: number;
   id: number;
   name: string;
@@ -144,7 +151,7 @@ interface OnLoadResponse {
 }
 
 type CreditFromAPI = {
-  adult: Boolean;
+  adult: boolean;
   backdrop_path: string;
   genre_ids: Array<number>;
   original_language: string;
@@ -163,8 +170,9 @@ type CreditFromAPI = {
   order: number;
 };
 
-type CrewCredit = {
+interface CrewCredit {
   id: number;
+  name: string;
   department: string;
   original_language: string;
   original_title: string;
@@ -181,7 +189,14 @@ type CrewCredit = {
   adult: boolean;
   release_date: string;
   credit_id: string;
-};
+  inWatchlist: boolean;
+  seen: boolean;
+  user_rating: number;
+}
+
+// interface CrewCreditWithStats extends CrewCredit {
+
+// }
 
 type CastCredit = {
   character: string;
@@ -203,7 +218,7 @@ type CastCredit = {
 };
 
 type APIMovieWithGenre = {
-  adult: Boolean;
+  adult: boolean;
   backdrop_path: string;
   genre_ids: Array<number>;
   id: number;
@@ -214,7 +229,7 @@ type APIMovieWithGenre = {
   poster_path: string;
   release_date: string;
   title: string;
-  video: Boolean;
+  video: boolean;
   vote_average: number;
   vote_count: number;
 };
@@ -236,13 +251,14 @@ type NewGenreList = {
   genreName: string;
   movies: Array<APIMovieWithGenre> | undefined;
 };
+
 type NewDirectorList = {
   directorName: string;
-  movies: Array<APIMovieWithGenre>;
+  movies: Array<CrewCredit>;
 };
 type NewActorList = {
   actorName: string;
-  movies: Array<APIMovieWithGenre>;
+  movies: Array<CastCredit>;
 };
 
 // User also has _id and __v.
