@@ -9,6 +9,10 @@ const { collection } = require('../models/user');
 const apiUrl = 'https://api.themoviedb.org/3/';
 const APIKEY = process.env.API_KEY
 
+
+// Person. This matches to 'Credit' but more general.
+// Name passed in to this returns the 
+
 const personToID = async (name) => {
 	try {
 		const person = await axios.get(`${apiUrl}search/person?api_key=${APIKEY}&language=en-US&query=${name}`);
@@ -17,7 +21,15 @@ const personToID = async (name) => {
 		console.error(e, 'personToID is failing');
 	}
 };
+/* 
+	// NOTE: Can the database do this automatically?
+*/
 
+/**
+ * 
+ * @param {[]} userDB The user's movie list 
+ * @param {*} array 
+ */
 const checkIfInDB = (userDB, array) => {
 	let match;
 	for (let i = 0; i < userDB.length; i++) {
@@ -47,12 +59,17 @@ const onLoadCollections = async (req, res) => {
 
 const addActorCollection = async (req, res) => {
 	try {
+		// req.body.name = name of the actor.
 		const actorid = await personToID(req.body.name);
+		// The movies that person has been in 
 		const apiResponse = await axios.get(`${apiUrl}person/${actorid}/movie_credits?api_key=${APIKEY}&language=en-US`);
+		// The cast in the movies
 		const array = apiResponse.data.cast;
+		// sorting cast by popularity
 		array.sort(function (a, b) {
 			return b.popularity - a.popularity
 		});
+		// 
 		for (let i = 0; i < array.length; i++) {
 			array[i].collectionID = actorid
 		}

@@ -20,16 +20,19 @@ function Home(props) {
 
 	const [cookies, setCookie] = useCookies();
 
-
 	const firstMovies = props.movies.slice(0, 99);
 	const secondMovies = props.movies.slice(100, 199);
-	const genres3 = props.genres.slice(3, 4);
-	const genres4 = props.genres.slice(4, 5);
-	const genres5 = props.genres.slice(5);
-	const actors2 = props.actors.slice(2, 3);
-	const actors3 = props.actors.slice(3);
-	const directors2 = props.directors.slice(2, 3);
-	const directors3 = props.directors.slice(3, 4);
+	
+	const genres3 = props.genres[0];
+	const genres4 = props.genres[1];
+	const genres5 = props.genres[2];
+	console.log('In home, ', props.genres);
+
+	const actors2 = props.actors[0];
+	const actors3 = props.actors[1];
+
+	const directors2 = props.directors[0];
+	const directors3 = props.directors[1];
 
 	const [addWatch, setAddWatch] = useState({})
 	const [show, setShow] = useState(false);
@@ -66,7 +69,7 @@ function Home(props) {
 	};
 
 	return (
-
+		
 		<div className = "App">
 			<Header></Header>
 			<div className= 'modal-container'>
@@ -110,11 +113,10 @@ function Home(props) {
 				</div>
 			</div>
 			<div className="infinity">
-				<h3 className="infinity-title">{props.genres[0]}</h3>
+				<h3 className="infinity-title">{props.genres[0].genreName}</h3>
 				<div className="movielist-container">
 					<ul className="infinity-movies">
-						{genres3.map(el => {
-							return el.map((e, index) => {
+						{props.genres[0].movies.map((e, index) => {
 								return (
 									<li key={index} >
 										<img className="movie-image" src={"https://image.tmdb.org/t/p/w300" + e.poster_path} alt="Not found." />
@@ -126,18 +128,16 @@ function Home(props) {
 										{ratingToggle(e)}
 									</li>
 								)
-							})
 						}
 						)}
 					</ul>
 				</div>
 			</div>
 			<div className="infinity">
-				<h3 className="infinity-title">{props.actors[0]}</h3>
+				<h3 className="infinity-title">{props.actors[0].actorName}</h3>
 				<div className="movielist-container">
 					<ul className="infinity-movies">
-						{actors2.map(el => {
-							return el.map((e, index) => {
+						{props.actors[0].movies.map((e, index) => {
 								return (
 									<li key={index} >
 										<img className="movie-image" src={"https://image.tmdb.org/t/p/w300" + e.poster_path} alt="Not found." /><p className="movie-title-text">{e.title}</p>
@@ -148,19 +148,16 @@ function Home(props) {
 										{ratingToggle(e)}
 									</li>
 								)
-							})
 						}
 						)}
 					</ul>
 				</div>
 			</div>
 			<div className="infinity">
-				<h3 className="infinity-title">{props.directors[0]}</h3>
+				<h3 className="infinity-title">{props.directors[0].directorName}</h3>
 				<div className="movielist-container">
 					<ul className="infinity-movies">
-						{directors2.map(el => {
-							console.log(el)
-							return el.map((e, index) => {
+						{props.actors[1].movies.map((e, index)  => {
 								return (
 									<li key={index} >
 										<img className="movie-image" src={"https://image.tmdb.org/t/p/w300" + e.poster_path} alt="Not found." /><p className="movie-title-text">{e.title}</p>
@@ -171,18 +168,16 @@ function Home(props) {
 										{ratingToggle(e)}
 									</li>
 								)
-							})
 						}
 						)}
 					</ul>
 				</div>
 			</div>
 			<div className="infinity">
-				<h3 className="infinity-title">{props.genres[1]}</h3>
+				<h3 className="infinity-title">{props.genres[1].genreName}</h3>
 				<div className="movielist-container">
 					<ul className="infinity-movies">
-						{genres4.map(el => {
-							return el.map((e, index) => {
+						{props.genres[1].movies.map((e, index) => {
 								return (
 									<li key={index} >
 										<img className="movie-image" src={"https://image.tmdb.org/t/p/w300" + e.poster_path} alt="Not found." /><p className="movie-title-text">{e.title}</p>
@@ -193,7 +188,6 @@ function Home(props) {
 										{ratingToggle(e)}
 									</li>
 								)
-							})
 						}
 						)}
 					</ul>

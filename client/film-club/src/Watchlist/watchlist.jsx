@@ -31,6 +31,10 @@ function Watchlist(props) {
 				const genres = response.slice(1, 3);
 				const directors = response.slice(3, 5);
 				const actors = response.slice(5, 7);
+
+				/* 
+					The first array in this response is the
+				*/
 				const user = response[0];
 				// console.log('user from watchlist', user)
 
