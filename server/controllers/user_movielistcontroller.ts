@@ -159,10 +159,11 @@ const genreSort = async (userEmail: String) => {
     const filter: UserMovieList = await movielist.findOne({
       email: userEmail,
     });
+
     const genresNull = filter.genres;
     // Get only the genres that have a rating.
     const genres = genresNull.filter((genre) => genre.rating);
-    if (genres === []) return false;
+    if (genres.length === 0) return undefined;
 
     // Set genreArray to first user genre.
     const genreArray: Array<GenreRating> = [
@@ -223,7 +224,7 @@ const directorSort = async (userEmail: String) => {
     });
     const directorsNull = filter.directors;
     const directors = directorsNull.filter((director) => director.rating);
-    if (directors === []) return undefined;
+    if (directors.length === 0) return undefined;
     const directorArray: Array<DirectorRating> = [
       {
         name: directors[0].name,
@@ -271,7 +272,7 @@ const actorSort = async (
     });
     const actorsNull = filter.actors;
     const actors = actorsNull.filter((actor) => actor.rating);
-    if (actors === []) return undefined;
+    if (actors.length === 0) return undefined;
     const actorArray: Array<ActorRating> = [
       {
         name: actors[0].name,

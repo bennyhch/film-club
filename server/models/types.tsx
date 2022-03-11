@@ -57,6 +57,7 @@ interface MovieExtended extends Movie {
 }
 
 interface GenreRating {
+  movid?: number;
   name: string;
   id: number;
   rating: number | null;
@@ -64,6 +65,7 @@ interface GenreRating {
 }
 
 interface DirectorRating {
+  movid?: number;
   name: string;
   id: number;
   rating: number | null;
@@ -112,63 +114,40 @@ interface TMDBCollection {
 }
 
 interface Credits {
-  cast: Array<Cast>;
-  crew: Array<Crew>;
-}
-
-interface Cast extends Credit {
-  character: string;
-  order: number;
-}
-
-interface Crew extends Credit {
-  department: string;
-  job: string;
-}
-
-interface Credit extends Person {
-  id: number;
-  name: string;
-  credit_id: string;
+  cast: Array<CastCredit>;
+  crew: Array<CrewCredit>;
 }
 
 /* 
   API types
-  
 */
-
-interface Person {
-  id: number;
-  known_for_department: string | null;
-  popularity: number;
-}
 
 interface OnLoadResponse {
   trendingMovies: Array<APIMovieWithGenre>;
   user: UserMovieList;
-  actors: Array<CreditFromAPI>;
-  directors: Array<CreditFromAPI>;
+  actors: Array<CastCredit>;
+  directors: Array<CrewCredit>;
 }
 
-type CreditFromAPI = {
-  adult: boolean;
-  backdrop_path: string;
-  genre_ids: Array<number>;
-  original_language: string;
-  original_title: string;
-  poster_path: string;
-  vote_count: number;
-  id: number;
-  vote_average: number;
-  video: number;
-  overview: string;
-  release_date: string;
-  title: string;
-  popularity: number;
-  character: string;
-  credit_id: string;
-  order: number;
-};
+// type CreditFromAPI = {
+//   adult: boolean;
+//   backdrop_path: string;
+//   genre_ids: Array<number>;
+//   original_language: string;
+//   original_title: string;
+//   poster_path: string;
+//   vote_count: number;
+//   id: number;
+//   vote_average: number;
+//   video: number;
+//   overview: string;
+//   release_date: string;
+//   title: string;
+//   popularity: number;
+//   character: string;
+//   credit_id: string;
+//   order: number;
+// };
 
 interface CrewCredit {
   id: number;
@@ -193,10 +172,6 @@ interface CrewCredit {
   seen: boolean;
   user_rating: number;
 }
-
-// interface CrewCreditWithStats extends CrewCredit {
-
-// }
 
 type CastCredit = {
   character: string;

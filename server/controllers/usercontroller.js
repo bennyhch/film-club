@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,10 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const user = require('../models/user');
-const movielist = require('../models/user_movielist');
-const bcrypt = require('bcrypt');
-const moviecollection = require('../models/user_collections');
+Object.defineProperty(exports, "__esModule", { value: true });
+const user = require("../models/user");
+const movielist = require("../models/user_movielist");
+const bcrypt = require("bcrypt");
+const moviecollection = require("../models/user_collections");
 const saltRounds = 10;
 const checkUser = (userEmail, userPassword) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -102,7 +103,7 @@ const logoutUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         // req.session.destroy()
         // res.clearCookie('sessionid');
         res.status(200);
-        res.send('Logout successful');
+        res.send("Logout successful");
     }
     catch (e) {
         console.error("logout is failing");

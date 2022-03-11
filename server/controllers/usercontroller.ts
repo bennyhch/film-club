@@ -1,5 +1,7 @@
 "use strict";
 
+import { ErrorRequestHandler, Request, Response } from "express";
+
 const user = require("../models/user");
 const movielist = require("../models/user_movielist");
 const bcrypt = require("bcrypt");
@@ -42,7 +44,7 @@ const createUser = async (req: Request, res: Response) => {
       res.status(400);
       res.send("parameter is missing");
     }
-  } catch (e) {
+  } catch (e: any) {
     if (e.code === 11000) {
       console.error("create new user is failing");
       res.status(500);
@@ -85,7 +87,7 @@ const loginUser = async (req: Request, res: Response) => {
   }
 };
 
-const logoutUser = async (req, res) => {
+const logoutUser = async (req: Request, res: Response) => {
   try {
     // req.session.destroy()
     // res.clearCookie('sessionid');
