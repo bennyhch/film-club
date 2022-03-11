@@ -30,7 +30,7 @@ function App() {
       .then((response) => {
         console.log("the response", response);
         const genres = response[200];
-        // console.log(genres, 'genres');
+        console.log(genres, 'genres');
         const directors = response[201];
         const actors = response[202];
         const user = response[203];
@@ -317,6 +317,9 @@ function App() {
                 actors={actors}
                 directors={directors}
                 genres={genres}
+                setGenres={setGenres}
+                setActors={setActors}
+                setDirectors={setDirectors}
                 movies={movies}
                 userMovielist={[userMovielist, setUserMovielist]}
                 userActorlist={userActorlist}

@@ -21,7 +21,6 @@ function Home(props) {
 
   const firstMovies = props.movies.slice(0, 99);
   const secondMovies = props.movies.slice(100, 199);
-  console.log("In home, ", props.genres);
 
   const [addWatch, setAddWatch] = useState({});
   const [show, setShow] = useState(false);
@@ -190,7 +189,7 @@ function Home(props) {
         <h3 className="infinity-title">{props.directors[0].directorName}</h3>
         <div className="movielist-container">
           <ul className="infinity-movies">
-            {props.actors[1].movies.map((e, index) => {
+            {props.actors[0].movies.map((e, index) => {
               return (
                 <li key={index}>
                   <img
