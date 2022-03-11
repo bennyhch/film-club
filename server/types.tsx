@@ -1,3 +1,6 @@
+/* 
+  Deal with collections later.
+*/
 type UserMovieCollection = Array<Movie>;
 
 type User = {
@@ -106,21 +109,20 @@ interface UserActor {
   rating: number;
 }
 
-interface TMDBCollection {
-  id: number;
-  name: string;
-  poster_path: string;
-  backdrop_path: string;
-}
-
 interface Credits {
   cast: Array<CastCredit>;
   crew: Array<CrewCredit>;
 }
 
 /* 
-  API types
+API types
 */
+interface TMDBCollection {
+  id: number;
+  name: string;
+  poster_path: string;
+  backdrop_path: string;
+}
 
 interface OnLoadResponse {
   trendingMovies: Array<APIMovieWithGenre>;

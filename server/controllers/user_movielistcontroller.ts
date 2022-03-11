@@ -818,7 +818,7 @@ const onLoad = async (req: Request, res: Response) => {
       email: userEmail,
     });
 
-    //
+    // TRENDING
     // Gets a random page number to use in request. Different trending movies.
     const arr = onLoadArray();
     const finalResponse = [];
@@ -829,8 +829,10 @@ const onLoad = async (req: Request, res: Response) => {
       const shuffled = shuffle(apiResponse.data.results);
       // update with user data.
       checkIfInDB(user.movielist, shuffled);
-      // finalResponse.push(...shuffled);
+      finalResponse.push(...shuffled);
     }
+
+    // GENRES
 
     const genre: Array<GenreRating> | undefined =
       (await genreSort(userEmail)) || undefined;
@@ -844,6 +846,8 @@ const onLoad = async (req: Request, res: Response) => {
     }
     finalResponse.push(genreIDArr);
 
+    // DIRECTORS
+
     const director: Array<DirectorRating> | undefined = await directorSort(
       userEmail
     );
@@ -854,8 +858,9 @@ const onLoad = async (req: Request, res: Response) => {
     if (director) {
       directorIDArr = await onLoadArrayDirectorWithDB(director, user);
     }
-    // finalResponse.push(directorIDArr);
+    finalResponse.push(directorIDArr);
 
+    // Actors
     const actor = await actorSort(userEmail);
     let actorIDArr;
     if (actor === undefined) {
@@ -864,8 +869,8 @@ const onLoad = async (req: Request, res: Response) => {
     if (actor) {
       actorIDArr = await onLoadArrayActorWithDB(actor, user);
     }
-    // finalResponse.push(actorIDArr);
-    // finalResponse.push(user)
+    finalResponse.push(actorIDArr);
+    finalResponse.push(user);
     res.status(200);
     res.send(finalResponse);
   } catch (e) {
