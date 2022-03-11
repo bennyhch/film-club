@@ -38,7 +38,7 @@ function App() {
   useEffect(() => {
     service.getOnLoadHome(cookies.sessionid)
       .then(response => {
-        console.log(response)
+        console.log('the response', response);
         const genres = response[200];
         const directors = response[201];
         const actors = response[202];
@@ -65,6 +65,8 @@ function App() {
       })
   }, [])
 
+
+  // Add to watchlist
   const addWatchlistFromHome = async (element) => {
     element.sessionid = cookies.sessionid;
     const response = await service.addWatchlistFromHome(element);
@@ -128,6 +130,7 @@ function App() {
     }
   }
 
+  // Add watched
   const addWatchedFromHome = async (element, userRating) => {
     element.sessionid = cookies.sessionid;
     element.user_rating = userRating
@@ -192,6 +195,8 @@ function App() {
     }
   };
 
+
+  // Delete 
   const deleteMovieFromHome = async (element) => {
     element.sessionid = cookies.sessionid;
     let newUserMovieList

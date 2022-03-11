@@ -754,7 +754,7 @@ const onLoad = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const user = yield movielist.findOne({
             email: userEmail,
         });
-        //
+        // TRENDING
         // Gets a random page number to use in request. Different trending movies.
         const arr = onLoadArray();
         const finalResponse = [];
@@ -763,8 +763,9 @@ const onLoad = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             const shuffled = shuffle(apiResponse.data.results);
             // update with user data.
             checkIfInDB(user.movielist, shuffled);
-            // finalResponse.push(...shuffled);
+            finalResponse.push(...shuffled);
         }
+        // GENRES
         const genre = (yield genreSort(userEmail)) || undefined;
         // const genre = undefined;
         let genreIDArr;
@@ -775,6 +776,7 @@ const onLoad = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             genreIDArr = yield onLoadArrayGenreWithDB(genre, user);
         }
         finalResponse.push(genreIDArr);
+        // DIRECTORS
         const director = yield directorSort(userEmail);
         let directorIDArr;
         if (director === undefined) {
@@ -783,7 +785,8 @@ const onLoad = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (director) {
             directorIDArr = yield onLoadArrayDirectorWithDB(director, user);
         }
-        // finalResponse.push(directorIDArr);
+        finalResponse.push(directorIDArr);
+        // Actors
         const actor = yield actorSort(userEmail);
         let actorIDArr;
         if (actor === undefined) {
@@ -792,8 +795,8 @@ const onLoad = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (actor) {
             actorIDArr = yield onLoadArrayActorWithDB(actor, user);
         }
-        // finalResponse.push(actorIDArr);
-        // finalResponse.push(user)
+        finalResponse.push(actorIDArr);
+        finalResponse.push(user);
         res.status(200);
         res.send(finalResponse);
     }

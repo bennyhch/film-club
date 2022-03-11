@@ -900,7 +900,7 @@ const onLoadWatchlist = async (req: Request, res: Response) => {
 
     /* 
       TODO factor out into separate helpers.
-      Finds the user's highest rating on any film
+      Finds the user's highest rating on any film they've watched
     */
     if (watchedMovies.length > 0) {
       let max = 0;
@@ -924,6 +924,9 @@ const onLoadWatchlist = async (req: Request, res: Response) => {
         TODO comma sep, separate at front
 
       */
+      /* 
+        Returns genre ids for fave genres.    
+      */
       const genres = findFaveGenre(user, max);
       const shuffleGenres = shuffle(genres);
       const faveGenres = shuffleGenres.slice(0, 2);
@@ -933,6 +936,9 @@ const onLoadWatchlist = async (req: Request, res: Response) => {
         );
         finalResponse.push(apiResponse.data.results);
       }
+
+      /////////////////////////////////////////////
+
       const directors = findFaveDirector(user, max);
       const shuffleDirectors = shuffle(directors);
       const faveDirectors = shuffleDirectors.slice(0, 2);
@@ -949,6 +955,7 @@ const onLoadWatchlist = async (req: Request, res: Response) => {
         });
         finalResponse.push(array);
       }
+      /////////////////////////////////////////
       const actors = findFaveActor(user, max);
       const shuffleActors = shuffle(actors);
       const faveActors = shuffleActors.slice(0, 2);
