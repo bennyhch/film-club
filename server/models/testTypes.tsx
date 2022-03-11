@@ -1,88 +1,107 @@
 type UserMovieCollection = Array<Movie>;
 
 type User = {
-  email: String;
-  password: String;
+  id: string;
+  email: string;
+  password: string;
+  _v: number;
 };
 
 type UserMovieList = {
-  email: String;
-  movieList: Array<MovieExtended>;
-  movieGenreRating: Array<MovieGenreRating>;
-  userDirectors: Array<UserDirector>;
-  userActors: Array<UserActors>;
+  email: string;
+  _id: string;
+  movielist: Array<MovieExtended>;
+  genres: Array<MovieGenreRating>;
+  directors: Array<UserDirector>;
+  actors: Array<UserActors>;
+  __v: number;
 };
 
 // The type in the collection
 type Movie = {
-  collectionID: Number;
+  collectionID: number;
   inWatchlist: Boolean;
   seen: Boolean;
-  user_rating: Number;
-  poster_path: String;
-  vote_average: Number;
-  overview: String;
-  release_date: String;
-  title: String;
-  id: Number;
-  character: String;
+  user_rating: number;
+  poster_path: string;
+  vote_average: number;
+  overview: string;
+  release_date: string;
+  title: string;
+  id: number;
+  character: string;
 };
 
 // The type in the 'movielist'
 
 interface MovieExtended extends Movie {
-  backdrop_path: String;
+  backdrop_path: string;
   belongs_to_collection: TMDBCollection;
-  budget: Number;
+  budget: number;
   genres: Array<Genre>;
-  homepage: String;
-  id: Number;
-  imdb_id: String;
-  original_language: String;
-  original_title: String;
-  popularity: Number;
-  poster_path: String;
-  release_date: String;
-  revenue: Number;
-  runtime: Number;
-  tagline: String;
-  title: String;
+  homepage: string;
+  id: number;
+  imdb_id: string;
+  original_language: string;
+  original_title: string;
+  popularity: number;
+  poster_path: string;
+  release_date: string;
+  revenue: number;
+  runtime: number;
+  tagline: string;
+  title: string;
   video: Boolean;
-  vote_count: Number;
+  vote_count: number;
   credits: Credits;
 }
 
+interface GenreRating {
+  name: string;
+  id: number;
+  rating: number;
+  count: number;
+}
+
+interface DirectorRating {
+  name: string;
+  id: number;
+  rating: number;
+  count: number;
+}
+
 interface Genre {
-  id: Number;
-  name: String;
+  id: number;
+  name: string;
 }
 
 interface MovieGenreRating {
-  movid: Number;
-  genreId: Number;
-  name: String;
-  rating: Number;
+  id: number;
+  movid: number;
+  genreId: number;
+  name: string;
+  rating: number;
 }
 
 interface UserDirector {
-  movid: Number;
-  id: Number;
-  name: String;
-  rating: Number;
+  movid: number;
+  id: number;
+  name: string;
+  rating: number;
 }
 
 interface UserActors {
-  movid: Number;
-  id: Number;
-  name: String;
-  rating: Number;
+  movid: number;
+  id: number;
+  name: string;
+  rating: number;
 }
 
 interface TMDBCollection {
-  id: Number;
-  name: String;
-  poster_path: String;
-  backdrop_path: String;
+  id: number;
+  name: string;
+  poster_path: string;
+  backdrop_path: string;
 }
 
 interface Credits {
@@ -91,20 +110,19 @@ interface Credits {
 }
 
 interface Cast extends Credit {
-  character: String;
-  order: Number;
+  character: string;
+  order: number;
 }
 
 interface Crew extends Credit {
-  department: String;
-  job: String;
+  department: string;
+  job: string;
 }
 
-interface Credit {
-  id: Number;
-  known_for_department: String;
-  name: String;
-  credit_id: String;
+interface Credit extends Person {
+  id: number;
+  name: string;
+  credit_id: string;
 }
 
 /* 
@@ -113,12 +131,13 @@ interface Credit {
 */
 
 interface Person {
-  id: Number;
+  id: number;
   known_for_department: string | null;
-  popularity: Number;
+  popularity: number;
 }
 
 interface OnLoadResponse {
+  trendingMovies: Array<APIMovieWithGenre>;
   user: UserMovieList;
   actors: Array<CreditFromAPI>;
   directors: Array<CreditFromAPI>;
@@ -126,43 +145,119 @@ interface OnLoadResponse {
 
 type CreditFromAPI = {
   adult: Boolean;
-  backdrop_path: String;
-  genre_ids: Array<Number>;
-  original_language: String;
-  original_title: String;
-  poster_path: String;
-  vote_count: Number;
-  id: Number;
-  vote_average: Number;
-  video: Number;
-  overview: String;
-  release_date: String;
-  title: String;
-  popularity: Number;
-  character: String;
-  credit_id: String;
-  order: Number;
+  backdrop_path: string;
+  genre_ids: Array<number>;
+  original_language: string;
+  original_title: string;
+  poster_path: string;
+  vote_count: number;
+  id: number;
+  vote_average: number;
+  video: number;
+  overview: string;
+  release_date: string;
+  title: string;
+  popularity: number;
+  character: string;
+  credit_id: string;
+  order: number;
+};
+
+type CrewCredit = {
+  id: number;
+  department: string;
+  original_language: string;
+  original_title: string;
+  job: string;
+  overview: string;
+  vote_count: number;
+  video: boolean;
+  poster_path: string;
+  backdrop_path: string;
+  title: string;
+  popularity: number;
+  genre_ids: [12, 18, 14, 878];
+  vote_average: number;
+  adult: boolean;
+  release_date: string;
+  credit_id: string;
+};
+
+type CastCredit = {
+  character: string;
+  credit_id: string;
+  release_date: string;
+  vote_count: number;
+  video: false;
+  adult: false;
+  vote_average: number;
+  title: string;
+  genre_ids: Array<number>;
+  original_language: string;
+  original_title: string;
+  popularity: number;
+  id: number;
+  backdrop_path: string;
+  overview: string;
+  poster_path: string;
 };
 
 type APIMovieWithGenre = {
   adult: Boolean;
-  backdrop_path: String;
-  genre_ids: Array<Number>;
-  id: Number;
-  original_language: String;
-  original_title: String;
-  overview: String;
-  popularity: Number;
-  poster_path: String;
-  release_date: String;
-  title: String;
+  backdrop_path: string;
+  genre_ids: Array<number>;
+  id: number;
+  original_language: string;
+  original_title: string;
+  overview: string;
+  popularity: number;
+  poster_path: string;
+  release_date: string;
+  title: string;
   video: Boolean;
-  vote_average: Number;
-  vote_count: Number;
+  vote_average: number;
+  vote_count: number;
 };
 
-// Could have the genre as a key?
-type NewGenreResponse = {
-  genreName: String;
+/* 
+  I have changed the genres from this:
+    [
+      [genreName]: string,
+      [genreName]: string,
+      [genreName]: string,
+      Array<APIMovieGenre>,
+      ...
+      ...
+    ]
+*/
+type GenreResponse = Array<NewGenreList>;
+
+type NewGenreList = {
+  genreName: string;
+  movies: Array<APIMovieWithGenre> | undefined;
+};
+type NewDirectorList = {
+  directorName: string;
   movies: Array<APIMovieWithGenre>;
+};
+type NewActorList = {
+  actorName: string;
+  movies: Array<APIMovieWithGenre>;
+};
+
+// User also has _id and __v.
+type CreateUserReturn = {
+  newUser: User;
+  newMovielistUser: UserMovieList;
+  newMovieCollectionUser: MovieCollectionResponse;
+};
+
+type MovieCollectionResponse = {
+  email: string;
+  _id: string;
+  person?: {
+    id: number;
+    name: string;
+  };
+  moviecoll: UserMovieCollection;
 };
