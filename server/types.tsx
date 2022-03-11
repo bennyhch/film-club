@@ -254,3 +254,10 @@ type MovieCollectionResponse = {
   };
   moviecoll: UserMovieCollection;
 };
+
+type WatchlistResponse = {
+  watchlistMovieLists: Array<Array<MovieExtended>>;
+  genreMovieLists: Array<Array<APIMovieWithGenre>>;
+  actorMovieLists: Array<Array<CastCredit>>;
+  directorMovieLists: Array<Array<CrewCredit>>;
+};

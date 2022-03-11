@@ -932,9 +932,15 @@ const onLoadWatchlist = async (req: Request, res: Response) => {
     const userMovies: Array<MovieExtended> = user.movielist;
     const watchlistMovies = userMovies.filter((movie) => movie.seen === false);
     const watchedMovies = userMovies.filter((movie) => movie.seen === true);
-    const finalResponse = [];
+    const finalResponse: WatchlistResponse = {} as WatchlistResponse;
+
+    finalResponse.watchlistMovieLists = [];
+    finalResponse.genreMovieLists = [];
+    finalResponse.actorMovieLists = [];
+    finalResponse.directorMovieLists = [];
+
     if (watchlistMovies.length > 0) {
-      finalResponse.push(watchlistMovies);
+      finalResponse.watchlistMovieLists.push(watchlistMovies);
     }
 
     /* 
@@ -973,7 +979,8 @@ const onLoadWatchlist = async (req: Request, res: Response) => {
         const apiResponse = await axios.get(
           `${apiUrl}discover/movie?api_key=${APIKEY}&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_genres=${faveGenres[i]}`
         );
-        finalResponse.push(apiResponse.data.results);
+
+        finalResponse.genreMovieLists.push(apiResponse.data.results);
       }
 
       /////////////////////////////////////////////
@@ -988,11 +995,11 @@ const onLoadWatchlist = async (req: Request, res: Response) => {
         const apiResponse = await axios.get(
           `${apiUrl}person/${faveDirectors[i]}/movie_credits?api_key=${APIKEY}&language=en-US`
         );
-        const array: Array<CastCredit> = apiResponse.data.cast;
+        const array: Array<CrewCredit> = apiResponse.data.crew;
         array.sort(function (a, b) {
           return b.popularity - a.popularity;
         });
-        finalResponse.push(array);
+        finalResponse.directorMovieLists.push(array);
       }
 
       /////////////////////////////////////////
@@ -1008,23 +1015,26 @@ const onLoadWatchlist = async (req: Request, res: Response) => {
         array.sort(function (a, b) {
           return b.popularity - a.popularity;
         });
-        finalResponse.push(array);
+        finalResponse.actorMovieLists.push(array);
       }
     }
+    console.log("hello after actor");
+
     if (watchedMovies.length === 0) {
       const arr = onLoadArray();
       for (let i = 0; i < arr.length; i++) {
         const apiResponse = await axios.get(
           `${apiUrl}trending/movie/day?api_key=${APIKEY}&page=${arr[i]}`
         );
-        const shuffled = shuffle(apiResponse.data.results);
-        finalResponse.push(...shuffled);
+        const shuffled: Array<MovieExtended> = shuffle(
+          apiResponse.data.results
+        );
+        finalResponse.watchlistMovieLists.push(shuffled);
       }
     }
 
     checkIfInDB(userMovies, finalResponse);
-    res.status(200);
-    res.send(finalResponse);
+    res.status(200).send(JSON.stringify(finalResponse));
   } catch (e) {
     console.error(e, "onLoadWatchlist is failing");
     res.status(500);
