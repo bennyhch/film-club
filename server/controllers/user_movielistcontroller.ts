@@ -955,7 +955,9 @@ const onLoadWatchlist = async (req: Request, res: Response) => {
         });
         finalResponse.push(array);
       }
+
       /////////////////////////////////////////
+
       const actors = findFaveActor(user, max);
       const shuffleActors = shuffle(actors);
       const faveActors = shuffleActors.slice(0, 2);

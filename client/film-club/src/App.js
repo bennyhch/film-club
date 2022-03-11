@@ -1,28 +1,17 @@
-
-import './App.css';
-import React, { useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
-import logo from "./images/film-club-logos_black.png";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Link
-} from "react-router-dom";
+import "./App.css";
+import React, { useEffect, useState } from "react";
+// import logo from "./images/film-club-logos_black.png";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./Login/login";
 import Home from "./Home/home";
-import Watched from './Watched/watched';
-import Watchlist from './Watchlist/watchlist';
-import Collections from './Collections/collections';
-import service from './service';
+import Watched from "./Watched/watched";
+import Watchlist from "./Watchlist/watchlist";
+import Collections from "./Collections/collections";
+import service from "./service";
 import { useCookies } from "react-cookie";
-import { Component } from 'react';
-import authAPI from './authAPI';
-
-
+// import authAPI from './authAPI';
 
 function App() {
-
   const [cookies, setCookie] = useCookies();
   const [movies, setMovies] = useState([]);
   const [genres, setGenres] = useState([]);
@@ -36,16 +25,21 @@ function App() {
   const [watchedMovies, setWatchedMovies] = useState([]);
 
   useEffect(() => {
-    service.getOnLoadHome(cookies.sessionid)
-      .then(response => {
-        console.log('the response', response);
+    service
+      .getOnLoadHome(cookies.sessionid)
+      .then((response) => {
+        console.log("the response", response);
         const genres = response[200];
         const directors = response[201];
         const actors = response[202];
         const user = response[203];
         const userMovielist = user.movielist;
-        const watchlistMovies = userMovielist.filter(movie => movie.seen === false);
-        const watchedMovies = userMovielist.filter(movie => movie.seen === true);
+        const watchlistMovies = userMovielist.filter(
+          (movie) => movie.seen === false
+        );
+        const watchedMovies = userMovielist.filter(
+          (movie) => movie.seen === true
+        );
         const userGenrelist = user.genres;
         const userActorlist = user.actors;
         const userDirectorlist = user.directors;
@@ -60,25 +54,26 @@ function App() {
         setUserActorlist(userActorlist);
         setUserDirectorlist(userDirectorlist);
       })
-      .catch(error => {
-        console.log(error, 'error occurred on load')
-      })
-  }, [])
-
+      .catch((error) => {
+        console.log(error, "error occurred on load");
+      });
+  }, []);
 
   // Add to watchlist
   const addWatchlistFromHome = async (element) => {
     element.sessionid = cookies.sessionid;
     const response = await service.addWatchlistFromHome(element);
-    const newUserMovieList = response.movielist
+    const newUserMovieList = response.movielist;
     setUserMovielist(newUserMovieList);
-    const newUserWatchlist = response.movielist.filter(movie => movie.seen === false);
+    const newUserWatchlist = response.movielist.filter(
+      (movie) => movie.seen === false
+    );
     setWatchlistMovies(newUserWatchlist);
-    const newUserGenreList = response.genres
-    setUserGenrelist(newUserGenreList)
-    const newUserActorList = response.actors
-    setUserActorlist(newUserActorList)
-    const newUserDirectorList = response.directors
+    const newUserGenreList = response.genres;
+    setUserGenrelist(newUserGenreList);
+    const newUserActorList = response.actors;
+    setUserActorlist(newUserActorList);
+    const newUserDirectorList = response.directors;
     setUserDirectorlist(newUserDirectorList);
     let newMovies = movies.slice();
     for (const el of newMovies) {
@@ -86,24 +81,28 @@ function App() {
         el.seen = false;
         el.inWatchlist = true;
         el.user_rating = null;
-        setMovies(newMovies)
+        setMovies(newMovies);
       }
     }
+
     let newGenres = genres.slice();
     for (const el of newGenres) {
       if (el.length > 0) {
-        for (const e of el) {
+        for (const e of el.movies) {
+          /* 
+            TODO refactor to find().
+          */
           if (e.id === element.id) {
             e.seen = false;
             e.inWatchlist = true;
             e.user_rating = null;
           }
         }
-        setGenres(newGenres)
+        setGenres(newGenres);
       }
     }
     let newDirectors = directors.slice();
-    for (const el of newDirectors) {
+    for (const el of newDirectors.movies) {
       if (el.length > 0) {
         for (const e of el) {
           if (e.id === element.id) {
@@ -112,11 +111,11 @@ function App() {
             e.user_rating = null;
           }
         }
-        setDirectors(newDirectors)
+        setDirectors(newDirectors);
       }
     }
     let newActors = actors.slice();
-    for (const el of newActors) {
+    for (const el of newActors.movies) {
       if (el.length > 0) {
         for (const e of el) {
           if (e.id === element.id) {
@@ -125,25 +124,27 @@ function App() {
             e.user_rating = null;
           }
         }
-        setActors(newActors)
+        setActors(newActors);
       }
     }
-  }
+  };
 
   // Add watched
   const addWatchedFromHome = async (element, userRating) => {
     element.sessionid = cookies.sessionid;
-    element.user_rating = userRating
+    element.user_rating = userRating;
     const response = await service.addWatchedFromHome(element);
-    const newUserMovieList = response.movielist
+    const newUserMovieList = response.movielist;
     setUserMovielist(newUserMovieList);
-    const newUserWatched = response.movielist.filter(movie => movie.seen === true);
+    const newUserWatched = response.movielist.filter(
+      (movie) => movie.seen === true
+    );
     setWatchlistMovies(newUserWatched);
-    const newUserGenreList = response.genres
-    setUserGenrelist(newUserGenreList)
-    const newUserActorList = response.actors
-    setUserActorlist(newUserActorList)
-    const newUserDirectorList = response.directors
+    const newUserGenreList = response.genres;
+    setUserGenrelist(newUserGenreList);
+    const newUserActorList = response.actors;
+    setUserActorlist(newUserActorList);
+    const newUserDirectorList = response.directors;
     setUserDirectorlist(newUserDirectorList);
     let newMovies = movies.slice();
     for (const el of newMovies) {
@@ -151,24 +152,24 @@ function App() {
         el.seen = true;
         el.inWatchlist = false;
         el.user_rating = userRating;
-        setMovies(newMovies)
+        setMovies(newMovies);
       }
     }
     let newGenres = genres.slice();
     for (const el of newGenres) {
       if (el.length > 0) {
-        for (const e of el) {
+        for (const e of el.movies) {
           if (e.id === element.id) {
             e.seen = true;
             e.inWatchlist = false;
             e.user_rating = userRating;
           }
         }
-        setGenres(newGenres)
+        setGenres(newGenres);
       }
     }
     let newDirectors = directors.slice();
-    for (const el of newDirectors) {
+    for (const el of newDirectors.movies) {
       if (el.length > 0) {
         for (const e of el) {
           if (e.id === element.id) {
@@ -177,11 +178,11 @@ function App() {
             e.user_rating = userRating;
           }
         }
-        setDirectors(newDirectors)
+        setDirectors(newDirectors);
       }
     }
     let newActors = actors.slice();
-    for (const el of newActors) {
+    for (const el of newActors.movies) {
       if (el.length > 0) {
         for (const e of el) {
           if (e.id === element.id) {
@@ -190,16 +191,15 @@ function App() {
             e.user_rating = userRating;
           }
         }
-        setActors(newActors)
+        setActors(newActors);
       }
     }
   };
 
-
-  // Delete 
+  // Delete
   const deleteMovieFromHome = async (element) => {
     element.sessionid = cookies.sessionid;
-    let newUserMovieList
+    let newUserMovieList;
     const response = await service.deleteMovieFromHome(element);
     let usermovielist = userMovielist.slice();
     for (const el of usermovielist) {
@@ -207,11 +207,15 @@ function App() {
         el.seen = false;
         el.inWatchlist = false;
         el.user_rating = null;
-        newUserMovieList = usermovielist.filter(movie => movie.id !== element.id);
-        setUserMovielist(newUserMovieList)
+        newUserMovieList = usermovielist.filter(
+          (movie) => movie.id !== element.id
+        );
+        setUserMovielist(newUserMovieList);
       }
     }
-    const newUserWatchlist = newUserMovieList.filter(movie => movie.seen === false);
+    const newUserWatchlist = newUserMovieList.filter(
+      (movie) => movie.seen === false
+    );
     setWatchlistMovies(newUserWatchlist);
     let newMovies = movies.slice();
     for (const el of newMovies) {
@@ -219,11 +223,11 @@ function App() {
         el.seen = false;
         el.inWatchlist = false;
         el.user_rating = null;
-        setMovies(newMovies)
+        setMovies(newMovies);
       }
     }
     let newGenres = genres.slice();
-    for (const el of newGenres) {
+    for (const el of newGenres.movies) {
       if (el.length > 0) {
         for (const e of el) {
           if (e.id === element.id) {
@@ -232,11 +236,11 @@ function App() {
             e.user_rating = null;
           }
         }
-        setGenres(newGenres)
+        setGenres(newGenres);
       }
     }
     let newDirectors = directors.slice();
-    for (const el of newDirectors) {
+    for (const el of newDirectors.movies) {
       if (el.length > 0) {
         for (const e of el) {
           if (e.id === element.id) {
@@ -245,11 +249,11 @@ function App() {
             e.user_rating = null;
           }
         }
-        setDirectors(newDirectors)
+        setDirectors(newDirectors);
       }
     }
     let newActors = actors.slice();
-    for (const el of newActors) {
+    for (const el of newActors.movies) {
       if (el.length > 0) {
         for (const e of el) {
           if (e.id === element.id) {
@@ -258,32 +262,95 @@ function App() {
             e.user_rating = null;
           }
         }
-        setActors(newActors)
+        setActors(newActors);
       }
     }
     let usergenrelist = userGenrelist.slice();
-    const newUserGenreList = usergenrelist.filter(genre => genre.movid !== element.id);
-    setUserGenrelist(newUserGenreList)
+    const newUserGenreList = usergenrelist.filter(
+      (genre) => genre.movid !== element.id
+    );
+    setUserGenrelist(newUserGenreList);
     let useractorlist = userActorlist.slice();
-    const newUserActorList = useractorlist.filter(actor => actor.movid !== element.id);
-    setUserActorlist(newUserActorList)
+    const newUserActorList = useractorlist.filter(
+      (actor) => actor.movid !== element.id
+    );
+    setUserActorlist(newUserActorList);
     let userdirectorlist = userDirectorlist.slice();
-    const newUserDirectorList = userdirectorlist.filter(director => director.movid !== element.id);
+    const newUserDirectorList = userdirectorlist.filter(
+      (director) => director.movid !== element.id
+    );
     setUserDirectorlist(newUserDirectorList);
-  }
+  };
 
   return (
     <div>
       {/* <authAPI.Provider value={{auth, setAuth}}> */}
-        <Router>
-          <Routes>
+      <Router>
+        <Routes>
           <Route path="/" element={<Login />} />
-          <Route path="/home" element={<Home actors={actors} directors={directors} genres={genres} movies={movies} userMovielist={userMovielist} userActorlist={userActorlist} userDirectorlist={userDirectorlist} userGenrelist={userGenrelist} deleteMovieFromHome={deleteMovieFromHome} watchlistMovies={[watchlistMovies, setWatchlistMovies]} watchedMovies={watchedMovies} addWatchlistFromHome={addWatchlistFromHome} addWatchedFromHome={addWatchedFromHome}/>} />
-          <Route path="/watchlist" element={<Watchlist actors={actors} directors={directors} genres={genres} movies={movies} userMovielist={[userMovielist, setUserMovielist]} userActorlist={userActorlist} userDirectorlist={userDirectorlist} userGenrelist={userGenrelist} deleteMovieFromHome={deleteMovieFromHome} watchlistMovies={watchlistMovies} watchedMovies={watchedMovies} addWatchlistFromHome={addWatchlistFromHome} addWatchedFromHome={addWatchedFromHome}/>} />
-          <Route path="/watched" element={<Watched actors={actors} directors={directors} genres={genres} movies={movies} userMovielist={[userMovielist, setUserMovielist]} userActorlist={userActorlist} userDirectorlist={userDirectorlist} userGenrelist={userGenrelist} deleteMovieFromHome={deleteMovieFromHome} watchlistMovies={watchlistMovies} watchedMovies={watchedMovies} addWatchlistFromHome={addWatchlistFromHome} addWatchedFromHome={addWatchedFromHome} />} />
-            <Route path="/collections" element={<Collections />} />
-          </Routes>
-        </Router>
+          <Route
+            path="/home"
+            element={
+              <Home
+                actors={actors}
+                directors={directors}
+                genres={genres}
+                movies={movies}
+                userMovielist={userMovielist}
+                userActorlist={userActorlist}
+                userDirectorlist={userDirectorlist}
+                userGenrelist={userGenrelist}
+                deleteMovieFromHome={deleteMovieFromHome}
+                watchlistMovies={[watchlistMovies, setWatchlistMovies]}
+                watchedMovies={watchedMovies}
+                addWatchlistFromHome={addWatchlistFromHome}
+                addWatchedFromHome={addWatchedFromHome}
+              />
+            }
+          />
+          <Route
+            path="/watchlist"
+            element={
+              <Watchlist
+                actors={actors}
+                directors={directors}
+                genres={genres}
+                movies={movies}
+                userMovielist={[userMovielist, setUserMovielist]}
+                userActorlist={userActorlist}
+                userDirectorlist={userDirectorlist}
+                userGenrelist={userGenrelist}
+                deleteMovieFromHome={deleteMovieFromHome}
+                watchlistMovies={watchlistMovies}
+                watchedMovies={watchedMovies}
+                addWatchlistFromHome={addWatchlistFromHome}
+                addWatchedFromHome={addWatchedFromHome}
+              />
+            }
+          />
+          <Route
+            path="/watched"
+            element={
+              <Watched
+                actors={actors}
+                directors={directors}
+                genres={genres}
+                movies={movies}
+                userMovielist={[userMovielist, setUserMovielist]}
+                userActorlist={userActorlist}
+                userDirectorlist={userDirectorlist}
+                userGenrelist={userGenrelist}
+                deleteMovieFromHome={deleteMovieFromHome}
+                watchlistMovies={watchlistMovies}
+                watchedMovies={watchedMovies}
+                addWatchlistFromHome={addWatchlistFromHome}
+                addWatchedFromHome={addWatchedFromHome}
+              />
+            }
+          />
+          <Route path="/collections" element={<Collections />} />
+        </Routes>
+      </Router>
       {/* </authAPI.Provider> */}
     </div>
   );
