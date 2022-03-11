@@ -102,9 +102,9 @@ function App() {
       }
     }
     let newDirectors = directors.slice();
-    for (const el of newDirectors.movies) {
+    for (const el of newDirectors) {
       if (el.length > 0) {
-        for (const e of el) {
+        for (const e of el.movies) {
           if (e.id === element.id) {
             e.seen = false;
             e.inWatchlist = true;
@@ -115,9 +115,9 @@ function App() {
       }
     }
     let newActors = actors.slice();
-    for (const el of newActors.movies) {
+    for (const el of newActors) {
       if (el.length > 0) {
-        for (const e of el) {
+        for (const e of el.movies) {
           if (e.id === element.id) {
             e.seen = false;
             e.inWatchlist = true;
@@ -325,6 +325,7 @@ function App() {
                 watchedMovies={watchedMovies}
                 addWatchlistFromHome={addWatchlistFromHome}
                 addWatchedFromHome={addWatchedFromHome}
+                setWatchlistMovies={setWatchlistMovies}
               />
             }
           />
