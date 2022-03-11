@@ -1,6 +1,6 @@
 "use strict";
 
-import { Request, Response } from "express";
+import e, { Request, Response } from "express";
 
 require("dotenv").config();
 const user = require("../models/user");
@@ -508,6 +508,20 @@ const onLoadActorNoDB = async (): Promise<Array<NewActorList> | undefined> => {
 //   let resp = await onLoadArrayGenreNoDB();
 // })();
 
+/* 
+interface GenreRating {
+  movid?: number;
+  name: string;
+  id: number;
+  rating: number | null;
+  count: number;
+}
+
+  1. sort by count.
+  2. get top 2
+  3. shuffle
+*/
+
 const onLoadArrayGenreWithDB = async (
   array: Array<GenreRating>,
   user: UserMovieList
@@ -520,17 +534,29 @@ const onLoadArrayGenreWithDB = async (
     });
     const newmax = max.slice(0, 3);
     const shuffledMax = shuffle(newmax);
+
     const highest = array;
+
+    /*Sorting by the ratio of rating to count */
     highest.sort(function (a, b) {
       return (b.rating as number) / b.count - (a.rating as number) / a.count;
     });
+
+    const genreArray = [];
     const newhighest = highest.slice(0, 3);
     const shuffled = shuffle(newhighest);
     const maxGenre = shuffledMax[0].id;
-    let maxHighest = shuffled[0].id;
-    if (maxHighest === maxGenre) maxHighest = shuffled[1].id;
-    const genreArray = [maxGenre, maxHighest];
     const finalResponse = [];
+
+    if (highest.length === 1) {
+      genreArray.push(shuffled[0].id);
+    } else if (highest.length > 1) {
+      // Get at least two genreIDs
+      let maxHighest = shuffled[0].id;
+      if (maxHighest === maxGenre) maxHighest = shuffled[1].id;
+      genreArray.push(maxGenre, maxHighest);
+    }
+
     while (genreArray.length < 3) {
       const num = numGenTo18();
       const randomGenre = genreIDlist[num];
@@ -541,7 +567,10 @@ const onLoadArrayGenreWithDB = async (
     }
     for (let i = 0; i < genreArray.length; i++) {
       const genreName = genreIDlookup[genreArray[i]];
-      finalResponse.push(genreName);
+      finalResponse.push({
+        genreName: genreName,
+        movies: [],
+      });
     }
     for (let i = 0; i < genreArray.length; i++) {
       const apiResponse = await axios.get(
@@ -549,8 +578,9 @@ const onLoadArrayGenreWithDB = async (
       );
       const response = apiResponse.data.results;
       checkIfInDB(user.movielist, response);
-      finalResponse.push(response);
+      finalResponse[i].movies = response;
     }
+
     return finalResponse;
   } catch (e) {
     console.error(e, "onLoadArrayGenreWithDB is failing");
@@ -563,7 +593,7 @@ const onLoadArrayDirectorWithDB = async (
 ): Promise<Array<NewDirectorList> | undefined> => {
   try {
     let directorIdArray: Array<number> = [];
-    const finalResponse = [];
+    const finalResponse: Array<NewDirectorList> = [];
     const max = array;
     if (max.length >= 2) {
       max.sort(function (a, b) {
@@ -604,7 +634,10 @@ const onLoadArrayDirectorWithDB = async (
         if (check) {
           directorIdArray.push(arr[num]);
           const directorName = directorsIDlist[arr[num]];
-          finalResponse.push(directorName);
+          finalResponse.push({
+            directorName: directorName,
+            movies: [],
+          });
         }
       }
     }
@@ -631,7 +664,7 @@ const onLoadArrayDirectorWithDB = async (
         }
       }
 
-      finalResponse.push(filteredArray);
+      finalResponse[i].movies = filteredArray;
     }
     return finalResponse;
   } catch (e) {
@@ -663,21 +696,25 @@ const onLoadArrayActorWithDB = async (
       const newhighest = highest.slice(0, 3);
       const shuffled = shuffle(newhighest);
       const maxActor = shuffledMax[0].id;
+
       finalResponse.push({
         actorName: shuffledMax[0].name,
         movies: [],
       });
-
       let actorHighest = shuffled[0].id;
-      if (actorHighest === maxActor) {
-        actorHighest = shuffled[1].id;
-        finalResponse.push({
-          actorName:
-            actorHighest === maxActor ? shuffled[1].name : shuffled[0].name,
-          movies: [],
-        });
+      if (shuffled.length === 1) {
+        actorIdArray.push(actorHighest);
+      } else if (shuffled.length > 1) {
+        if (actorHighest === maxActor) {
+          actorHighest = shuffled[1].id;
+          finalResponse.push({
+            actorName:
+              actorHighest === maxActor ? shuffled[1].name : shuffled[0].name,
+            movies: [],
+          });
+        }
+        actorIdArray.push(maxActor, actorHighest);
       }
-      actorIdArray = [maxActor, actorHighest];
     } else {
       const arr = [
         287, 1283, 71580, 1136406, 62, 6193, 3896, 31, 2888, 505710, 18918,
@@ -697,7 +734,8 @@ const onLoadArrayActorWithDB = async (
         }
       }
     }
-    for (let i = 0; i < actorIdArray.length; i++) {
+
+    for (let i = 0; i < finalResponse.length; i++) {
       const apiResponse = await axios.get(
         `${apiUrl}person/${actorIdArray[i]}/movie_credits?api_key=${APIKEY}&language=en-US`
       );
@@ -834,6 +872,7 @@ const onLoad = async (req: Request, res: Response) => {
 
     // GENRES
 
+    // this FLATTENS the GenreRatings into a set so that count can be reduced.
     const genre: Array<GenreRating> | undefined =
       (await genreSort(userEmail)) || undefined;
     // const genre = undefined;
