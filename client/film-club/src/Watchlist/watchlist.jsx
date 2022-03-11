@@ -28,11 +28,12 @@ function Watchlist(props) {
 	useEffect(() => {
 		service.getOnLoadWatchlist(cookies.sessionid)
 			.then(response => {
-				console.log(response)
 				const genres = response.slice(1, 3);
 				const directors = response.slice(3, 5);
 				const actors = response.slice(5, 7);
 				const user = response[0];
+				// console.log('user from watchlist', user)
+
 				// const userGenrelist = user.genres;
 				// const userActorlist = user.actors;
 				// const userDirectorlist = user.directors;
@@ -51,6 +52,7 @@ function Watchlist(props) {
 	}, [])
 
 	const firstMovies = props.movies.slice(0, 24);
+	// console.log(firstMovies, "firstMovies");
 	const secondMovies = props.movies.slice(25, 49);
 	const thirdMovies = props.movies.slice(50, 74);
 	const fourthMovies = props.movies.slice(75, 99);

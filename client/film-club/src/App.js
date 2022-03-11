@@ -38,8 +38,9 @@ function App() {
   useEffect(() => {
     service.getOnLoadHome(cookies.sessionid)
       .then(response => {
-        console.log(response)
+        console.log(response, 'response');
         const genres = response[200];
+        // console.log(genres, 'genres');
         const directors = response[201];
         const actors = response[202];
         const user = response[203];
@@ -56,6 +57,7 @@ function App() {
         setActors(actors);
         setDirectors(directors);
         setUserMovielist(userMovielist);
+        console.log('userMovielist', userMovielist);
         setUserGenrelist(userGenrelist);
         setUserActorlist(userActorlist);
         setUserDirectorlist(userDirectorlist);
