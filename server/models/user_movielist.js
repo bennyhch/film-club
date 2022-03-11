@@ -2,6 +2,13 @@
 
 const mongoose = require('./index.js');
 const Schema = mongoose.Schema;
+/* 
+	email to identify user.
+	Maybe use id here?
+	movieList - list of all movies 
+		// either in watched or not watched.
+		
+*/
 
 const movielistSchema = new Schema({
 	email: {
@@ -10,11 +17,11 @@ const movielistSchema = new Schema({
 		unique: true,
 	},
 	movielist: [{
-		inWatchlist: Boolean,
+		inWatchlist: Boolean, // I want to watch it
 		seen: Boolean,
-		user_rating: Number,
-		backdrop_path: String,
-		belongs_to_collection: {
+		user_rating: Number, // Rating after seen.
+		backdrop_path: String, // image
+		belongs_to_collection: { // each movie can belong to a collection
 			id: Number,
 			name: String,
 			poster_path: String,

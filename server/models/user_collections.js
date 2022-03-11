@@ -3,6 +3,13 @@
 const mongoose = require('./index.js');
 const Schema = mongoose.Schema;
 
+/* 
+	A collection of movies.
+	user id.
+	and email? hmm.
+	The collection:
+	An array of movies
+*/
 const moviecollectionSchema = new Schema({
 	email: {
 		type: String,

@@ -7,6 +7,11 @@ const axios = require('axios');
 const apiUrl = 'https://api.themoviedb.org/3/';
 const APIKEY = process.env.API_KEY
 
+
+/* 
+  TODO Refactor this into one function.
+  e.g. random number 1-10
+*/
 const numGenTo10 = () => {
   return Math.floor(Math.random() * 11)
 }
@@ -23,6 +28,9 @@ const numGenTo1000 = () => {
   return Math.floor(Math.random() * 1001)
 }
 
+/*
+  TODO Refactor, in built method.
+*/
 const duplicateCheck = (num, array) => {
   for (let i = 0; i < array.length; i++) {
     if (array[i] === num) return false;
@@ -30,6 +38,10 @@ const duplicateCheck = (num, array) => {
   return true;
 }
 
+/**
+ * 
+ * @returns an array of 1,2,3[3 random numbers between 1-10][]
+ */
 const onLoadArray = () => {
   const arr = [1, 2, 3];
   while (arr.length < 6) {
@@ -55,7 +67,13 @@ const onLoadArray = () => {
   }
   return arr;
 }
-
+/**
+ * 
+ * @param {array} arr an array of movies 
+ * @param {*} movieid movie
+ * @param {*} userRating 
+ * @returns 
+ */
 const directorCheck = async (arr, movieid, userRating) => {
   try {
     let directorName = '';
@@ -104,33 +122,59 @@ const getMovieWithCredits = async (id) => {
     console.error(e, 'getMovieWithCredits is failing');
   }
 };
+/**
+ * 
+ * @param {string} userEmail
+ * 
+ * - Finds a collection of UserMovieGenres
+ * - Collates them into a set of genres.
+ * 
+ * @returns A list of genres
+ */
 
+/* 
+  TODO: Naming conventions here. Simplify. For loops.
+  genres = The genres associated with a user's movielist: [UserGenre]
+    - that have a rating of not null.
+*/
 const genreSort = async (userEmail) => {
   try {
     const filter = await movielist.findOne({
       email: userEmail
     });
     const genresNull = filter.genres;
+    // Get only the genres that have a rating.
     const genres = genresNull.filter(genre => genre.rating)
     if (genres === []) return false;
+
+    // Set genreArray to first user genre.
     const genreArray = [{
       name: genres[0].name,
       id: genres[0].id,
       rating: genres[0].rating,
       count: 1
     }];
+
+    /* 
+      Collate all similar genres, add together ratings, and update count
+      Otherwise add the next genre and set count to one.
+    */
     for (let i = 1; i < genres.length; i++) {
       let len = genreArray.length;
       for (let j = 0; j < len; j++) {
         if (genres[i].name === genreArray[j].name) {
           genreArray[j].rating = genreArray[j].rating + genres[i].rating;
           genreArray[j].count++
+
+          // If it has got to the end of the array. Return it.
           if (i < genres.length - 1) {
             continue;
           }
           else {
             return genreArray;
           }
+
+          // If the genres match and it is at the last position:
         } if (genres[i].name !== genreArray[j].name && j === (len - 1)) {
           genreArray.push({
             name: genres[i].name,
@@ -147,6 +191,11 @@ const genreSort = async (userEmail) => {
   }
 };
 
+/**
+ * 
+ * @param {*} userEmail 
+ * @returns Similar to above, collates ratings.
+ */
 const directorSort = async (userEmail) => {
   try {
     const filter = await movielist.findOne({
@@ -233,6 +282,11 @@ const actorSort = async (userEmail) => {
   }
 };
 
+/* 
+  This section is for prepopulating the main page, if the user has not put anything in, to have a default.
+
+
+*/
 const genreIDlist = [28, 12, 16, 35, 80, 99, 18, 10751, 14, 36, 27, 10402, 9648, 10749, 878, 10770, 53, 10752, 37];
 
 const genreIDlookup = {
@@ -289,6 +343,10 @@ const actorsIDlist = {
   18973: 'Mila Kunis'
 };
 
+
+/* 
+  TODO remap genre ids to genre names
+*/
 const onLoadArrayGenreNoDB = async () => {
   try {
     const arr = [];
@@ -304,10 +362,18 @@ const onLoadArrayGenreNoDB = async () => {
     for (let i = 0; i < arr.length; i++) {
       genreIDArr.push(genreIDlist[arr[i]]);
     }
+
+    /* 
+      Adds the names of the genres onto the array.
+    */
     for (let i = 0; i < genreIDArr.length; i++) {
       const genreName = genreIDlookup[genreIDArr[i]];
       finalResponse.push(genreName);
     }
+
+    /* 
+      Adds the arrays of movies.
+    */
     for (let i = 0; i < genreIDArr.length; i++) {
       const apiResponse = await axios.get(`${apiUrl}discover/movie?api_key=${APIKEY}&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_genres=${genreIDArr[i]}`);
       finalResponse.push(apiResponse.data.results);
@@ -352,6 +418,7 @@ const onLoadDirectorNoDB = async () => {
 const onLoadActorNoDB = async () => {
   try {
     const arr = [287, 1283, 71580, 1136406, 62, 6193, 3896, 31, 2888, 505710, 18918, 10859, 1245, 139, 204, 1813, 83002, 18973];
+    // finalArr is array of randoms
     const finalArr = []
     const finalResponse = [];
     while (finalArr.length < 2) {
@@ -378,6 +445,10 @@ const onLoadActorNoDB = async () => {
     console.error(e, "onLoadDirectorNoDB is failing");
   }
 }
+
+// (async () => {
+//   let resp = await onLoadArrayGenreNoDB();
+// })();
 
 const onLoadArrayGenreWithDB = async (array, user) => {
   try {
@@ -536,6 +607,15 @@ const onLoadArrayActorWithDB = async (array, user) => {
   }
 }
 
+/**
+ * 
+ * @param {*} user user movie list
+ * @param {*} max The highest rating they have put for a movie
+ * 
+ * Looks through array of MovieGenreRating for genres that match max rating.
+ * 
+ * @returns an array of ids of their favourite genres. 
+ */
 const findFaveGenre = (user, max) => {
   const genres = user.genres;
   const faves = [];
@@ -568,7 +648,11 @@ const findFaveActor = (user, max) => {
   }
   return faves;
 }
-
+/**
+ * 
+ * @param {array} array the array to shuffle 
+ * @returns 
+ */
 const shuffle = (array) => {
   let currentIndex = array.length, randomIndex;
   while (currentIndex != 0) {
@@ -580,7 +664,13 @@ const shuffle = (array) => {
   return array;
 }
 
-
+/**
+ * 
+ * @param {*} userDB all user movies 
+ * @param {*} array movies from api /discover
+ * 
+ * cross checks api movies against user movies and modifies movies in place
+ */
 const checkIfInDB = (userDB, array) => {
   for (let i = 0; i < userDB.length; i++) {
     for (let j = 0; j < array.length; j++) {
@@ -593,17 +683,34 @@ const checkIfInDB = (userDB, array) => {
   }
 }
 
+////////////////////////////////////////////////////////////////////
+
+/**
+ * Whatever loads when the page first does.
+ * @param {*} req 
+ * @param {*} res 
+ */
+
+/* 
+  TODO Make a response type.
+*/
+
 const onLoad = async (req, res) => {
   try {
+    // Find movie list for user.
     const userEmail = req.body.email;
     const user = await movielist.findOne({
       email: userEmail
     });
+
+    // 
+    // Gets a random page number to use in request. Different trending movies.
     const arr = onLoadArray();
     const finalResponse = [];
     for (let i = 0; i < arr.length; i++) {
       const apiResponse = await axios.get(`${apiUrl}trending/movie/day?api_key=${APIKEY}&page=${arr[i]}`);
       const shuffled = shuffle(apiResponse.data.results);
+      // update with user data.
       checkIfInDB(user.movielist, shuffled);
       finalResponse.push(...shuffled);
     }
@@ -642,7 +749,14 @@ const onLoad = async (req, res) => {
     res.status(500);
   }
 };
-
+/**
+ * 
+ * Find a user's movie list, and separates out into
+ * watchlist: What they want to watch
+ * watchedMovies: what they've watched
+ * 
+ * 
+ */
 const onLoadWatchlist = async (req, res) => {
   try {
     const userEmail = req.body.email;
@@ -654,6 +768,12 @@ const onLoadWatchlist = async (req, res) => {
     if (watchlistMovies.length > 0) {
       finalResponse.push(watchlistMovies);
     }
+
+
+    /* 
+      TODO factor out into separate helpers.
+      Finds the user's highest rating on any film
+    */
     if (watchedMovies.length > 0) {
       let max = 0;
       for (let i = 0; i < watchedMovies.length; i++) {
@@ -661,6 +781,21 @@ const onLoadWatchlist = async (req, res) => {
           max = watchedMovies[i].user_rating
         }
       }
+
+      /* 
+        Get a random bunch of movies of those genres,
+        the first page
+        sorted by popularity descending
+
+        same for directors and actors
+
+        Top three genres, directors and actors
+
+
+        TODO figure out api response types for these.
+        TODO comma sep, separate at front
+
+      */
       const genres = findFaveGenre(user, max);
       const shuffleGenres = shuffle(genres);
       const faveGenres = shuffleGenres.slice(0, 2);
@@ -672,6 +807,9 @@ const onLoadWatchlist = async (req, res) => {
       const shuffleDirectors = shuffle(directors);
       const faveDirectors = shuffleDirectors.slice(0, 2);
       for (let i = 0; i < faveDirectors.length; i++) {
+        /**
+         * Movies they have been in, sort by popularity.
+         */
         const apiResponse = await axios.get(`${apiUrl}person/${faveDirectors[i]}/movie_credits?api_key=${APIKEY}&language=en-US`);
         const array = apiResponse.data.cast;
         array.sort(function (a, b) {
@@ -699,6 +837,7 @@ const onLoadWatchlist = async (req, res) => {
         finalResponse.push(...shuffled);
       }
     }
+    
     checkIfInDB(userMovies, finalResponse)
     res.status(200);
     res.send(finalResponse);
@@ -763,6 +902,11 @@ const onLoadWatched = async (req, res) => {
   }
 };
 
+/**
+ * Adds to watchlist, updates db.
+ * 
+ * 
+ */
 const addWatchlist = async (req, res) => {
   try {
     const id = req.body.id;

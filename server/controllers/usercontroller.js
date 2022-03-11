@@ -54,6 +54,11 @@ const createUser = async (req, res) => {
 	}
 };
 
+
+/* 
+	Bug: Session is undefined at the moment.
+	
+*/
 const loginUser = async (req, res) => {
 	try {
 		if (req.body.email && req.body.password) {
@@ -61,8 +66,8 @@ const loginUser = async (req, res) => {
 			const userPassword = req.body.password;
 			const authenticate = await checkUser(userEmail, userPassword);
 			if (authenticate) {
-				console.log(authenticate)
-				req.session.userEmail = authenticate
+				// req.session.userEmail = authenticate
+				console.log(req.session)
 				res.status(200);
 				res.send({ email: userEmail, password: userPassword });
 			} else {

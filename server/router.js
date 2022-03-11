@@ -5,6 +5,9 @@ const router = express.Router();
 const user = require('./controllers/usercontroller');
 const user_movielist = require('./controllers/user_movielistcontroller');
 const user_collection = require('./controllers/user_collectionscontroller');
+/* 
+  Deal with auth later. 
+*/
 const authMiddleware = require('./middlewares/authmiddleware');
 
 //from login page
@@ -30,6 +33,10 @@ router.delete('/watched', user_movielist.deleteMovie);
 router.post('/watched', user.logoutUser);
 
 //from collections page
+
+/* 
+This is not fully implemented yet.
+*/
 router.post('/collections', user_collection.onLoadCollections);
 router.post('/collections/addactor', user_collection.addActorCollection);
 router.post('/collections/adddirector', user_collection.addDirectorCollection);
