@@ -858,7 +858,7 @@ const checkIfInDB = (userDB: Array<MovieExtended>, array: any) => {
   ]
 */
 
-const onLoad = async (req: Request, res: Response) => {
+export const onLoad = async (req: Request, res: Response) => {
   try {
     // Find movie list for user.
     const userEmail = req.body.email;
@@ -935,7 +935,7 @@ const onLoad = async (req: Request, res: Response) => {
  *
  *
  */
-const onLoadWatchlist = async (req: Request, res: Response) => {
+export const onLoadWatchlist = async (req: Request, res: Response) => {
   try {
     const userEmail = req.body.email;
     const user = await movielist.findOne({ email: userEmail });
@@ -1051,7 +1051,7 @@ const onLoadWatchlist = async (req: Request, res: Response) => {
   }
 };
 
-const onLoadWatched = async (req: Request, res: Response) => {
+export const onLoadWatched = async (req: Request, res: Response) => {
   try {
     const userEmail = req.body.email;
     const user = await movielist.findOne({ email: userEmail });
@@ -1117,7 +1117,7 @@ const onLoadWatched = async (req: Request, res: Response) => {
  *
  *
  */
-const addWatchlist = async (req: Request, res: Response) => {
+export const addWatchlist = async (req: Request, res: Response) => {
   try {
     const id = req.body.id;
     const filter = { email: req.body.sessionid };
@@ -1153,7 +1153,7 @@ const addWatchlist = async (req: Request, res: Response) => {
   }
 };
 
-const addWatched = async (req: Request, res: Response) => {
+export const addWatched = async (req: Request, res: Response) => {
   try {
     const movieid = req.body.id;
     const userRating = req.body.user_rating;
@@ -1226,7 +1226,7 @@ const addWatched = async (req: Request, res: Response) => {
   }
 };
 
-const deleteMovie = async (req: Request, res: Response) => {
+export const deleteMovie = async (req: Request, res: Response) => {
   try {
     const useremail = req.body.sessionid;
     const movieid = req.body.id;
