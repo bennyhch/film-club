@@ -9,9 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const user = require("../models/user");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const movielist = require("../models/user_movielist");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const bcrypt = require("bcrypt");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const moviecollection = require("../models/user_collections");
 const saltRounds = 10;
 const checkUser = (userEmail, userPassword) => __awaiter(void 0, void 0, void 0, function* () {

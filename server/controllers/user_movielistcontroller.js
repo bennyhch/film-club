@@ -9,9 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 require("dotenv").config();
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const user = require("../models/user");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const movielist = require("../models/user_movielist");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const axios = require("axios");
 const apiUrl = "https://api.themoviedb.org/3/";
 const APIKEY = process.env.API_KEY;
@@ -171,9 +175,9 @@ const genreSort = (userEmail) => __awaiter(void 0, void 0, void 0, function* () 
             const len = genreArray.length;
             for (let j = 0; j < len; j++) {
                 if (genres[i].name === genreArray[j].name) {
-                    genreArray[j].rating =
-                        genreArray[j].rating + genres[i].rating;
-                    genreArray[j].count++;
+                    genreArray[j].rating = genreArray[j].rating + genres[i].rating;
+                    const count = genreArray[j].count;
+                    genreArray[j].count = count + 1;
                     // If it has got to the end of the array. Return it.
                     if (i < genres.length - 1) {
                         continue;
@@ -503,7 +507,8 @@ const onLoadArrayGenreWithDB = (array, user) => __awaiter(void 0, void 0, void 0
         const highest = array;
         /*Sorting by the ratio of rating to count */
         highest.sort(function (a, b) {
-            return b.rating / b.count - a.rating / a.count;
+            return (b.rating / b.count -
+                a.rating / a.count);
         });
         const genreArray = [];
         const newhighest = highest.slice(0, 3);
@@ -594,6 +599,7 @@ const onLoadArrayDirectorWithDB = (array, user) => __awaiter(void 0, void 0, voi
                 }
             }
         }
+        ////
         for (let i = 0; i < directorIdArray.length; i++) {
             const apiResponse = yield axios.get(`${apiUrl}person/${directorIdArray[i]}/movie_credits?api_key=${APIKEY}&language=en-US`);
             const array = apiResponse.data.crew;
@@ -602,7 +608,7 @@ const onLoadArrayDirectorWithDB = (array, user) => __awaiter(void 0, void 0, voi
                 return b.popularity - a.popularity;
             });
             for (let i = 0; i < user.movielist.length; i++) {
-                for (let j = 0; j < array.length; j++) {
+                for (let j = 0; j < filteredArray.length; j++) {
                     if (user.movielist[i].id === filteredArray[j].id) {
                         filteredArray[j].inWatchlist = user.movielist[i].inWatchlist;
                         filteredArray[j].seen = user.movielist[i].seen;
