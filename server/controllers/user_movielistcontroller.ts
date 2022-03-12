@@ -13,21 +13,12 @@ const APIKEY = process.env.API_KEY;
   TODO Refactor this into one function.
   e.g. random number 1-10
 */
-const numGenTo10 = () => {
-  return Math.floor(Math.random() * 11);
-};
 
-const numGenTo18 = () => {
-  return Math.floor(Math.random() * 18);
-};
 
-const numGenTo100 = () => {
-  return Math.floor(Math.random() * 101);
-};
-
-const numGenTo1000 = () => {
-  return Math.floor(Math.random() * 1001);
-};
+// To replace numGenTo10 etc
+function numGen (num:number) {
+  return Math.floor(Math.random() * (num+1))
+}
 
 /*
   TODO Refactor, in built method.
@@ -43,28 +34,49 @@ const duplicateCheck = (num: number, array: Array<number>) => {
  *
  * @returns an array of 1,2,3[3 random numbers between 1-10][]
  */
+
+// const onLoadArray = () => {
+//   const arr = [1, 2, 3];
+//   while (arr.length < 6) {
+//     let num = numGenTo10();
+//     const check = duplicateCheck(num, arr);
+//     if (check && num !== 0) {
+//       arr.push(num);
+//     }
+//   }
+//   while (arr.length < 8) {
+//     let num = numGenTo100();
+//     const check = duplicateCheck(num, arr);
+//     if (check && num !== 0) {
+//       arr.push(num);
+//     }
+//   }
+//   while (arr.length < 10) {
+//     let num = numGenTo1000();
+//     const check = duplicateCheck(num, arr);
+//     if (check && num !== 0) {
+//       arr.push(num);
+//     }
+//   }
+//   return arr;
+// };
+
+// onLoadArray: create an array with nine elements, without any duplications, 
+// [1,2,3, (3 random num from 4-10), (... from 11-100), (... from 101-1000)]
 const onLoadArray = () => {
+  const random = (min: number, max: number) => Math.floor(Math.random() * (max - min)) + min;
   const arr = [1, 2, 3];
   while (arr.length < 6) {
-    const num = numGenTo10();
-    const check = duplicateCheck(num, arr);
-    if (check && num !== 0) {
-      arr.push(num);
-    }
+    let newNum = random(4, 11);
+    if (duplicateCheck(newNum, arr)) arr.push(newNum);
   }
   while (arr.length < 8) {
-    const num = numGenTo100();
-    const check = duplicateCheck(num, arr);
-    if (check && num !== 0) {
-      arr.push(num);
-    }
+    let newNum = random(11, 101);
+    if (duplicateCheck(newNum, arr)) arr.push(newNum);
   }
-  while (arr.length < 10) {
-    const num = numGenTo1000();
-    const check = duplicateCheck(num, arr);
-    if (check && num !== 0) {
-      arr.push(num);
-    }
+  while(arr.length<10) {
+    let newNum = random(101, 1001);
+    if (duplicateCheck(newNum, arr)) arr.push(newNum);
   }
   return arr;
 };
@@ -382,8 +394,9 @@ const onLoadArrayGenreNoDB = async () => {
   try {
     const arr = [];
     const finalResponse = [];
+    // arr to contain 3 elements with random different numbers ranging from 0-18 inclusively
     while (arr.length < 3) {
-      const num = numGenTo18();
+      const num = numGen(18);
       const check = duplicateCheck(num, arr);
       if (check) {
         arr.push(num);
@@ -558,7 +571,8 @@ const onLoadArrayGenreWithDB = async (
     }
 
     while (genreArray.length < 3) {
-      const num = numGenTo18();
+      // const num = numGenTo18();
+      const num = numGen(18);
       const randomGenre = genreIDlist[num];
       const check = duplicateCheck(randomGenre, genreArray);
       if (check) {
