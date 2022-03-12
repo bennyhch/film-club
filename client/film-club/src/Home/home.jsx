@@ -185,54 +185,60 @@ function Home(props) {
           </ul>
         </div>
       </div>
-      <div className="infinity">
-        <h3 className="infinity-title">{props.directors[0].directorName}</h3>
-        <div className="movielist-container">
-          <ul className="infinity-movies">
-            {props.actors[0].movies.map((e, index) => {
-              return (
-                <li key={index}>
-                  <img
-                    className="movie-image"
-                    src={"https://image.tmdb.org/t/p/w300" + e.poster_path}
-                    alt="Not found."
-                  />
-                  <p className="movie-title-text">{e.title}</p>
-                  <p className="watchlist-text">Watchlist</p>
-                  <p className="watched-text">Watched</p>
-                  {watchlistToggle(e)}
-                  {watchedToggle(e)}
-                  {ratingToggle(e)}
-                </li>
-              );
-            })}
-          </ul>
+      {props.directors ? (
+        <div className="infinity">
+          <h3 className="infinity-title">{props.directors[0].directorName}</h3>
+          <div className="movielist-container">
+            <ul className="infinity-movies">
+              {props.actors[0].movies.map((e, index) => {
+                return (
+                  <li key={index}>
+                    <img
+                      className="movie-image"
+                      src={"https://image.tmdb.org/t/p/w300" + e.poster_path}
+                      alt="Not found."
+                    />
+                    <p className="movie-title-text">{e.title}</p>
+                    <p className="watchlist-text">Watchlist</p>
+                    <p className="watched-text">Watched</p>
+                    {watchlistToggle(e)}
+                    {watchedToggle(e)}
+                    {ratingToggle(e)}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
         </div>
-      </div>
-      <div className="infinity">
-        <h3 className="infinity-title">{props.genres[1].genreName}</h3>
-        <div className="movielist-container">
-          <ul className="infinity-movies">
-            {props.genres[1].movies.map((e, index) => {
-              return (
-                <li key={index}>
-                  <img
-                    className="movie-image"
-                    src={"https://image.tmdb.org/t/p/w300" + e.poster_path}
-                    alt="Not found."
-                  />
-                  <p className="movie-title-text">{e.title}</p>
-                  <p className="watchlist-text">Watchlist</p>
-                  <p className="watched-text">Watched</p>
-                  {watchlistToggle(e)}
-                  {watchedToggle(e)}
-                  {ratingToggle(e)}
-                </li>
-              );
-            })}
-          </ul>
+      ) : (
+        <></>
+      )}
+      {props.genres && (
+        <div className="infinity">
+          <h3 className="infinity-title">{props.genres[1].genreName}</h3>
+          <div className="movielist-container">
+            <ul className="infinity-movies">
+              {props.genres[1].movies.map((e, index) => {
+                return (
+                  <li key={index}>
+                    <img
+                      className="movie-image"
+                      src={"https://image.tmdb.org/t/p/w300" + e.poster_path}
+                      alt="Not found."
+                    />
+                    <p className="movie-title-text">{e.title}</p>
+                    <p className="watchlist-text">Watchlist</p>
+                    <p className="watched-text">Watched</p>
+                    {watchlistToggle(e)}
+                    {watchedToggle(e)}
+                    {ratingToggle(e)}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

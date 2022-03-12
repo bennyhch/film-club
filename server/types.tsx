@@ -63,8 +63,8 @@ interface GenreRating {
   movid?: number;
   name: string;
   id: number;
-  rating: number | null;
-  count: number;
+  rating?: number | null;
+  count?: number;
 }
 
 interface DirectorRating {

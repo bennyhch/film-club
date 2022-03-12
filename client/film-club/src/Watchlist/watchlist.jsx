@@ -20,7 +20,6 @@ function Watchlist(props) {
     service
       .getOnLoadWatchlist(cookies.sessionid)
       .then((response) => {
-        console.log("response in watchlist", response);
         const genres = response.genreMovieLists;
         const directors = response.directorMovieLists;
         const actors = response.actorMovieLists;
@@ -36,7 +35,6 @@ function Watchlist(props) {
         for (let i = 0; i < 200; i += 25) {
           movieReels.push(props.movies.slice(i, i + 24));
         }
-        console.log("the reels", movieReels);
         setMovieReels(movieReels);
       })
       .catch((error) => {
@@ -49,7 +47,6 @@ function Watchlist(props) {
     for (let i = 0; i < 200; i += 25) {
       movieReels.push(props.movies.slice(i, i + 24));
     }
-    console.log("the reels", movieReels);
     setMovieReels(movieReels);
   }, []);
 
@@ -111,6 +108,8 @@ function Watchlist(props) {
   const [addWatch, setAddWatch] = useState({});
   const [show, setShow] = useState(false);
   const openModal = (element) => {
+    // remove from watched on this page.
+    //
     setAddWatch(element);
     setShow(true);
   };
@@ -123,8 +122,8 @@ function Watchlist(props) {
         {show ? (
           <Modal
             closeModal={closeModal}
-            addWatchedFromHome={props.addWatchedFromHome}
             addWatch={addWatch}
+            addWatchedFromHome={props.addWatchedFromHome}
             show={show}
           />
         ) : null}
@@ -254,29 +253,30 @@ function Watchlist(props) {
           Fill your watchlist with films you want to see. Here are a few you
           might like:
         </h3>
-        {movieReels.map((reel, index) => {
-          return (
-            <div className="movielist-container" key={index}>
-              <ul className="infinity-movies">
-                {reel.map((el, index) => (
-                  <li key={index}>
-                    <img
-                      className="movie-image"
-                      src={"https://image.tmdb.org/t/p/w300" + el.poster_path}
-                      alt="Not found."
-                    />
-                    <p className="movie-title-text">{el.title}</p>
-                    <p className="watchlist-text">Watchlist</p>
-                    <p className="watched-text">Watched</p>
-                    {watchlistToggle(el)}
-                    {watchedToggle(el)}
-                    {ratingToggle(el)}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          );
-        })}
+        {movieReels &&
+          movieReels.map((reel, index) => {
+            return (
+              <div className="movielist-container" key={index}>
+                <ul className="infinity-movies">
+                  {reel.map((el, index) => (
+                    <li key={index}>
+                      <img
+                        className="movie-image"
+                        src={"https://image.tmdb.org/t/p/w300" + el.poster_path}
+                        alt="Not found."
+                      />
+                      <p className="movie-title-text">{el.title}</p>
+                      <p className="watchlist-text">Watchlist</p>
+                      <p className="watched-text">Watched</p>
+                      {watchlistToggle(el)}
+                      {watchedToggle(el)}
+                      {ratingToggle(el)}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
       </div>
     </div>
   );
