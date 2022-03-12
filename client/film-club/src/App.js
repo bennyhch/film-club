@@ -28,9 +28,7 @@ function App() {
     service
       .getOnLoadHome(cookies.sessionid)
       .then((response) => {
-        console.log("the response", response);
         const genres = response[200];
-        // console.log(genres, 'genres');
         const directors = response[201];
         const actors = response[202];
         const user = response[203];
@@ -51,7 +49,6 @@ function App() {
         setActors(actors);
         setDirectors(directors);
         setUserMovielist(userMovielist);
-        console.log('userMovielist', userMovielist);
         setUserGenrelist(userGenrelist);
         setUserActorlist(userActorlist);
         setUserDirectorlist(userDirectorlist);
@@ -62,71 +59,87 @@ function App() {
   }, []);
 
   // Add to watchlist
-  const addWatchlistFromHome = async (element) => {
-    element.sessionid = cookies.sessionid;
-    const response = await service.addWatchlistFromHome(element);
+  /* 
+    Sends film to server.
+    Server responds with the new watchlist.
+    sets new watchlist
+    Sets genres, actors and directors, same as before.
+  */
+  const addWatchlistFromHome = async (filmToAdd) => {
+    filmToAdd.sessionid = cookies.sessionid;
+    
+    const response = await service.addWatchlistFromHome(filmToAdd);
     const newUserMovieList = response.movielist;
     setUserMovielist(newUserMovieList);
     const newUserWatchlist = response.movielist.filter(
       (movie) => movie.seen === false
-    );
-    setWatchlistMovies(newUserWatchlist);
-    const newUserGenreList = response.genres;
-    setUserGenrelist(newUserGenreList);
-    const newUserActorList = response.actors;
-    setUserActorlist(newUserActorList);
-    const newUserDirectorList = response.directors;
-    setUserDirectorlist(newUserDirectorList);
-    let newMovies = movies.slice();
-    for (const el of newMovies) {
-      if (el.id === element.id) {
-        el.seen = false;
-        el.inWatchlist = true;
-        el.user_rating = null;
-        setMovies(newMovies);
+      );
+      setWatchlistMovies(newUserWatchlist);
+      const newUserGenreList = response.genres;
+      setUserGenrelist(newUserGenreList);
+      const newUserActorList = response.actors;
+      setUserActorlist(newUserActorList);
+      const newUserDirectorList = response.directors;
+      setUserDirectorlist(newUserDirectorList);
+
+      let newMovies = movies.slice(0, 200);
+      for (const movie of newMovies) {
+        if (movie.id === filmToAdd.id) {
+          movie.seen = false;
+          movie.inWatchlist = true;
+          movie.user_rating = null;
+          setMovies(newMovies);
+        }
       }
-    }
 
     let newGenres = genres.slice();
-    for (const el of newGenres) {
-      if (el.length > 0) {
-        for (const e of el.movies) {
+    for (const genre of newGenres) {
+      if (genre.length > 0) {
+        for (const film of genre.movies) {
           /* 
             TODO refactor to find().
           */
-          if (e.id === element.id) {
-            e.seen = false;
-            e.inWatchlist = true;
-            e.user_rating = null;
+          if (film.id === filmToAdd.id) {
+            film.seen = false;
+            film.inWatchlist = true;
+            film.user_rating = null;
           }
         }
         setGenres(newGenres);
       }
     }
-    let newDirectors = directors.slice();
-    for (const el of newDirectors) {
-      if (el.length > 0) {
-        for (const e of el.movies) {
-          if (e.id === element.id) {
-            e.seen = false;
-            e.inWatchlist = true;
-            e.user_rating = null;
+    if (directors) {
+
+      let newDirectors = directors.slice();
+      for (const director of newDirectors) {
+        if (director.length > 0) {
+          for (const film of director.movies) {
+            if (film.id === filmToAdd.id) {
+              film.seen = false;
+              film.inWatchlist = true;
+              film.user_rating = null;
+            }
           }
+          setDirectors(newDirectors);
         }
-        setDirectors(newDirectors);
       }
+
     }
-    let newActors = actors.slice();
-    for (const el of newActors) {
-      if (el.length > 0) {
-        for (const e of el.movies) {
-          if (e.id === element.id) {
-            e.seen = false;
-            e.inWatchlist = true;
-            e.user_rating = null;
+    
+    if (actors) {
+
+      let newActors = actors.slice();
+      for (const actor of newActors) {
+        if (actor.length > 0) {
+          for (const film of actor.movies) {
+            if (film.id === filmToAdd.id) {
+              film.seen = false;
+              film.inWatchlist = true;
+              film.user_rating = null;
+            }
           }
+          setActors(newActors);
         }
-        setActors(newActors);
       }
     }
   };
@@ -136,11 +149,14 @@ function App() {
     element.sessionid = cookies.sessionid;
     element.user_rating = userRating;
     const response = await service.addWatchedFromHome(element);
+    console.log("user movie list before", userMovielist);
     const newUserMovieList = response.movielist;
     setUserMovielist(newUserMovieList);
     const newUserWatched = response.movielist.filter(
-      (movie) => movie.seen === true
-    );
+      (movie) => movie.seen === false
+      );
+
+    console.log("user movie list after", newUserWatched);
     setWatchlistMovies(newUserWatched);
     const newUserGenreList = response.genres;
     setUserGenrelist(newUserGenreList);
@@ -148,7 +164,7 @@ function App() {
     setUserActorlist(newUserActorList);
     const newUserDirectorList = response.directors;
     setUserDirectorlist(newUserDirectorList);
-    let newMovies = movies.slice();
+    let newMovies = movies.slice(0, 200);
     for (const el of newMovies) {
       if (el.id === element.id) {
         el.seen = true;
@@ -157,45 +173,55 @@ function App() {
         setMovies(newMovies);
       }
     }
-    let newGenres = genres.slice();
-    for (const el of newGenres) {
-      if (el.length > 0) {
-        for (const e of el.movies) {
-          if (e.id === element.id) {
-            e.seen = true;
-            e.inWatchlist = false;
-            e.user_rating = userRating;
+
+    if (genres) {
+      let newGenres = genres.slice();
+      for (const el of newGenres) {
+        if (el.length > 0) {
+          for (const e of el.movies) {
+            if (e.id === element.id) {
+              e.seen = true;
+              e.inWatchlist = false;
+              e.user_rating = userRating;
+            }
           }
+          setGenres(newGenres);
         }
-        setGenres(newGenres);
       }
     }
-    let newDirectors = directors.slice();
-    for (const el of newDirectors.movies) {
-      if (el.length > 0) {
-        for (const e of el) {
-          if (e.id === element.id) {
-            e.seen = true;
-            e.inWatchlist = false;
-            e.user_rating = userRating;
+      
+    if (directors) {
+      let newDirectors = directors.slice();
+      for (const el of newDirectors) {
+        if (el.length > 0) {
+          for (const e of el.movies) {
+            if (e.id === element.id) {
+              e.seen = true;
+              e.inWatchlist = false;
+              e.user_rating = userRating;
+            }
           }
+          setDirectors(newDirectors);
         }
-        setDirectors(newDirectors);
       }
     }
-    let newActors = actors.slice();
-    for (const el of newActors.movies) {
-      if (el.length > 0) {
-        for (const e of el) {
-          if (e.id === element.id) {
-            e.seen = true;
-            e.inWatchlist = false;
-            e.user_rating = userRating;
+
+    if (actors) {
+      let newActors = actors.slice();
+      for (const el of newActors) {
+        if (el.length > 0) {
+          for (const e of el.movies) {
+            if (e.id === element.id) {
+              e.seen = true;
+              e.inWatchlist = false;
+              e.user_rating = userRating;
+            }
           }
+          setActors(newActors);
         }
-        setActors(newActors);
       }
     }
+
   };
 
   // Delete
@@ -317,6 +343,9 @@ function App() {
                 actors={actors}
                 directors={directors}
                 genres={genres}
+                setGenres={setGenres}
+                setActors={setActors}
+                setDirectors={setDirectors}
                 movies={movies}
                 userMovielist={[userMovielist, setUserMovielist]}
                 userActorlist={userActorlist}

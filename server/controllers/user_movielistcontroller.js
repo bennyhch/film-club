@@ -48,21 +48,21 @@ const duplicateCheck = (num, array) => {
 const onLoadArray = () => {
     const arr = [1, 2, 3];
     while (arr.length < 6) {
-        let num = numGenTo10();
+        const num = numGenTo10();
         const check = duplicateCheck(num, arr);
         if (check && num !== 0) {
             arr.push(num);
         }
     }
     while (arr.length < 8) {
-        let num = numGenTo100();
+        const num = numGenTo100();
         const check = duplicateCheck(num, arr);
         if (check && num !== 0) {
             arr.push(num);
         }
     }
     while (arr.length < 10) {
-        let num = numGenTo1000();
+        const num = numGenTo1000();
         const check = duplicateCheck(num, arr);
         if (check && num !== 0) {
             arr.push(num);
@@ -168,7 +168,7 @@ const genreSort = (userEmail) => __awaiter(void 0, void 0, void 0, function* () 
           Otherwise add the next genre and set count to one.
         */
         for (let i = 1; i < genres.length; i++) {
-            let len = genreArray.length;
+            const len = genreArray.length;
             for (let j = 0; j < len; j++) {
                 if (genres[i].name === genreArray[j].name) {
                     genreArray[j].rating =
@@ -222,7 +222,7 @@ const directorSort = (userEmail) => __awaiter(void 0, void 0, void 0, function* 
             },
         ];
         for (let i = 1; i < directors.length; i++) {
-            let len = directorArray.length;
+            const len = directorArray.length;
             for (let j = 0; j < len; j++) {
                 if (directors[i].name === directorArray[j].name) {
                     directorArray[j].rating =
@@ -269,7 +269,7 @@ const actorSort = (userEmail) => __awaiter(void 0, void 0, void 0, function* () 
             },
         ];
         for (let i = 1; i < actors.length; i++) {
-            let len = actorArray.length;
+            const len = actorArray.length;
             for (let j = 0; j < len; j++) {
                 if (actors[i].name === actorArray[j].name) {
                     actorArray[j].rating =
@@ -366,7 +366,7 @@ const onLoadArrayGenreNoDB = () => __awaiter(void 0, void 0, void 0, function* (
         const arr = [];
         const finalResponse = [];
         while (arr.length < 3) {
-            let num = numGenTo18();
+            const num = numGenTo18();
             const check = duplicateCheck(num, arr);
             if (check) {
                 arr.push(num);
@@ -409,7 +409,7 @@ const onLoadDirectorNoDB = () => __awaiter(void 0, void 0, void 0, function* () 
         const finalArr = [];
         const finalResponse = [];
         while (finalArr.length < 2) {
-            let num = Math.floor(Math.random() * 8);
+            const num = Math.floor(Math.random() * 8);
             const check = duplicateCheck(arr[num], finalArr);
             if (check) {
                 finalArr.push(arr[num]);
@@ -448,7 +448,7 @@ const onLoadActorNoDB = () => __awaiter(void 0, void 0, void 0, function* () {
         const finalArr = [];
         const finalResponse = [];
         while (finalArr.length < 2) {
-            let num = Math.floor(Math.random() * 18);
+            const num = Math.floor(Math.random() * 18);
             const check = duplicateCheck(arr[num], finalArr);
             if (check) {
                 finalArr.push(arr[num]);
@@ -478,6 +478,19 @@ const onLoadActorNoDB = () => __awaiter(void 0, void 0, void 0, function* () {
 // (async () => {
 //   let resp = await onLoadArrayGenreNoDB();
 // })();
+/*
+interface GenreRating {
+  movid?: number;
+  name: string;
+  id: number;
+  rating: number | null;
+  count: number;
+}
+
+  1. sort by count.
+  2. get top 2
+  3. shuffle
+*/
 const onLoadArrayGenreWithDB = (array, user) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const page = 1;
@@ -488,20 +501,28 @@ const onLoadArrayGenreWithDB = (array, user) => __awaiter(void 0, void 0, void 0
         const newmax = max.slice(0, 3);
         const shuffledMax = shuffle(newmax);
         const highest = array;
+        /*Sorting by the ratio of rating to count */
         highest.sort(function (a, b) {
             return b.rating / b.count - a.rating / a.count;
         });
+        const genreArray = [];
         const newhighest = highest.slice(0, 3);
         const shuffled = shuffle(newhighest);
-        let maxGenre = shuffledMax[0].id;
-        let maxHighest = shuffled[0].id;
-        if (maxHighest === maxGenre)
-            maxHighest = shuffled[1].id;
-        let genreArray = [maxGenre, maxHighest];
+        const maxGenre = shuffledMax[0].id;
         const finalResponse = [];
+        if (highest.length === 1) {
+            genreArray.push(shuffled[0].id);
+        }
+        else if (highest.length > 1) {
+            // Get at least two genreIDs
+            let maxHighest = shuffled[0].id;
+            if (maxHighest === maxGenre)
+                maxHighest = shuffled[1].id;
+            genreArray.push(maxGenre, maxHighest);
+        }
         while (genreArray.length < 3) {
-            let num = numGenTo18();
-            let randomGenre = genreIDlist[num];
+            const num = numGenTo18();
+            const randomGenre = genreIDlist[num];
             const check = duplicateCheck(randomGenre, genreArray);
             if (check) {
                 genreArray.push(randomGenre);
@@ -509,13 +530,16 @@ const onLoadArrayGenreWithDB = (array, user) => __awaiter(void 0, void 0, void 0
         }
         for (let i = 0; i < genreArray.length; i++) {
             const genreName = genreIDlookup[genreArray[i]];
-            finalResponse.push(genreName);
+            finalResponse.push({
+                genreName: genreName,
+                movies: [],
+            });
         }
         for (let i = 0; i < genreArray.length; i++) {
             const apiResponse = yield axios.get(`${apiUrl}discover/movie?api_key=${APIKEY}&sort_by=popularity.desc&include_adult=false&include_video=false&page=${page}&with_genres=${genreArray[i]}`);
             const response = apiResponse.data.results;
             checkIfInDB(user.movielist, response);
-            finalResponse.push(response);
+            finalResponse[i].movies = response;
         }
         return finalResponse;
     }
@@ -541,7 +565,7 @@ const onLoadArrayDirectorWithDB = (array, user) => __awaiter(void 0, void 0, voi
             });
             const newhighest = highest.slice(0, 3);
             const shuffled = shuffle(newhighest);
-            let maxDirector = shuffledMax[0].id;
+            const maxDirector = shuffledMax[0].id;
             finalResponse.push({
                 directorName: shuffledMax[0].name,
                 movies: [],
@@ -556,14 +580,17 @@ const onLoadArrayDirectorWithDB = (array, user) => __awaiter(void 0, void 0, voi
         }
         else {
             const arr = [55934, 488, 1032, 138, 578, 1223, 525, 108];
-            let directorIdArray = [array[0].id];
+            const directorIdArray = [array[0].id];
             while (directorIdArray.length < 2) {
-                let num = Math.floor(Math.random() * 8);
+                const num = Math.floor(Math.random() * 8);
                 const check = duplicateCheck(arr[num], directorIdArray);
                 if (check) {
                     directorIdArray.push(arr[num]);
                     const directorName = directorsIDlist[arr[num]];
-                    finalResponse.push(directorName);
+                    finalResponse.push({
+                        directorName: directorName,
+                        movies: [],
+                    });
                 }
             }
         }
@@ -584,7 +611,7 @@ const onLoadArrayDirectorWithDB = (array, user) => __awaiter(void 0, void 0, voi
                     }
                 }
             }
-            finalResponse.push(filteredArray);
+            finalResponse[i].movies = filteredArray;
         }
         return finalResponse;
     }
@@ -610,20 +637,25 @@ const onLoadArrayActorWithDB = (array, user) => __awaiter(void 0, void 0, void 0
             });
             const newhighest = highest.slice(0, 3);
             const shuffled = shuffle(newhighest);
-            let maxActor = shuffledMax[0].id;
+            const maxActor = shuffledMax[0].id;
             finalResponse.push({
                 actorName: shuffledMax[0].name,
                 movies: [],
             });
             let actorHighest = shuffled[0].id;
-            if (actorHighest === maxActor) {
-                actorHighest = shuffled[1].id;
-                finalResponse.push({
-                    actorName: actorHighest === maxActor ? shuffled[1].name : shuffled[0].name,
-                    movies: [],
-                });
+            if (shuffled.length === 1) {
+                actorIdArray.push(actorHighest);
             }
-            actorIdArray = [maxActor, actorHighest];
+            else if (shuffled.length > 1) {
+                if (actorHighest === maxActor) {
+                    actorHighest = shuffled[1].id;
+                    finalResponse.push({
+                        actorName: actorHighest === maxActor ? shuffled[1].name : shuffled[0].name,
+                        movies: [],
+                    });
+                }
+                actorIdArray.push(maxActor, actorHighest);
+            }
         }
         else {
             const arr = [
@@ -632,7 +664,7 @@ const onLoadArrayActorWithDB = (array, user) => __awaiter(void 0, void 0, void 0
             ];
             actorIdArray = [array[0].id];
             while (actorIdArray.length < 2) {
-                let num = Math.floor(Math.random() * 18);
+                const num = Math.floor(Math.random() * 18);
                 const check = duplicateCheck(arr[num], actorIdArray);
                 if (check) {
                     actorIdArray.push(arr[num]);
@@ -644,7 +676,7 @@ const onLoadArrayActorWithDB = (array, user) => __awaiter(void 0, void 0, void 0
                 }
             }
         }
-        for (let i = 0; i < actorIdArray.length; i++) {
+        for (let i = 0; i < finalResponse.length; i++) {
             const apiResponse = yield axios.get(`${apiUrl}person/${actorIdArray[i]}/movie_credits?api_key=${APIKEY}&language=en-US`);
             const array = apiResponse.data.cast;
             array.sort(function (a, b) {
@@ -766,6 +798,7 @@ const onLoad = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             finalResponse.push(...shuffled);
         }
         // GENRES
+        // this FLATTENS the GenreRatings into a set so that count can be reduced.
         const genre = (yield genreSort(userEmail)) || undefined;
         // const genre = undefined;
         let genreIDArr;
@@ -820,13 +853,17 @@ const onLoadWatchlist = (req, res) => __awaiter(void 0, void 0, void 0, function
         const userMovies = user.movielist;
         const watchlistMovies = userMovies.filter((movie) => movie.seen === false);
         const watchedMovies = userMovies.filter((movie) => movie.seen === true);
-        const finalResponse = [];
+        const finalResponse = {};
+        finalResponse.watchlistMovieLists = [];
+        finalResponse.genreMovieLists = [];
+        finalResponse.actorMovieLists = [];
+        finalResponse.directorMovieLists = [];
         if (watchlistMovies.length > 0) {
-            finalResponse.push(watchlistMovies);
+            finalResponse.watchlistMovieLists.push(watchlistMovies);
         }
         /*
           TODO factor out into separate helpers.
-          Finds the user's highest rating on any film
+          Finds the user's highest rating on any film they've watched
         */
         if (watchedMovies.length > 0) {
             let max = 0;
@@ -849,13 +886,17 @@ const onLoadWatchlist = (req, res) => __awaiter(void 0, void 0, void 0, function
               TODO comma sep, separate at front
       
             */
+            /*
+              Returns genre ids for fave genres.
+            */
             const genres = findFaveGenre(user, max);
             const shuffleGenres = shuffle(genres);
             const faveGenres = shuffleGenres.slice(0, 2);
             for (let i = 0; i < faveGenres.length; i++) {
                 const apiResponse = yield axios.get(`${apiUrl}discover/movie?api_key=${APIKEY}&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_genres=${faveGenres[i]}`);
-                finalResponse.push(apiResponse.data.results);
+                finalResponse.genreMovieLists.push(apiResponse.data.results);
             }
+            /////////////////////////////////////////////
             const directors = findFaveDirector(user, max);
             const shuffleDirectors = shuffle(directors);
             const faveDirectors = shuffleDirectors.slice(0, 2);
@@ -864,12 +905,13 @@ const onLoadWatchlist = (req, res) => __awaiter(void 0, void 0, void 0, function
                  * Movies they have been in, sort by popularity.
                  */
                 const apiResponse = yield axios.get(`${apiUrl}person/${faveDirectors[i]}/movie_credits?api_key=${APIKEY}&language=en-US`);
-                const array = apiResponse.data.cast;
+                const array = apiResponse.data.crew;
                 array.sort(function (a, b) {
                     return b.popularity - a.popularity;
                 });
-                finalResponse.push(array);
+                finalResponse.directorMovieLists.push(array);
             }
+            /////////////////////////////////////////
             const actors = findFaveActor(user, max);
             const shuffleActors = shuffle(actors);
             const faveActors = shuffleActors.slice(0, 2);
@@ -879,20 +921,20 @@ const onLoadWatchlist = (req, res) => __awaiter(void 0, void 0, void 0, function
                 array.sort(function (a, b) {
                     return b.popularity - a.popularity;
                 });
-                finalResponse.push(array);
+                finalResponse.actorMovieLists.push(array);
             }
         }
+        console.log("hello after actor");
         if (watchedMovies.length === 0) {
             const arr = onLoadArray();
             for (let i = 0; i < arr.length; i++) {
                 const apiResponse = yield axios.get(`${apiUrl}trending/movie/day?api_key=${APIKEY}&page=${arr[i]}`);
                 const shuffled = shuffle(apiResponse.data.results);
-                finalResponse.push(...shuffled);
+                finalResponse.watchlistMovieLists.push(shuffled);
             }
         }
         checkIfInDB(userMovies, finalResponse);
-        res.status(200);
-        res.send(finalResponse);
+        res.status(200).send(JSON.stringify(finalResponse));
     }
     catch (e) {
         console.error(e, "onLoadWatchlist is failing");

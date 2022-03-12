@@ -63,8 +63,8 @@ interface GenreRating {
   movid?: number;
   name: string;
   id: number;
-  rating: number | null;
-  count: number;
+  rating?: number | null;
+  count?: number;
 }
 
 interface DirectorRating {
@@ -253,4 +253,11 @@ type MovieCollectionResponse = {
     name: string;
   };
   moviecoll: UserMovieCollection;
+};
+
+type WatchlistResponse = {
+  watchlistMovieLists: Array<Array<MovieExtended>>;
+  genreMovieLists: Array<Array<APIMovieWithGenre>>;
+  actorMovieLists: Array<Array<CastCredit>>;
+  directorMovieLists: Array<Array<CrewCredit>>;
 };
