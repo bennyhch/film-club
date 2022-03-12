@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 // import logo from "./images/film-club-logos_black.png";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./Login/login";
@@ -25,7 +25,7 @@ function App() {
     []
   );
   const [userDirectorlist, setUserDirectorlist] = useState<
-    Array<DirectorRating>
+    Array<UserDirectorRating>
   >([]);
   const [watchlistMovies, setWatchlistMovies] = useState<Array<Movie>>([]);
   const [watchedMovies, setWatchedMovies] = useState<Array<Movie>>([]);
@@ -72,14 +72,14 @@ function App() {
     sets new watchlist
     Sets genres, actors and directors, same as before.
   */
-  const addWatchlistFromHome = async (filmToAdd) => {
-    filmToAdd.sessionid = cookies.sessionid;
+  const addWatchlistFromHome = async (filmToAdd: Movie) => {
+    // filmToAdd.sessionid = cookies.sessionid;
 
     const response = await service.addWatchlistFromHome(filmToAdd);
     const newUserMovieList = response.movielist;
     setUserMovielist(newUserMovieList);
     const newUserWatchlist = response.movielist.filter(
-      (movie) => movie.seen === false
+      (movie: Movie) => movie.seen === false
     );
     setWatchlistMovies(newUserWatchlist);
     const newUserGenreList = response.genres;
@@ -101,7 +101,7 @@ function App() {
 
     const newGenres = genres.slice();
     for (const genre of newGenres) {
-      if (genre.length > 0) {
+      if (genre.movies.length > 0) {
         for (const film of genre.movies) {
           /* 
             TODO refactor to find().
@@ -149,15 +149,15 @@ function App() {
   };
 
   // Add watched
-  const addWatchedFromHome = async (element, userRating) => {
-    element.sessionid = cookies.sessionid;
+  const addWatchedFromHome = async (element: Movie, userRating: number) => {
+    // element.sessionid = cookies.sessionid;
     element.user_rating = userRating;
     const response = await service.addWatchedFromHome(element);
     console.log("user movie list before", userMovielist);
     const newUserMovieList = response.movielist;
     setUserMovielist(newUserMovieList);
     const newUserWatched = response.movielist.filter(
-      (movie) => movie.seen === false
+      (movie: Movie) => movie.seen === false
     );
 
     console.log("user movie list after", newUserWatched);
@@ -181,7 +181,7 @@ function App() {
     if (genres) {
       const newGenres = genres.slice();
       for (const el of newGenres) {
-        if (el.length > 0) {
+        if (el.movies.length > 0) {
           for (const e of el.movies) {
             if (e.id === element.id) {
               e.seen = true;
@@ -228,8 +228,8 @@ function App() {
   };
 
   // Delete
-  const deleteMovieFromHome = async (element) => {
-    element.sessionid = cookies.sessionid;
+  const deleteMovieFromHome = async (element: Movie) => {
+    // element.sessionid = cookies.sessionid;
     let newUserMovieList;
     const response = await service.deleteMovieFromHome(element);
     const usermovielist = userMovielist.slice();
@@ -244,9 +244,10 @@ function App() {
         setUserMovielist(newUserMovieList);
       }
     }
-    const newUserWatchlist = newUserMovieList.filter(
+    const newUserWatchlist = newUserMovieList?.filter(
       (movie) => movie.seen === false
-    );
+    ) as Array<Movie>;
+
     setWatchlistMovies(newUserWatchlist);
     const newMovies = movies.slice();
     for (const el of newMovies) {
@@ -258,9 +259,9 @@ function App() {
       }
     }
     const newGenres = genres.slice();
-    for (const el of newGenres.movies) {
-      if (el.length > 0) {
-        for (const e of el) {
+    for (const el of newGenres) {
+      if (el.movies.length > 0) {
+        for (const e of el.movies) {
           if (e.id === element.id) {
             e.seen = false;
             e.inWatchlist = false;
@@ -271,9 +272,9 @@ function App() {
       }
     }
     const newDirectors = directors.slice();
-    for (const el of newDirectors.movies) {
-      if (el.length > 0) {
-        for (const e of el) {
+    for (const el of newDirectors) {
+      if (el.movies.length > 0) {
+        for (const e of el.movies) {
           if (e.id === element.id) {
             e.seen = false;
             e.inWatchlist = false;
@@ -284,9 +285,9 @@ function App() {
       }
     }
     const newActors = actors.slice();
-    for (const el of newActors.movies) {
-      if (el.length > 0) {
-        for (const e of el) {
+    for (const el of newActors) {
+      if (el.movies.length > 0) {
+        for (const e of el.movies) {
           if (e.id === element.id) {
             e.seen = false;
             e.inWatchlist = false;

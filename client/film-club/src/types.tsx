@@ -32,8 +32,18 @@ type Movie = {
   release_date: string;
   title: string;
   id: number;
-  character: string;
 };
+
+interface APIMovieWithGenre extends Movie {
+  adult: boolean;
+  backdrop_path: string;
+  genre_ids: Array<number>;
+  original_language: string;
+  original_title: string;
+  popularity: number;
+  video: boolean;
+  vote_count: number;
+}
 
 // The type in the 'movielist'
 
@@ -169,7 +179,7 @@ interface CastCredit extends Credit {
   character: string;
 }
 
-interface Credit {
+interface Credit extends Movie {
   credit_id: string;
   release_date: string;
   vote_count: number;
@@ -186,25 +196,8 @@ interface Credit {
   poster_path: string;
   inWatchlist: boolean;
   seen: boolean;
-  user_rating: number;
+  user_rating: number | null;
 }
-
-type APIMovieWithGenre = {
-  adult: boolean;
-  backdrop_path: string;
-  genre_ids: Array<number>;
-  id: number;
-  original_language: string;
-  original_title: string;
-  overview: string;
-  popularity: number;
-  poster_path: string;
-  release_date: string;
-  title: string;
-  video: boolean;
-  vote_average: number;
-  vote_count: number;
-};
 
 /* 
   I have changed the genres from this:
@@ -221,7 +214,7 @@ type GenreResponse = Array<NewGenreList>;
 
 type NewGenreList = {
   genreName: string;
-  movies: Array<APIMovieWithGenre> | undefined;
+  movies: Array<APIMovieWithGenre>;
 };
 
 type NewDirectorList = {
@@ -234,7 +227,7 @@ type NewActorList = {
 };
 
 interface ListByType<C extends Credit> {
-  movies: Array<C> | undefined;
+  movies: Array<C>;
   [key: string]: any;
 }
 
@@ -261,3 +254,5 @@ type WatchlistResponse = {
   actorMovieLists: Array<Array<CastCredit>>;
   directorMovieLists: Array<Array<CrewCredit>>;
 };
+
+///////// PROPS TYPES

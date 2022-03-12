@@ -1,7 +1,7 @@
 const url = "http://localhost:3000";
 
 const data = {
-  loginUser: async (email, password) => {
+  loginUser: async (email: string, password: string) => {
     const response = await fetch(`${url}/`, {
       method: "POST",
       headers: {
@@ -12,7 +12,7 @@ const data = {
     return response;
   },
 
-  registerUser: async (email, password) => {
+  registerUser: async (email: string, password: string) => {
     const response = await fetch(`${url}/register`, {
       method: "POST",
       headers: {
@@ -34,7 +34,7 @@ const data = {
     return response;
   },
 
-  addWatchlistFromHome: async (movie) => {
+  addWatchlistFromHome: async (movie: Movie) => {
     const response = await fetch(`${url}/home/watchlist`, {
       method: "POST",
       headers: {
@@ -45,7 +45,7 @@ const data = {
     return response;
   },
 
-  addWatchedFromHome: async (movie) => {
+  addWatchedFromHome: async (movie: Movie) => {
     const response = await fetch(`${url}/home/watched`, {
       method: "POST",
       headers: {
@@ -56,7 +56,7 @@ const data = {
     return response;
   },
 
-  deleteMovieFromHome: async (movie) => {
+  deleteMovieFromHome: async (movie: Movie) => {
     const response = await fetch(`${url}/home`, {
       method: "DELETE",
       headers: {
@@ -74,7 +74,7 @@ const data = {
     return response;
   },
 
-  getOnLoadWatchlist: async (sessionid) => {
+  getOnLoadWatchlist: async (sessionid: number) => {
     const response = await fetch(`${url}/watchlist`, {
       method: "POST",
       headers: {
@@ -85,7 +85,7 @@ const data = {
     return response;
   },
 
-  addWatchedFromWatchlist: async (movie) => {
+  addWatchedFromWatchlist: async (movie: Movie) => {
     const response = await fetch(`${url}/watchlist/watched`, {
       method: "POST",
       headers: {
@@ -96,7 +96,7 @@ const data = {
     return response;
   },
 
-  deleteMovieFromWatchlist: async (movie) => {
+  deleteMovieFromWatchlist: async (movie: Movie) => {
     const response = await fetch(`${url}/watchlist`, {
       method: "DELETE",
       headers: {
@@ -114,7 +114,7 @@ const data = {
     return response;
   },
 
-  getOnLoadWatched: async (sessionid) => {
+  getOnLoadWatched: async (sessionid: number) => {
     const response = await fetch(`${url}/watched`, {
       method: "POST",
       headers: {
@@ -125,7 +125,7 @@ const data = {
     return response;
   },
 
-  deleteMovieFromWatched: async (movie) => {
+  deleteMovieFromWatched: async (movie: Movie) => {
     const response = await fetch(`${url}/watched`, {
       method: "DELETE",
       headers: {
@@ -143,7 +143,7 @@ const data = {
     return response;
   },
 
-  getOnLoadCollections: async (sessionid) => {
+  getOnLoadCollections: async (sessionid: number) => {
     const response = await fetch(`${url}/collections`, {
       method: "POST",
       headers: {
@@ -154,7 +154,7 @@ const data = {
     return response;
   },
 
-  addActorCollections: async (name) => {
+  addActorCollections: async (name: string) => {
     const response = await fetch(`${url}/collections/addactor`, {
       method: "POST",
       headers: {
@@ -165,7 +165,7 @@ const data = {
     return response;
   },
 
-  addDirectorCollections: async (name) => {
+  addDirectorCollections: async (name: string) => {
     const response = await fetch(`${url}/collections/adddirector`, {
       method: "POST",
       headers: {
@@ -176,7 +176,7 @@ const data = {
     return response;
   },
 
-  addWatchlistFromCollections: async (movie) => {
+  addWatchlistFromCollections: async (movie: Movie) => {
     const response = await fetch(`${url}/collections/watchlist`, {
       method: "POST",
       headers: {
@@ -187,7 +187,7 @@ const data = {
     return response;
   },
 
-  addWatchedFromCollections: async (movie) => {
+  addWatchedFromCollections: async (movie: Movie) => {
     const response = await fetch(`${url}/collections/watched`, {
       method: "POST",
       headers: {
@@ -198,7 +198,7 @@ const data = {
     return response;
   },
 
-  deleteActorFromCollection: async (name) => {
+  deleteActorFromCollection: async (name: string) => {
     const response = await fetch(`${url}/collections/collection`, {
       method: "DELETE",
       headers: {
@@ -209,7 +209,7 @@ const data = {
     return response;
   },
 
-  deleteMovieFromCollections: async (movie) => {
+  deleteMovieFromCollections: async (movie: Movie) => {
     const response = await fetch(`${url}/collections`, {
       method: "DELETE",
       headers: {
