@@ -1,0 +1,4 @@
+[] The directors response contains all crew, when only directors are needed
+  - maybe modify api call?
+  - or send back a smaller version of the response?
+  
