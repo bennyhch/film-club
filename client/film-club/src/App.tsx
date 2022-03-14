@@ -372,7 +372,7 @@ function App() {
                 directors={directors}
                 genres={genres}
                 movies={movies}
-                userMovielist={[userMovielist, setUserMovielist]}
+                userMovielist={userMovielist}
                 userActorlist={userActorlist}
                 userDirectorlist={userDirectorlist}
                 userGenrelist={userGenrelist}
@@ -381,6 +381,10 @@ function App() {
                 watchedMovies={watchedMovies}
                 addWatchlistFromHome={addWatchlistFromHome}
                 addWatchedFromHome={addWatchedFromHome}
+                setWatchlistMovies={setWatchlistMovies}
+                setGenres={setGenres}
+                setActors={setActors}
+                setDirectors={setDirectors}
               />
             }
           />

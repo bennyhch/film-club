@@ -109,7 +109,7 @@ function Watchlist(props: WatchlistProps) {
     }
   };
 
-  const [addWatch, setAddWatch] = useState({});
+  const [addWatch, setAddWatch] = useState<Movie>({} as Movie);
   const [show, setShow] = useState(false);
   const openModal = (element: Movie) => {
     setAddWatch(element);
