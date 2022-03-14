@@ -5,7 +5,7 @@ import { NavLink } from "react-router-dom";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const logo = require("../images/film-club-logos_black.png");
 
-function Header(props) {
+function Header() {
   return (
     <div>
       <header className="App-header">
