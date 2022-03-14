@@ -1,36 +1,31 @@
 import "../App.css";
 import "./home.css";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Switch,
-  Route,
-  Link,
-  NavLink,
-} from "react-router-dom";
 import Header from "../Header/header";
-import service from "../service";
-import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
-import image1 from "../images/btn-add.svg";
-import image2 from "../images/btn-added.svg";
-import Modal from "../Modal/modal";
 
-function Home(props) {
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const image1 = require("../images/btn-add.svg");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const image2 = require("../images/btn-added.svg");
+import Modal from "../Modal/modal";
+import { useState } from "react";
+import { HomeProps } from "../PropTypes";
+
+function Home(props: HomeProps) {
   const [cookies, setCookie] = useCookies();
 
-  const firstMovies = props.movies.slice(0, 99);
-  const secondMovies = props.movies.slice(100, 199);
+  const firstMovies: Array<Movie> = props.movies.slice(0, 99);
+  const secondMovies: Array<Movie> = props.movies.slice(100, 199);
 
   const [addWatch, setAddWatch] = useState({});
   const [show, setShow] = useState(false);
-  const openModal = (element) => {
+  const openModal = (element: Movie) => {
     setAddWatch(element);
     setShow(true);
   };
   const closeModal = () => setShow(false);
 
-  const watchlistToggle = (element) => {
+  const watchlistToggle = (element: Movie) => {
     if (element.inWatchlist === true) {
       return (
         <img
@@ -50,7 +45,7 @@ function Home(props) {
     }
   };
 
-  const watchedToggle = (element) => {
+  const watchedToggle = (element: Movie) => {
     if (element.seen === true) {
       return (
         <img
@@ -64,14 +59,13 @@ function Home(props) {
         <img
           className="seen-button"
           src={image1}
-          value={element}
           onClick={() => openModal(element)}
         />
       );
     }
   };
 
-  const ratingToggle = (element) => {
+  const ratingToggle = (element: Movie) => {
     if (element.seen === true) {
       return <p className="rating-text">Your rating: {element.user_rating}</p>;
     } else {
@@ -141,23 +135,26 @@ function Home(props) {
         <h3 className="infinity-title">{props.genres[0].genreName}</h3>
         <div className="movielist-container">
           <ul className="infinity-movies">
-            {props.genres[0].movies.map((e, index) => {
-              return (
-                <li key={index}>
-                  <img
-                    className="movie-image"
-                    src={"https://image.tmdb.org/t/p/w300" + e.poster_path}
-                    alt="Not found."
-                  />
-                  <p className="movie-title-text">{e.title}</p>
-                  <p className="watchlist-text">Watchlist</p>
-                  <p className="watched-text">Watched</p>
-                  {watchlistToggle(e)}
-                  {watchedToggle(e)}
-                  {ratingToggle(e)}
-                </li>
-              );
-            })}
+            {props.genres &&
+              props.genres[0].movies?.map(
+                (e: APIMovieWithGenre, index: number) => {
+                  return (
+                    <li key={index}>
+                      <img
+                        className="movie-image"
+                        src={"https://image.tmdb.org/t/p/w300" + e.poster_path}
+                        alt="Not found."
+                      />
+                      <p className="movie-title-text">{e.title}</p>
+                      <p className="watchlist-text">Watchlist</p>
+                      <p className="watched-text">Watched</p>
+                      {watchlistToggle(e)}
+                      {watchedToggle(e)}
+                      {ratingToggle(e)}
+                    </li>
+                  );
+                }
+              )}
           </ul>
         </div>
       </div>
@@ -165,32 +162,8 @@ function Home(props) {
         <h3 className="infinity-title">{props.actors[0].actorName}</h3>
         <div className="movielist-container">
           <ul className="infinity-movies">
-            {props.actors[0].movies.map((e, index) => {
-              return (
-                <li key={index}>
-                  <img
-                    className="movie-image"
-                    src={"https://image.tmdb.org/t/p/w300" + e.poster_path}
-                    alt="Not found."
-                  />
-                  <p className="movie-title-text">{e.title}</p>
-                  <p className="watchlist-text">Watchlist</p>
-                  <p className="watched-text">Watched</p>
-                  {watchlistToggle(e)}
-                  {watchedToggle(e)}
-                  {ratingToggle(e)}
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      </div>
-      {props.directors ? (
-        <div className="infinity">
-          <h3 className="infinity-title">{props.directors[0].directorName}</h3>
-          <div className="movielist-container">
-            <ul className="infinity-movies">
-              {props.actors[0].movies.map((e, index) => {
+            {props.actors &&
+              props.actors[0].movies?.map((e: CastCredit, index: number) => {
                 return (
                   <li key={index}>
                     <img
@@ -207,6 +180,32 @@ function Home(props) {
                   </li>
                 );
               })}
+          </ul>
+        </div>
+      </div>
+      {props.directors ? (
+        <div className="infinity">
+          <h3 className="infinity-title">{props.directors[0].directorName}</h3>
+          <div className="movielist-container">
+            <ul className="infinity-movies">
+              {props.actors[1] &&
+                props.actors[1].movies?.map((e: CastCredit, index: number) => {
+                  return (
+                    <li key={index}>
+                      <img
+                        className="movie-image"
+                        src={"https://image.tmdb.org/t/p/w300" + e.poster_path}
+                        alt="Not found."
+                      />
+                      <p className="movie-title-text">{e.title}</p>
+                      <p className="watchlist-text">Watchlist</p>
+                      <p className="watched-text">Watched</p>
+                      {watchlistToggle(e)}
+                      {watchedToggle(e)}
+                      {ratingToggle(e)}
+                    </li>
+                  );
+                })}
             </ul>
           </div>
         </div>
@@ -218,23 +217,28 @@ function Home(props) {
           <h3 className="infinity-title">{props.genres[1].genreName}</h3>
           <div className="movielist-container">
             <ul className="infinity-movies">
-              {props.genres[1].movies.map((e, index) => {
-                return (
-                  <li key={index}>
-                    <img
-                      className="movie-image"
-                      src={"https://image.tmdb.org/t/p/w300" + e.poster_path}
-                      alt="Not found."
-                    />
-                    <p className="movie-title-text">{e.title}</p>
-                    <p className="watchlist-text">Watchlist</p>
-                    <p className="watched-text">Watched</p>
-                    {watchlistToggle(e)}
-                    {watchedToggle(e)}
-                    {ratingToggle(e)}
-                  </li>
-                );
-              })}
+              {props.genres[1] &&
+                props.genres[1].movies?.map(
+                  (e: APIMovieWithGenre, index: number) => {
+                    return (
+                      <li key={index}>
+                        <img
+                          className="movie-image"
+                          src={
+                            "https://image.tmdb.org/t/p/w300" + e.poster_path
+                          }
+                          alt="Not found."
+                        />
+                        <p className="movie-title-text">{e.title}</p>
+                        <p className="watchlist-text">Watchlist</p>
+                        <p className="watched-text">Watched</p>
+                        {watchlistToggle(e)}
+                        {watchedToggle(e)}
+                        {ratingToggle(e)}
+                      </li>
+                    );
+                  }
+                )}
             </ul>
           </div>
         </div>

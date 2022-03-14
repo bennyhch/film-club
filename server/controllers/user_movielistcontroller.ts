@@ -2,9 +2,13 @@
 
 import e, { Request, Response } from "express";
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 require("dotenv").config();
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const user = require("../models/user");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const movielist = require("../models/user_movielist");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const axios = require("axios");
 const apiUrl = "https://api.themoviedb.org/3/";
 const APIKEY = process.env.API_KEY;
@@ -183,9 +187,10 @@ const genreSort = async (userEmail: string) => {
       const len = genreArray.length;
       for (let j = 0; j < len; j++) {
         if (genres[i].name === genreArray[j].name) {
-          genreArray[j].rating =
-            (genreArray[j].rating as number) + genres[i].rating;
-          genreArray[j].count++;
+          genreArray[j].rating = genreArray[j].rating! + genres[i].rating!;
+
+          const count = genreArray[j].count as number;
+          genreArray[j].count = count + 1;
 
           // If it has got to the end of the array. Return it.
           if (i < genres.length - 1) {
@@ -530,7 +535,7 @@ const onLoadArrayGenreWithDB = async (
     const page = 1;
     const max = array;
     max.sort(function (a, b) {
-      return b.count - a.count;
+      return (b.count as number) - (a.count as number);
     });
     const newmax = max.slice(0, 3);
     const shuffledMax = shuffle(newmax);
@@ -539,7 +544,10 @@ const onLoadArrayGenreWithDB = async (
 
     /*Sorting by the ratio of rating to count */
     highest.sort(function (a, b) {
-      return (b.rating as number) / b.count - (a.rating as number) / a.count;
+      return (
+        (b.rating as number) / (b.count as number) -
+        (a.rating as number) / (a.count as number)
+      );
     });
 
     const genreArray = [];
@@ -641,6 +649,8 @@ const onLoadArrayDirectorWithDB = async (
         }
       }
     }
+
+    ////
     for (let i = 0; i < directorIdArray.length; i++) {
       const apiResponse = await axios.get(
         `${apiUrl}person/${directorIdArray[i]}/movie_credits?api_key=${APIKEY}&language=en-US`
@@ -654,7 +664,7 @@ const onLoadArrayDirectorWithDB = async (
       });
 
       for (let i = 0; i < user.movielist.length; i++) {
-        for (let j = 0; j < array.length; j++) {
+        for (let j = 0; j < filteredArray.length; j++) {
           if (user.movielist[i].id === filteredArray[j].id) {
             filteredArray[j].inWatchlist = user.movielist[i].inWatchlist;
             filteredArray[j].seen = user.movielist[i].seen;
@@ -848,7 +858,7 @@ const checkIfInDB = (userDB: Array<MovieExtended>, array: any) => {
   ]
 */
 
-const onLoad = async (req: Request, res: Response) => {
+export const onLoad = async (req: Request, res: Response) => {
   try {
     // Find movie list for user.
     const userEmail = req.body.email;
@@ -925,7 +935,7 @@ const onLoad = async (req: Request, res: Response) => {
  *
  *
  */
-const onLoadWatchlist = async (req: Request, res: Response) => {
+export const onLoadWatchlist = async (req: Request, res: Response) => {
   try {
     const userEmail = req.body.email;
     const user = await movielist.findOne({ email: userEmail });
@@ -1041,7 +1051,7 @@ const onLoadWatchlist = async (req: Request, res: Response) => {
   }
 };
 
-const onLoadWatched = async (req: Request, res: Response) => {
+export const onLoadWatched = async (req: Request, res: Response) => {
   try {
     const userEmail = req.body.email;
     const user = await movielist.findOne({ email: userEmail });
@@ -1107,7 +1117,7 @@ const onLoadWatched = async (req: Request, res: Response) => {
  *
  *
  */
-const addWatchlist = async (req: Request, res: Response) => {
+export const addWatchlist = async (req: Request, res: Response) => {
   try {
     const id = req.body.id;
     const filter = { email: req.body.sessionid };
@@ -1143,7 +1153,7 @@ const addWatchlist = async (req: Request, res: Response) => {
   }
 };
 
-const addWatched = async (req: Request, res: Response) => {
+export const addWatched = async (req: Request, res: Response) => {
   try {
     const movieid = req.body.id;
     const userRating = req.body.user_rating;
@@ -1216,7 +1226,7 @@ const addWatched = async (req: Request, res: Response) => {
   }
 };
 
-const deleteMovie = async (req: Request, res: Response) => {
+export const deleteMovie = async (req: Request, res: Response) => {
   try {
     const useremail = req.body.sessionid;
     const movieid = req.body.id;

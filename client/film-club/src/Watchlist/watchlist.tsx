@@ -4,8 +4,12 @@ import Header from "../Header/header";
 import service from "../service";
 import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
-import image1 from "../images/btn-add.svg";
-import image2 from "../images/btn-added.svg";
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const image1 = require("../images/btn-add.svg") as string;
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const image2 = require("../images/btn-added.svg") as string;
+
 import Modal from "../Modal/modal";
 
 function Watchlist(props) {
@@ -108,8 +112,6 @@ function Watchlist(props) {
   const [addWatch, setAddWatch] = useState({});
   const [show, setShow] = useState(false);
   const openModal = (element) => {
-    // remove from watched on this page.
-    //
     setAddWatch(element);
     setShow(true);
   };

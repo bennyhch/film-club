@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 // import logo from "./images/film-club-logos_black.png";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./Login/login";
@@ -13,27 +13,34 @@ import { useCookies } from "react-cookie";
 
 function App() {
   const [cookies, setCookie] = useCookies();
-  const [movies, setMovies] = useState([]);
-  const [genres, setGenres] = useState([]);
-  const [actors, setActors] = useState([]);
-  const [directors, setDirectors] = useState([]);
-  const [userMovielist, setUserMovielist] = useState([]);
-  const [userGenrelist, setUserGenrelist] = useState([]);
-  const [userActorlist, setUserActorlist] = useState([]);
-  const [userDirectorlist, setUserDirectorlist] = useState([]);
-  const [watchlistMovies, setWatchlistMovies] = useState([]);
-  const [watchedMovies, setWatchedMovies] = useState([]);
+  const [movies, setMovies] = useState<Array<APIMovieWithGenre>>([]);
+  const [genres, setGenres] = useState<Array<NewGenreList>>([]);
+  const [actors, setActors] = useState<Array<ListByType<CastCredit>>>([]);
+  const [directors, setDirectors] = useState<Array<ListByType<CrewCredit>>>([]);
+  const [userMovielist, setUserMovielist] = useState<Array<Movie>>([]);
+  const [userGenrelist, setUserGenrelist] = useState<Array<MovieGenreRating>>(
+    []
+  );
+  const [userActorlist, setUserActorlist] = useState<Array<UserActorRating>>(
+    []
+  );
+  const [userDirectorlist, setUserDirectorlist] = useState<
+    Array<UserDirectorRating>
+  >([]);
+  const [watchlistMovies, setWatchlistMovies] = useState<Array<Movie>>([]);
+  const [watchedMovies, setWatchedMovies] = useState<Array<Movie>>([]);
 
   useEffect(() => {
     service
       .getOnLoadHome(cookies.sessionid)
       .then((response) => {
-        const genres = response[200];
-        const directors = response[201];
-        const actors = response[202];
-        const user = response[203];
-        const userMovielist = user.movielist;
-        const watchlistMovies = userMovielist.filter(
+        const movies: Array<APIMovieWithGenre> = response.slice(0, 200);
+        const genres: Array<NewGenreList> = response[200];
+        const directors: Array<ListByType<CrewCredit>> = response[201];
+        const actors: Array<ListByType<CastCredit>> = response[202];
+        const user: UserMovieList = response[203];
+        const userMovielist: Array<Movie> = user.movielist;
+        const watchlistMovies: Array<Movie> = userMovielist.filter(
           (movie) => movie.seen === false
         );
         const watchedMovies = userMovielist.filter(
@@ -65,36 +72,36 @@ function App() {
     sets new watchlist
     Sets genres, actors and directors, same as before.
   */
-  const addWatchlistFromHome = async (filmToAdd) => {
-    filmToAdd.sessionid = cookies.sessionid;
-    
+  const addWatchlistFromHome = async (filmToAdd: Movie) => {
+    // filmToAdd.sessionid = cookies.sessionid;
+
     const response = await service.addWatchlistFromHome(filmToAdd);
     const newUserMovieList = response.movielist;
     setUserMovielist(newUserMovieList);
     const newUserWatchlist = response.movielist.filter(
-      (movie) => movie.seen === false
-      );
-      setWatchlistMovies(newUserWatchlist);
-      const newUserGenreList = response.genres;
-      setUserGenrelist(newUserGenreList);
-      const newUserActorList = response.actors;
-      setUserActorlist(newUserActorList);
-      const newUserDirectorList = response.directors;
-      setUserDirectorlist(newUserDirectorList);
+      (movie: Movie) => movie.seen === false
+    );
+    setWatchlistMovies(newUserWatchlist);
+    const newUserGenreList = response.genres;
+    setUserGenrelist(newUserGenreList);
+    const newUserActorList = response.actors;
+    setUserActorlist(newUserActorList);
+    const newUserDirectorList = response.directors;
+    setUserDirectorlist(newUserDirectorList);
 
-      let newMovies = movies.slice(0, 200);
-      for (const movie of newMovies) {
-        if (movie.id === filmToAdd.id) {
-          movie.seen = false;
-          movie.inWatchlist = true;
-          movie.user_rating = null;
-          setMovies(newMovies);
-        }
+    const newMovies = movies.slice(0, 200);
+    for (const movie of newMovies) {
+      if (movie.id === filmToAdd.id) {
+        movie.seen = false;
+        movie.inWatchlist = true;
+        movie.user_rating = null;
+        setMovies(newMovies);
       }
+    }
 
-    let newGenres = genres.slice();
+    const newGenres = genres.slice();
     for (const genre of newGenres) {
-      if (genre.length > 0) {
+      if (genre.movies.length > 0) {
         for (const film of genre.movies) {
           /* 
             TODO refactor to find().
@@ -109,8 +116,7 @@ function App() {
       }
     }
     if (directors) {
-
-      let newDirectors = directors.slice();
+      const newDirectors = directors.slice();
       for (const director of newDirectors) {
         if (director.length > 0) {
           for (const film of director.movies) {
@@ -123,12 +129,10 @@ function App() {
           setDirectors(newDirectors);
         }
       }
-
     }
-    
-    if (actors) {
 
-      let newActors = actors.slice();
+    if (actors) {
+      const newActors = actors.slice();
       for (const actor of newActors) {
         if (actor.length > 0) {
           for (const film of actor.movies) {
@@ -145,16 +149,16 @@ function App() {
   };
 
   // Add watched
-  const addWatchedFromHome = async (element, userRating) => {
-    element.sessionid = cookies.sessionid;
+  const addWatchedFromHome = async (element: Movie, userRating: number) => {
+    // element.sessionid = cookies.sessionid;
     element.user_rating = userRating;
     const response = await service.addWatchedFromHome(element);
     console.log("user movie list before", userMovielist);
     const newUserMovieList = response.movielist;
     setUserMovielist(newUserMovieList);
     const newUserWatched = response.movielist.filter(
-      (movie) => movie.seen === false
-      );
+      (movie: Movie) => movie.seen === false
+    );
 
     console.log("user movie list after", newUserWatched);
     setWatchlistMovies(newUserWatched);
@@ -164,7 +168,7 @@ function App() {
     setUserActorlist(newUserActorList);
     const newUserDirectorList = response.directors;
     setUserDirectorlist(newUserDirectorList);
-    let newMovies = movies.slice(0, 200);
+    const newMovies = movies.slice(0, 200);
     for (const el of newMovies) {
       if (el.id === element.id) {
         el.seen = true;
@@ -175,9 +179,9 @@ function App() {
     }
 
     if (genres) {
-      let newGenres = genres.slice();
+      const newGenres = genres.slice();
       for (const el of newGenres) {
-        if (el.length > 0) {
+        if (el.movies.length > 0) {
           for (const e of el.movies) {
             if (e.id === element.id) {
               e.seen = true;
@@ -189,9 +193,9 @@ function App() {
         }
       }
     }
-      
+
     if (directors) {
-      let newDirectors = directors.slice();
+      const newDirectors = directors.slice();
       for (const el of newDirectors) {
         if (el.length > 0) {
           for (const e of el.movies) {
@@ -207,7 +211,7 @@ function App() {
     }
 
     if (actors) {
-      let newActors = actors.slice();
+      const newActors = actors.slice();
       for (const el of newActors) {
         if (el.length > 0) {
           for (const e of el.movies) {
@@ -221,15 +225,14 @@ function App() {
         }
       }
     }
-
   };
 
   // Delete
-  const deleteMovieFromHome = async (element) => {
-    element.sessionid = cookies.sessionid;
+  const deleteMovieFromHome = async (element: Movie) => {
+    // element.sessionid = cookies.sessionid;
     let newUserMovieList;
     const response = await service.deleteMovieFromHome(element);
-    let usermovielist = userMovielist.slice();
+    const usermovielist = userMovielist.slice();
     for (const el of usermovielist) {
       if (el.id === element.id) {
         el.seen = false;
@@ -241,11 +244,12 @@ function App() {
         setUserMovielist(newUserMovieList);
       }
     }
-    const newUserWatchlist = newUserMovieList.filter(
+    const newUserWatchlist = newUserMovieList?.filter(
       (movie) => movie.seen === false
-    );
+    ) as Array<Movie>;
+
     setWatchlistMovies(newUserWatchlist);
-    let newMovies = movies.slice();
+    const newMovies = movies.slice();
     for (const el of newMovies) {
       if (el.id === element.id) {
         el.seen = false;
@@ -254,10 +258,10 @@ function App() {
         setMovies(newMovies);
       }
     }
-    let newGenres = genres.slice();
-    for (const el of newGenres.movies) {
-      if (el.length > 0) {
-        for (const e of el) {
+    const newGenres = genres.slice();
+    for (const el of newGenres) {
+      if (el.movies.length > 0) {
+        for (const e of el.movies) {
           if (e.id === element.id) {
             e.seen = false;
             e.inWatchlist = false;
@@ -267,10 +271,10 @@ function App() {
         setGenres(newGenres);
       }
     }
-    let newDirectors = directors.slice();
-    for (const el of newDirectors.movies) {
-      if (el.length > 0) {
-        for (const e of el) {
+    const newDirectors = directors.slice();
+    for (const el of newDirectors) {
+      if (el.movies.length > 0) {
+        for (const e of el.movies) {
           if (e.id === element.id) {
             e.seen = false;
             e.inWatchlist = false;
@@ -280,10 +284,10 @@ function App() {
         setDirectors(newDirectors);
       }
     }
-    let newActors = actors.slice();
-    for (const el of newActors.movies) {
-      if (el.length > 0) {
-        for (const e of el) {
+    const newActors = actors.slice();
+    for (const el of newActors) {
+      if (el.movies.length > 0) {
+        for (const e of el.movies) {
           if (e.id === element.id) {
             e.seen = false;
             e.inWatchlist = false;
@@ -293,17 +297,17 @@ function App() {
         setActors(newActors);
       }
     }
-    let usergenrelist = userGenrelist.slice();
+    const usergenrelist = userGenrelist.slice();
     const newUserGenreList = usergenrelist.filter(
       (genre) => genre.movid !== element.id
     );
     setUserGenrelist(newUserGenreList);
-    let useractorlist = userActorlist.slice();
+    const useractorlist = userActorlist.slice();
     const newUserActorList = useractorlist.filter(
       (actor) => actor.movid !== element.id
     );
     setUserActorlist(newUserActorList);
-    let userdirectorlist = userDirectorlist.slice();
+    const userdirectorlist = userDirectorlist.slice();
     const newUserDirectorList = userdirectorlist.filter(
       (director) => director.movid !== element.id
     );
