@@ -939,6 +939,8 @@ export const onLoadWatchlist = async (req: Request, res: Response) => {
   try {
     const userEmail = req.body.email;
     const user = await movielist.findOne({ email: userEmail });
+    const a = req.params;
+    const b = a.id;
     const userMovies: Array<MovieExtended> = user.movielist;
     const watchlistMovies = userMovies.filter((movie) => movie.seen === false);
     const watchedMovies = userMovies.filter((movie) => movie.seen === true);
