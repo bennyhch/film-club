@@ -18,10 +18,9 @@ const APIKEY = process.env.API_KEY;
   e.g. random number 1-10
 */
 
-
 // To replace numGenTo10 etc
-function numGen (num:number) {
-  return Math.floor(Math.random() * (num+1))
+function numGen(num: number) {
+  return Math.floor(Math.random() * (num + 1));
 }
 
 /*
@@ -65,21 +64,22 @@ const duplicateCheck = (num: number, array: Array<number>) => {
 //   return arr;
 // };
 
-// onLoadArray: create an array with nine elements, without any duplications, 
+// onLoadArray: create an array with nine elements, without any duplications,
 // [1,2,3, (3 random num from 4-10), (... from 11-100), (... from 101-1000)]
 const onLoadArray = () => {
-  const random = (min: number, max: number) => Math.floor(Math.random() * (max - min)) + min;
+  const random = (min: number, max: number) =>
+    Math.floor(Math.random() * (max - min)) + min;
   const arr = [1, 2, 3];
   while (arr.length < 6) {
-    let newNum = random(4, 11);
+    const newNum = random(4, 11);
     if (duplicateCheck(newNum, arr)) arr.push(newNum);
   }
   while (arr.length < 8) {
-    let newNum = random(11, 101);
+    const newNum = random(11, 101);
     if (duplicateCheck(newNum, arr)) arr.push(newNum);
   }
-  while(arr.length<10) {
-    let newNum = random(101, 1001);
+  while (arr.length < 10) {
+    const newNum = random(101, 1001);
     if (duplicateCheck(newNum, arr)) arr.push(newNum);
   }
   return arr;
