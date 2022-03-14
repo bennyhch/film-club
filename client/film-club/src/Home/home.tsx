@@ -17,7 +17,7 @@ function Home(props: HomeProps) {
   const firstMovies: Array<Movie> = props.movies.slice(0, 99);
   const secondMovies: Array<Movie> = props.movies.slice(100, 199);
 
-  const [addWatch, setAddWatch] = useState({});
+  const [addWatch, setAddWatch] = useState<Movie>({} as Movie);
   const [show, setShow] = useState(false);
   const openModal = (element: Movie) => {
     setAddWatch(element);

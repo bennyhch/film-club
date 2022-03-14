@@ -11,14 +11,15 @@ const image1 = require("../images/btn-add.svg") as string;
 const image2 = require("../images/btn-added.svg") as string;
 
 import Modal from "../Modal/modal";
+import { WatchlistProps } from "../PropTypes";
 
-function Watchlist(props) {
+function Watchlist(props: WatchlistProps) {
   const [cookies, setCookie] = useCookies();
 
-  const [movieReels, setMovieReels] = useState();
-  const [genreReels, setGenreReels] = useState();
-  const [actorReels, setActorReels] = useState();
-  const [directorReels, setDirectorReels] = useState();
+  const [movieReels, setMovieReels] = useState<Array<Movie[]>>();
+  const [genreReels, setGenreReels] = useState<Array<Movie[]>>();
+  const [actorReels, setActorReels] = useState<Array<Movie[]>>();
+  const [directorReels, setDirectorReels] = useState<Array<Movie[]>>();
 
   useEffect(() => {
     service
@@ -54,7 +55,7 @@ function Watchlist(props) {
     setMovieReels(movieReels);
   }, []);
 
-  const watchlistToggle = (element) => {
+  const watchlistToggle = (element: Movie) => {
     if (element.inWatchlist === true) {
       return (
         <img
@@ -76,7 +77,7 @@ function Watchlist(props) {
     }
   };
 
-  const watchedToggle = (element) => {
+  const watchedToggle = (element: Movie) => {
     if (element.seen === true) {
       return (
         <img
@@ -91,7 +92,6 @@ function Watchlist(props) {
         <img
           className="seen-button"
           src={image1}
-          value={element}
           onClick={() => openModal(element)}
           alt="infinity"
         />
@@ -99,7 +99,7 @@ function Watchlist(props) {
     }
   };
 
-  const ratingToggle = (element) => {
+  const ratingToggle = (element: Movie) => {
     if (element.seen === true) {
       return <p className="rating-text">Your rating: {element.user_rating}</p>;
     } else {
@@ -109,9 +109,9 @@ function Watchlist(props) {
     }
   };
 
-  const [addWatch, setAddWatch] = useState({});
+  const [addWatch, setAddWatch] = useState<Movie>({} as Movie);
   const [show, setShow] = useState(false);
-  const openModal = (element) => {
+  const openModal = (element: Movie) => {
     setAddWatch(element);
     setShow(true);
   };
