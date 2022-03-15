@@ -16,7 +16,7 @@ function Reel(props: ReelProps) {
       return (
         <img
           className="infinity-button"
-          role="moviebutton"
+          role="delete-button"
           src={image2}
           onClick={() => movieContext.deleteMovieFromHome(element)}
         />
@@ -25,7 +25,7 @@ function Reel(props: ReelProps) {
       return (
         <img
           className="infinity-button"
-          role="moviebutton"
+          role="add-watchlist-button"
           src={image1}
           onClick={() => movieContext.addWatchlistFromHome(element)}
         />
@@ -38,6 +38,7 @@ function Reel(props: ReelProps) {
       return (
         <img
           className="seen-button"
+          role="delete-seen"
           src={image2}
           onClick={() => movieContext.deleteMovieFromHome(element)}
         />
@@ -46,6 +47,7 @@ function Reel(props: ReelProps) {
       return (
         <img
           className="seen-button"
+          role="add-seen"
           src={image1}
           onClick={() => props.openModal(element)}
         />
@@ -64,7 +66,7 @@ function Reel(props: ReelProps) {
   };
   return (
     <div className="movielist-container">
-      <ul className="infinity-movies">
+      <ul className="infinity-movies" role="list">
         {props.movies.map((el, index) => (
           <li key={index}>
             <img
