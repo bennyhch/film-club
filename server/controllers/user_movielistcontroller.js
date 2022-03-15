@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.deleteMovie = exports.addWatched = exports.addWatchlist = exports.onLoadWatched = exports.onLoadWatchlist = exports.onLoad = void 0;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require("dotenv").config();
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -23,18 +24,10 @@ const APIKEY = process.env.API_KEY;
   TODO Refactor this into one function.
   e.g. random number 1-10
 */
-const numGenTo10 = () => {
-    return Math.floor(Math.random() * 11);
-};
-const numGenTo18 = () => {
-    return Math.floor(Math.random() * 18);
-};
-const numGenTo100 = () => {
-    return Math.floor(Math.random() * 101);
-};
-const numGenTo1000 = () => {
-    return Math.floor(Math.random() * 1001);
-};
+// To replace numGenTo10 etc
+function numGen(num) {
+    return Math.floor(Math.random() * (num + 1));
+}
 /*
   TODO Refactor, in built method.
 */
@@ -49,28 +42,50 @@ const duplicateCheck = (num, array) => {
  *
  * @returns an array of 1,2,3[3 random numbers between 1-10][]
  */
+// const onLoadArray = () => {
+//   const arr = [1, 2, 3];
+//   while (arr.length < 6) {
+//     let num = numGenTo10();
+//     const check = duplicateCheck(num, arr);
+//     if (check && num !== 0) {
+//       arr.push(num);
+//     }
+//   }
+//   while (arr.length < 8) {
+//     let num = numGenTo100();
+//     const check = duplicateCheck(num, arr);
+//     if (check && num !== 0) {
+//       arr.push(num);
+//     }
+//   }
+//   while (arr.length < 10) {
+//     let num = numGenTo1000();
+//     const check = duplicateCheck(num, arr);
+//     if (check && num !== 0) {
+//       arr.push(num);
+//     }
+//   }
+//   return arr;
+// };
+// onLoadArray: create an array with nine elements, without any duplications,
+// [1,2,3, (3 random num from 4-10), (... from 11-100), (... from 101-1000)]
 const onLoadArray = () => {
+    const random = (min, max) => Math.floor(Math.random() * (max - min)) + min;
     const arr = [1, 2, 3];
     while (arr.length < 6) {
-        const num = numGenTo10();
-        const check = duplicateCheck(num, arr);
-        if (check && num !== 0) {
-            arr.push(num);
-        }
+        const newNum = random(4, 11);
+        if (duplicateCheck(newNum, arr))
+            arr.push(newNum);
     }
     while (arr.length < 8) {
-        const num = numGenTo100();
-        const check = duplicateCheck(num, arr);
-        if (check && num !== 0) {
-            arr.push(num);
-        }
+        const newNum = random(11, 101);
+        if (duplicateCheck(newNum, arr))
+            arr.push(newNum);
     }
     while (arr.length < 10) {
-        const num = numGenTo1000();
-        const check = duplicateCheck(num, arr);
-        if (check && num !== 0) {
-            arr.push(num);
-        }
+        const newNum = random(101, 1001);
+        if (duplicateCheck(newNum, arr))
+            arr.push(newNum);
     }
     return arr;
 };
@@ -369,8 +384,9 @@ const onLoadArrayGenreNoDB = () => __awaiter(void 0, void 0, void 0, function* (
     try {
         const arr = [];
         const finalResponse = [];
+        // arr to contain 3 elements with random different numbers ranging from 0-18 inclusively
         while (arr.length < 3) {
-            const num = numGenTo18();
+            const num = numGen(18);
             const check = duplicateCheck(num, arr);
             if (check) {
                 arr.push(num);
@@ -526,7 +542,8 @@ const onLoadArrayGenreWithDB = (array, user) => __awaiter(void 0, void 0, void 0
             genreArray.push(maxGenre, maxHighest);
         }
         while (genreArray.length < 3) {
-            const num = numGenTo18();
+            // const num = numGenTo18();
+            const num = numGen(18);
             const randomGenre = genreIDlist[num];
             const check = duplicateCheck(randomGenre, genreArray);
             if (check) {
@@ -844,6 +861,7 @@ const onLoad = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(500);
     }
 });
+exports.onLoad = onLoad;
 /**
  *
  * Find a user's movie list, and separates out into
@@ -856,6 +874,8 @@ const onLoadWatchlist = (req, res) => __awaiter(void 0, void 0, void 0, function
     try {
         const userEmail = req.body.email;
         const user = yield movielist.findOne({ email: userEmail });
+        const a = req.params;
+        const b = a.id;
         const userMovies = user.movielist;
         const watchlistMovies = userMovies.filter((movie) => movie.seen === false);
         const watchedMovies = userMovies.filter((movie) => movie.seen === true);
@@ -911,7 +931,9 @@ const onLoadWatchlist = (req, res) => __awaiter(void 0, void 0, void 0, function
                  * Movies they have been in, sort by popularity.
                  */
                 const apiResponse = yield axios.get(`${apiUrl}person/${faveDirectors[i]}/movie_credits?api_key=${APIKEY}&language=en-US`);
-                const array = apiResponse.data.crew;
+                let array = apiResponse.data.crew;
+                array = array.filter((film) => film.job === "Director");
+                console.log(array);
                 array.sort(function (a, b) {
                     return b.popularity - a.popularity;
                 });
@@ -930,7 +952,6 @@ const onLoadWatchlist = (req, res) => __awaiter(void 0, void 0, void 0, function
                 finalResponse.actorMovieLists.push(array);
             }
         }
-        console.log("hello after actor");
         if (watchedMovies.length === 0) {
             const arr = onLoadArray();
             for (let i = 0; i < arr.length; i++) {
@@ -947,6 +968,7 @@ const onLoadWatchlist = (req, res) => __awaiter(void 0, void 0, void 0, function
         res.status(500);
     }
 });
+exports.onLoadWatchlist = onLoadWatchlist;
 const onLoadWatched = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const userEmail = req.body.email;
@@ -1001,6 +1023,7 @@ const onLoadWatched = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         res.status(500);
     }
 });
+exports.onLoadWatched = onLoadWatched;
 /**
  * Adds to watchlist, updates db.
  *
@@ -1040,6 +1063,7 @@ const addWatchlist = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         res.status(500);
     }
 });
+exports.addWatchlist = addWatchlist;
 const addWatched = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const movieid = req.body.id;
@@ -1096,6 +1120,7 @@ const addWatched = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         res.status(500);
     }
 });
+exports.addWatched = addWatched;
 const deleteMovie = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const useremail = req.body.sessionid;
@@ -1120,11 +1145,12 @@ const deleteMovie = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         res.status(500);
     }
 });
+exports.deleteMovie = deleteMovie;
 module.exports = {
-    onLoad,
-    addWatchlist,
-    addWatched,
-    deleteMovie,
-    onLoadWatchlist,
-    onLoadWatched,
+    onLoad: exports.onLoad,
+    addWatchlist: exports.addWatchlist,
+    addWatched: exports.addWatched,
+    deleteMovie: exports.deleteMovie,
+    onLoadWatchlist: exports.onLoadWatchlist,
+    onLoadWatched: exports.onLoadWatched,
 };

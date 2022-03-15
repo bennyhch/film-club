@@ -326,6 +326,10 @@ function App() {
         addWatchlistFromHome,
         setWatchlistMovies,
         addWatchedFromHome,
+        setGenres,
+        setMovies,
+        setActors,
+        setDirectors,
       }}
     >
       <div>
@@ -336,30 +340,7 @@ function App() {
             <Route path="/" element={<Login />} />
             <Route path="/home" element={<Home />} />
             <Route path="/watchlist" element={<Watchlist />} />
-            <Route
-              path="/watched"
-              element={
-                <Watched
-                  actors={actors}
-                  directors={directors}
-                  genres={genres}
-                  movies={movies}
-                  userMovielist={userMovielist}
-                  userActorlist={userActorlist}
-                  userDirectorlist={userDirectorlist}
-                  userGenrelist={userGenrelist}
-                  deleteMovieFromHome={deleteMovieFromHome}
-                  watchlistMovies={watchlistMovies}
-                  watchedMovies={watchedMovies}
-                  addWatchlistFromHome={addWatchlistFromHome}
-                  addWatchedFromHome={addWatchedFromHome}
-                  setWatchlistMovies={setWatchlistMovies}
-                  setGenres={setGenres}
-                  setActors={setActors}
-                  setDirectors={setDirectors}
-                />
-              }
-            />
+            <Route path="/watched" element={<Watched />} />
             <Route path="/collections" element={<Collections />} />
           </Routes>
         </Router>

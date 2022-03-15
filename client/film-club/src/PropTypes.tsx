@@ -31,6 +31,10 @@ export type ContextProps = {
   addWatchlistFromHome: (filmToAdd: Movie) => void;
   addWatchedFromHome: (element: Movie, userRating: number) => void;
   deleteMovieFromHome: (element: Movie) => void;
+  setGenres: Dispatch<SetStateAction<Array<NewGenreList>>>;
+  setDirectors: Dispatch<SetStateAction<Array<ListByType<CrewCredit>>>>;
+  setActors: Dispatch<SetStateAction<Array<ListByType<CastCredit>>>>;
+  setMovies: Dispatch<SetStateAction<APIMovieWithGenre[]>>;
 };
 
 export type WatchlistProps = {

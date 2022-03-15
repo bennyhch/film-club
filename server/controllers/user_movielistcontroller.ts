@@ -1021,7 +1021,10 @@ export const onLoadWatchlist = async (req: Request, res: Response) => {
         const apiResponse = await axios.get(
           `${apiUrl}person/${faveDirectors[i]}/movie_credits?api_key=${APIKEY}&language=en-US`
         );
-        const array: Array<CrewCredit> = apiResponse.data.crew;
+        let array: Array<CrewCredit> = apiResponse.data.crew;
+        array = array.filter((film) => film.job === "Director");
+        console.log(array);
+
         array.sort(function (a, b) {
           return b.popularity - a.popularity;
         });
@@ -1044,7 +1047,6 @@ export const onLoadWatchlist = async (req: Request, res: Response) => {
         finalResponse.actorMovieLists.push(array);
       }
     }
-    console.log("hello after actor");
 
     if (watchedMovies.length === 0) {
       const arr = onLoadArray();

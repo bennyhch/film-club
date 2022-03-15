@@ -69,11 +69,23 @@ function Reel(props: ReelProps) {
       <ul className="infinity-movies" role="list">
         {props.movies.map((el, index) => (
           <li key={index}>
-            <img
-              className="movie-image"
-              src={"https://image.tmdb.org/t/p/w300" + el.poster_path}
-              alt="Not found."
-            />
+            {el.poster_path ? (
+              <img
+                className="movie-image"
+                src={"https://image.tmdb.org/t/p/w300" + el.poster_path}
+              />
+            ) : (
+              <h2
+                className="movie-image"
+                style={{
+                  width: "min-content",
+                  whiteSpace: "normal",
+                  fontSize: 12,
+                }}
+              >
+                {el.title}
+              </h2>
+            )}
             <p className="movie-title-text">{el.title}</p>
             <p className="watchlist-text">Watchlist</p>
             <p className="watched-text">Watched</p>

@@ -1,6 +1,5 @@
 import "../App.css";
 import "./watchlist.css";
-import Header from "../Header/header";
 import service from "../service";
 import { useContext, useEffect, useState } from "react";
 import { useCookies } from "react-cookie";

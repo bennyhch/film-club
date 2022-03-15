@@ -2,7 +2,7 @@ import "../App.css";
 import "./watched.css";
 import Header from "../Header/header";
 import service from "../service";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -11,8 +11,12 @@ const image1 = require("../images/btn-add.svg");
 const image2 = require("../images/btn-added.svg");
 import Modal from "../Modal/modal";
 import { WatchedProps } from "../PropTypes";
+import Reel from "../Reel/Reel";
+import { MovieContext } from "../App";
 
-function Watched(props: WatchedProps) {
+function Watched() {
+  const movieContext = useContext(MovieContext);
+
   const [cookies, setCookie] = useCookies();
   const [fiveMovies, setFiveMovies] = useState<Array<Movie>>([]);
   const [fourMovies, setFourMovies] = useState<Array<Movie>>([]);
@@ -49,10 +53,10 @@ function Watched(props: WatchedProps) {
           (movie: Movie) => movie.user_rating === 1
         );
         setOneMovies(oneMovies);
-        props.setWatchlistMovies(user);
-        props.setGenres(genres);
-        props.setActors(actors);
-        props.setDirectors(directors);
+        movieContext.setWatchlistMovies(user);
+        movieContext.setGenres(genres);
+        movieContext.setActors(actors);
+        movieContext.setDirectors(directors);
       })
       .catch((error) => {
         console.log(error, "error occurred on load");
@@ -65,7 +69,7 @@ function Watched(props: WatchedProps) {
         <img
           className="infinity-button"
           src={image2}
-          onClick={() => props.deleteMovieFromHome(element)}
+          onClick={() => movieContext.deleteMovieFromHome(element)}
         />
       );
     } else {
@@ -73,7 +77,7 @@ function Watched(props: WatchedProps) {
         <img
           className="infinity-button"
           src={image1}
-          onClick={() => props.addWatchlistFromHome(element)}
+          onClick={() => movieContext.addWatchlistFromHome(element)}
         />
       );
     }
@@ -85,7 +89,7 @@ function Watched(props: WatchedProps) {
         <img
           className="seen-button"
           src={image2}
-          onClick={() => props.deleteMovieFromHome(element)}
+          onClick={() => movieContext.deleteMovieFromHome(element)}
         />
       );
     } else {
@@ -117,43 +121,61 @@ function Watched(props: WatchedProps) {
   };
   const closeModal = () => setShow(false);
 
-  return (
-    <div className="App">
-      <Header></Header>
+  const renderModal = () => {
+    return (
       <div className="modal-container">
         {show ? (
           <Modal
             closeModal={closeModal}
-            addWatchedFromHome={props.addWatchedFromHome}
+            addWatchedFromHome={movieContext.addWatchedFromHome}
             addWatch={addWatch}
             show={show}
           />
         ) : null}
       </div>
-      {props.watchedMovies.length ? (
-        <div className="infinity">
-          <h3 className="infinity-title">Your 5 Star Films:</h3>
-          <div className="movielist-container">
-            <ul className="infinity-movies">
-              {fiveMovies.map((el, index) => (
-                <li key={index}>
-                  <img
-                    className="movie-image"
-                    src={"https://image.tmdb.org/t/p/w300" + el.poster_path}
-                    alt="Not found."
-                  />
-                  <p className="movie-title-text">{el.title}</p>
-                  <p className="watchlist-text">Watchlist</p>
-                  <p className="watched-text">Watched</p>
-                  {watchlistToggle(el)}
-                  {watchedToggle(el)}
-                  {ratingToggle(el)}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      ) : (
+    );
+  };
+
+  return movieContext.watchedMovies.length > 0 ? (
+    <div className="App">
+      {renderModal()}
+      <div className="infinity">
+        <h3 className="infinity-title">Your 5 Star Films:</h3>
+        {fiveMovies && <Reel movies={fiveMovies} openModal={openModal} />}
+      </div>
+      <div className="infinity">
+        <h3 className="infinity-title">Your 4 Star Films:</h3>
+        {fourMovies && <Reel movies={fourMovies} openModal={openModal} />}
+      </div>
+      <div className="infinity">
+        <h3 className="infinity-title">Your 3 Star Films:</h3>
+        {threeMovies && <Reel movies={threeMovies} openModal={openModal} />}
+      </div>
+      <div className="infinity">
+        <h3 className="infinity-title">Your 2 Star Films:</h3>
+        {twoMovies && <Reel movies={twoMovies} openModal={openModal} />}
+      </div>
+      <div className="infinity">
+        <h3 className="infinity-title">Your 1 Star Films:</h3>
+        {oneMovies && <Reel movies={oneMovies} openModal={openModal} />}
+      </div>
+    </div>
+  ) : (
+    <div className="watched-page">
+      <div class-name="empty-watched-box">
+        <p>
+          Call yourself a film fan? Mark movies as watched to see them appear on
+          your watched list.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export default Watched;
+
+/* 
+
         <div className="watched-page">
           <div class-name="empty-watched-box">
             <p>
@@ -162,105 +184,4 @@ function Watched(props: WatchedProps) {
             </p>
           </div>
         </div>
-      )}
-      {props.watchedMovies.length ? (
-        <div className="infinity">
-          <h3 className="infinity-title">Your 4 Star Films:</h3>
-          <div className="movielist-container">
-            <ul className="infinity-movies">
-              {fourMovies.map((el, index) => (
-                <li key={index}>
-                  <img
-                    className="movie-image"
-                    src={"https://image.tmdb.org/t/p/w300" + el.poster_path}
-                    alt="Not found."
-                  />
-                  <p className="movie-title-text">{el.title}</p>
-                  <p className="watchlist-text">Watchlist</p>
-                  <p className="watched-text">Watched</p>
-                  {watchlistToggle(el)}
-                  {watchedToggle(el)}
-                  {ratingToggle(el)}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      ) : null}
-      {props.watchedMovies.length ? (
-        <div className="infinity">
-          <h3 className="infinity-title">Your 3 Star Films:</h3>
-          <div className="movielist-container">
-            <ul className="infinity-movies">
-              {threeMovies.map((el, index) => (
-                <li key={index}>
-                  <img
-                    className="movie-image"
-                    src={"https://image.tmdb.org/t/p/w300" + el.poster_path}
-                    alt="Not found."
-                  />
-                  <p className="movie-title-text">{el.title}</p>
-                  <p className="watchlist-text">Watchlist</p>
-                  <p className="watched-text">Watched</p>
-                  {watchlistToggle(el)}
-                  {watchedToggle(el)}
-                  {ratingToggle(el)}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      ) : null}
-      {props.watchedMovies.length ? (
-        <div className="infinity">
-          <h3 className="infinity-title">Your 2 Star Films:</h3>
-          <div className="movielist-container">
-            <ul className="infinity-movies">
-              {twoMovies.map((el, index) => (
-                <li key={index}>
-                  <img
-                    className="movie-image"
-                    src={"https://image.tmdb.org/t/p/w300" + el.poster_path}
-                    alt="Not found."
-                  />
-                  <p className="movie-title-text">{el.title}</p>
-                  <p className="watchlist-text">Watchlist</p>
-                  <p className="watched-text">Watched</p>
-                  {watchlistToggle(el)}
-                  {watchedToggle(el)}
-                  {ratingToggle(el)}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      ) : null}
-      {props.watchedMovies.length ? (
-        <div className="infinity">
-          <h3 className="infinity-title">Your 1 Star Films:</h3>
-          <div className="movielist-container">
-            <ul className="infinity-movies">
-              {oneMovies.map((el, index) => (
-                <li key={index}>
-                  <img
-                    className="movie-image"
-                    src={"https://image.tmdb.org/t/p/w300" + el.poster_path}
-                    alt="Not found."
-                  />
-                  <p className="movie-title-text">{el.title}</p>
-                  <p className="watchlist-text">Watchlist</p>
-                  <p className="watched-text">Watched</p>
-                  {watchlistToggle(el)}
-                  {watchedToggle(el)}
-                  {ratingToggle(el)}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      ) : null}
-    </div>
-  );
-}
-
-export default Watched;
+*/
