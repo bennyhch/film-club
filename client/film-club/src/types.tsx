@@ -22,7 +22,6 @@ type UserMovieList = {
 
 // The type in the collection
 type Movie = {
-  collectionID: number;
   inWatchlist: boolean;
   seen: boolean;
   user_rating: number | null;
