@@ -334,26 +334,7 @@ function App() {
         <Router>
           <Routes>
             <Route path="/" element={<Login />} />
-            <Route
-              path="/home"
-              element={
-                <Home
-                  actors={actors}
-                  directors={directors}
-                  genres={genres}
-                  movies={movies}
-                  userMovielist={userMovielist}
-                  userActorlist={userActorlist}
-                  userDirectorlist={userDirectorlist}
-                  userGenrelist={userGenrelist}
-                  deleteMovieFromHome={deleteMovieFromHome}
-                  watchlistMovies={[watchlistMovies, setWatchlistMovies]}
-                  watchedMovies={watchedMovies}
-                  addWatchlistFromHome={addWatchlistFromHome}
-                  addWatchedFromHome={addWatchedFromHome}
-                />
-              }
-            />
+            <Route path="/home" element={<Home />} />
             <Route
               path="/watchlist"
               element={
