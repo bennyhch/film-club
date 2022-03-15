@@ -209,4 +209,3 @@ export const mockHomeProps = {
   addWatchedFromHome: (element, userRating) => ({element: element, userRating: userRating}),
   deleteMovieFromHome: (element) => element
 }
-

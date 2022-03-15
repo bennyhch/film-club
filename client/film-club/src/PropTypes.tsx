@@ -16,6 +16,23 @@ export type HomeProps = {
   deleteMovieFromHome: (element: Movie) => void;
 };
 
+export type ContextProps = {
+  actors: Array<ListByType<CastCredit>>;
+  directors: Array<ListByType<CrewCredit>>;
+  genres: Array<NewGenreList>;
+  movies: Array<Movie>;
+  userMovielist: Array<Movie>;
+  userActorlist: Array<UserActorRating>;
+  userDirectorlist: Array<UserDirectorRating>;
+  userGenrelist: Array<GenreRating>;
+  watchlistMovies: Array<Movie>;
+  setWatchlistMovies: Dispatch<SetStateAction<Movie[]>>;
+  watchedMovies: Array<Movie>;
+  addWatchlistFromHome: (filmToAdd: Movie) => void;
+  addWatchedFromHome: (element: Movie, userRating: number) => void;
+  deleteMovieFromHome: (element: Movie) => void;
+};
+
 export type WatchlistProps = {
   setActors: Dispatch<SetStateAction<Array<ListByType<CastCredit>>>>;
   actors: Array<ListByType<CastCredit>>;
@@ -61,4 +78,9 @@ export type ModalProps = {
   show: boolean;
   addWatch: Movie;
   addWatchedFromHome: (element: Movie, userRating: number) => void;
+};
+
+export type ReelProps = {
+  movies: Movie[];
+  openModal: (element: Movie) => void;
 };

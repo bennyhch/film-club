@@ -12,8 +12,6 @@ import { useState } from "react";
 import { HomeProps } from "../PropTypes";
 
 function Home(props: HomeProps) {
-  const [cookies, setCookie] = useCookies();
-
   const firstMovies: Array<Movie> = props.movies.slice(0, 99);
   const secondMovies: Array<Movie> = props.movies.slice(100, 199);
 
