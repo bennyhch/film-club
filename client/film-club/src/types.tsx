@@ -20,7 +20,7 @@ type UserMovieList = {
   __v: number;
 };
 
-// The type in the collection
+// The main type that is used to render the movie cards.
 type Movie = {
   inWatchlist: boolean;
   seen: boolean;
@@ -45,7 +45,7 @@ interface APIMovieWithGenre extends Movie {
 }
 
 // The type in the 'movielist'
-
+// Not necessary in the front end??
 interface MovieExtended extends Movie {
   backdrop_path: string;
   belongs_to_collection: TMDBCollection;
@@ -132,41 +132,6 @@ interface TMDBCollection {
   poster_path: string;
   backdrop_path: string;
 }
-
-// interface OnLoadResponse {
-//   trendingMovies: Array<APIMovieWithGenre>;
-//   user: UserMovieList;
-//   actors: Array<CastCredit>;
-//   directors: Array<CrewCredit>;
-// }
-
-// type OnLoadResponse = Array<
-//   Array<APIMovieWithGenre> |
-//   UserMovieList |
-//   Array<NewGenreList> |
-//   Array<CastCredit |
-//   Array<CrewCredit>
-// >
-
-// type CreditFromAPI = {
-//   adult: boolean;
-//   backdrop_path: string;
-//   genre_ids: Array<number>;
-//   original_language: string;
-//   original_title: string;
-//   poster_path: string;
-//   vote_count: number;
-//   id: number;
-//   vote_average: number;
-//   video: number;
-//   overview: string;
-//   release_date: string;
-//   title: string;
-//   popularity: number;
-//   character: string;
-//   credit_id: string;
-//   order: number;
-// };
 
 interface CrewCredit extends Credit {
   name: string;
