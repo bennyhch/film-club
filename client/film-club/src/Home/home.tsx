@@ -45,7 +45,6 @@ function Home() {
 
   return (
     <div className="App">
-      <Header></Header>
       {renderModal()}
 
       <div className="infinity">
@@ -97,7 +96,7 @@ function Home() {
       )}
       {movieContext.genres[1] && (
         <div className="infinity">
-          <h3 className="infinity-title">{movieContext.genres[0].genreName}</h3>
+          <h3 className="infinity-title">{movieContext.genres[1].genreName}</h3>
           <Reel openModal={openModal} movies={movieContext.genres[1].movies} />
         </div>
       )}

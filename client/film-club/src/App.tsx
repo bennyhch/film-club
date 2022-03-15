@@ -10,6 +10,7 @@ import Collections from "./Collections/collections";
 import service from "./service";
 import { useCookies } from "react-cookie";
 import { ContextProps, HomeProps } from "./PropTypes";
+import Header from "./Header/header";
 // import authAPI from './authAPI';
 
 export const MovieContext = createContext<ContextProps>({} as ContextProps);
@@ -144,7 +145,6 @@ function App() {
     }
   };
 
-  // Add watched
   const addWatchedFromHome = async (element: Movie, userRating: number) => {
     // element.sessionid = cookies.sessionid;
     element.user_rating = userRating;
@@ -223,7 +223,6 @@ function App() {
     }
   };
 
-  // Delete
   const deleteMovieFromHome = async (element: Movie) => {
     // element.sessionid = cookies.sessionid;
     let newUserMovieList;
@@ -332,33 +331,11 @@ function App() {
       <div>
         {/* <authAPI.Provider value={{auth, setAuth}}> */}
         <Router>
+          <Header></Header>
           <Routes>
             <Route path="/" element={<Login />} />
             <Route path="/home" element={<Home />} />
-            <Route
-              path="/watchlist"
-              element={
-                <Watchlist
-                  actors={actors}
-                  directors={directors}
-                  genres={genres}
-                  setGenres={setGenres}
-                  setActors={setActors}
-                  setDirectors={setDirectors}
-                  movies={movies}
-                  userMovielist={[userMovielist, setUserMovielist]}
-                  userActorlist={userActorlist}
-                  userDirectorlist={userDirectorlist}
-                  userGenrelist={userGenrelist}
-                  deleteMovieFromHome={deleteMovieFromHome}
-                  watchlistMovies={watchlistMovies}
-                  watchedMovies={watchedMovies}
-                  addWatchlistFromHome={addWatchlistFromHome}
-                  addWatchedFromHome={addWatchedFromHome}
-                  setWatchlistMovies={setWatchlistMovies}
-                />
-              }
-            />
+            <Route path="/watchlist" element={<Watchlist />} />
             <Route
               path="/watched"
               element={
