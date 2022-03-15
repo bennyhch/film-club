@@ -1,6 +1,6 @@
 "use strict";
 
-import e, { Request, Response } from "express";
+import { Request, Response } from "express";
 
 require("dotenv").config();
 const user = require("../models/user");
@@ -926,9 +926,11 @@ const onLoad = async (req: Request, res: Response) => {
     finalResponse.push(user);
     res.status(200);
     res.send(finalResponse);
+    res.end();
   } catch (e) {
     console.error(e, "onLoad is failing");
     res.status(500);
+    res.end();
   }
 };
 /**
@@ -1267,6 +1269,8 @@ const deleteMovie = async (req: Request, res: Response) => {
 };
 
 module.exports = {
+  duplicateCheck,
+  onLoadArray,
   onLoad,
   addWatchlist,
   addWatched,

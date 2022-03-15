@@ -1,16 +1,16 @@
 /* 
   Deal with collections later.
 */
-type UserMovieCollection = Array<Movie>;
+export type UserMovieCollection = Array<Movie>;
 
-type User = {
+export type User = {
   id: string;
   email: string;
   password: string;
   _v: number;
 };
 
-type UserMovieList = {
+export type UserMovieList = {
   email: string;
   _id: string;
   movielist: Array<MovieExtended>;
@@ -21,7 +21,7 @@ type UserMovieList = {
 };
 
 // The type in the collection
-type Movie = {
+export type Movie = {
   collectionID: number;
   inWatchlist: boolean;
   seen: boolean;
@@ -37,7 +37,7 @@ type Movie = {
 
 // The type in the 'movielist'
 
-interface MovieExtended extends Movie {
+export interface MovieExtended extends Movie {
   backdrop_path: string;
   belongs_to_collection: TMDBCollection;
   budget: number;
@@ -59,7 +59,7 @@ interface MovieExtended extends Movie {
   credits: Credits;
 }
 
-interface GenreRating {
+export interface GenreRating {
   movid?: number;
   name: string;
   id: number;
@@ -67,7 +67,7 @@ interface GenreRating {
   count?: number;
 }
 
-interface DirectorRating {
+export interface DirectorRating {
   movid?: number;
   name: string;
   id: number;
@@ -75,19 +75,19 @@ interface DirectorRating {
   count?: number;
 }
 
-interface ActorRating {
+export interface ActorRating {
   name: string;
   id: number;
   rating: number | null;
   count: number;
 }
 
-interface Genre {
+export interface Genre {
   id: number;
   name: string;
 }
 
-interface MovieGenreRating {
+export interface MovieGenreRating {
   id: number;
   movid: number;
   genreId: number;
@@ -95,21 +95,21 @@ interface MovieGenreRating {
   rating: number;
 }
 
-interface UserDirector {
+export interface UserDirector {
   movid: number;
   id: number;
   name: string;
   rating: number;
 }
 
-interface UserActor {
+export interface UserActor {
   movid: number;
   id: number;
   name: string;
   rating: number;
 }
 
-interface Credits {
+export interface Credits {
   cast: Array<CastCredit>;
   crew: Array<CrewCredit>;
 }
@@ -117,14 +117,14 @@ interface Credits {
 /* 
 API types
 */
-interface TMDBCollection {
+export interface TMDBCollection {
   id: number;
   name: string;
   poster_path: string;
   backdrop_path: string;
 }
 
-interface OnLoadResponse {
+export interface OnLoadResponse {
   trendingMovies: Array<APIMovieWithGenre>;
   user: UserMovieList;
   actors: Array<CastCredit>;
@@ -151,7 +151,7 @@ interface OnLoadResponse {
 //   order: number;
 // };
 
-interface CrewCredit {
+export interface CrewCredit {
   id: number;
   name: string;
   department: string;
@@ -175,7 +175,7 @@ interface CrewCredit {
   user_rating: number;
 }
 
-type CastCredit = {
+export type CastCredit = {
   character: string;
   credit_id: string;
   release_date: string;
@@ -194,7 +194,7 @@ type CastCredit = {
   poster_path: string;
 };
 
-type APIMovieWithGenre = {
+export type APIMovieWithGenre = {
   adult: boolean;
   backdrop_path: string;
   genre_ids: Array<number>;
@@ -222,30 +222,30 @@ type APIMovieWithGenre = {
       ...
     ]
 */
-type GenreResponse = Array<NewGenreList>;
+export type GenreResponse = Array<NewGenreList>;
 
-type NewGenreList = {
+export type NewGenreList = {
   genreName: string;
   movies: Array<APIMovieWithGenre> | undefined;
 };
 
-type NewDirectorList = {
+export type NewDirectorList = {
   directorName: string;
   movies: Array<CrewCredit>;
 };
-type NewActorList = {
+export type NewActorList = {
   actorName: string;
   movies: Array<CastCredit>;
 };
 
 // User also has _id and __v.
-type CreateUserReturn = {
+export type CreateUserReturn = {
   newUser: User;
   newMovielistUser: UserMovieList;
   newMovieCollectionUser: MovieCollectionResponse;
 };
 
-type MovieCollectionResponse = {
+export type MovieCollectionResponse = {
   email: string;
   _id: string;
   person?: {
@@ -255,7 +255,7 @@ type MovieCollectionResponse = {
   moviecoll: UserMovieCollection;
 };
 
-type WatchlistResponse = {
+export type WatchlistResponse = {
   watchlistMovieLists: Array<Array<MovieExtended>>;
   genreMovieLists: Array<Array<APIMovieWithGenre>>;
   actorMovieLists: Array<Array<CastCredit>>;

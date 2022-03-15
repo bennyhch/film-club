@@ -15,11 +15,14 @@ router.post('/register', user.createUser);
 router.post('/', user.loginUser);
 
 //from home page
-router.post('/home', user_movielist.onLoad);
-router.post('/home/watchlist', user_movielist.addWatchlist);
-router.post('/home/watched', user_movielist.addWatched);
-router.delete('/home', user_movielist.deleteMovie);
-router.post('/home', user.logoutUser);
+router.post('/home', (req, res) => {
+  res.sendStatus(200);
+})
+// router.post('/home', user_movielist.onLoad);
+// router.post('/home/watchlist', user_movielist.addWatchlist);
+// router.post('/home/watched', user_movielist.addWatched);
+// router.delete('/home', user_movielist.deleteMovie);
+// router.post('/home', user.logoutUser);
 
 //from watchlist page
 router.post('/watchlist', user_movielist.onLoadWatchlist);

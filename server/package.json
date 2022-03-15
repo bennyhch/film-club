@@ -7,7 +7,7 @@
     "build": "tsc",
     "prestart": "npm run build",
     "start": "nodemon .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "author": "Chris Mitchell",
   "license": "ISC",
@@ -30,7 +30,9 @@
     "@typescript-eslint/parser": "^5.14.0",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.10.0",
-    "eslint-plugin-react": "^7.29.3"
+    "eslint-plugin-react": "^7.29.3",
+    "jest": "^27.5.1",
+    "supertest": "^6.2.2"
   },
   "config": {
     "commitizen": {
