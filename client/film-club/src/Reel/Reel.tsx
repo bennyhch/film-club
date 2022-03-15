@@ -16,6 +16,7 @@ function Reel(props: ReelProps) {
       return (
         <img
           className="infinity-button"
+          role="moviebutton"
           src={image2}
           onClick={() => movieContext.deleteMovieFromHome(element)}
         />
@@ -24,6 +25,7 @@ function Reel(props: ReelProps) {
       return (
         <img
           className="infinity-button"
+          role="moviebutton"
           src={image1}
           onClick={() => movieContext.addWatchlistFromHome(element)}
         />

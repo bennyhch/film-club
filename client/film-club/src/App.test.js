@@ -12,9 +12,6 @@ test("Renders Headline", () => {
   expect(linkElement).toBeInTheDocument();
 });
 
-test("Fetch response returns correctly", () => {
-    
-});
 
 
 

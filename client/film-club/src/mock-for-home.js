@@ -88,7 +88,7 @@ for (let i = 1; i < 6; i++) {
   const copy = {};
   Object.assign(copy, director);
   copy.id = i;
-  directorList.push(copy);
+  directorsonList.push(copy);
 }
 
 export const directorList = {
