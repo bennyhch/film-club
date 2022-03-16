@@ -1,6 +1,6 @@
 'use strict';
 
-const mongoose = require('./index.js');
+import mongoose from './index.js';
 const Schema = mongoose.Schema;
 /* 
 	email to identify user.
@@ -12,14 +12,22 @@ const Schema = mongoose.Schema;
 
 
 // Document interface - Typescript
-interface movieList {
+interface MovieListInfo {
+	email: string;
+	movielist: Array<MovieList>;
+	genres: Array<Genres>;
+	directors: Array<Directors>;
+	actors: Array<Actors>;
+}
+
+interface MovieList {
 	inWatchlist: boolean;
 	seen: boolean;
 	user_rating: number;
 	backdrop_path: string;
-	// belongs to collection 
+	belongs_to_collection: Collection;
 	budget: number;
-	// genres
+	genres: Array<GenresMovielist>;
 	homepage: string;
 	id: number;
 	imdb_id: string,
@@ -35,62 +43,67 @@ interface movieList {
 	video: boolean;
 	vote_average: number;
 	vote_count: number;
-	//credits
+	credits: Credits;
 }
 
+interface GenresMovielist {
+	id: number;
+	name: string;
+}
 
+interface Collection {
+	id: number;
+	name: string;
+	poster_path: string;
+	backdrop_path: string;
+}
 
-type CastCredit = {
-  character: string;
-  credit_id: string;
-  release_date?: string;
-  vote_count?: number;
-  video: false;
-  adult: false;
-  vote_average: number;
-  title: string;
-  genre_ids: Array<number>;
-  original_language: string;
-  original_title: string;
-  popularity: number;
-  id: number;
-  backdrop_path: string;
-  overview: string;
-  poster_path: string;
+interface CastCredit {
+	id: number;
+	known_for_department: string;
+	name: string;
+	character: string;
+	credit_id: string;
+	order: number;
 };
-
 interface CrewCredit {
-  id: number;
-  name: string;
-  department: string;
-  original_language: string;
-  original_title: string;
-  job: string;
-  overview: string;
-  vote_count: number;
-  video: boolean;
-  poster_path: string;
-  backdrop_path: string;
-  title: string;
-  popularity: number;
-  genre_ids: [12, 18, 14, 878];
-  vote_average: number;
-  adult: boolean;
-  release_date: string;
-  credit_id: string;
-  inWatchlist: boolean;
-  seen: boolean;
-  user_rating: number;
+	id: number;
+	known_for_department: string;
+	name: string;
+	credit_id: string;
+	department: string;
+	job: string;
 }
+
 
 interface Credits {
   cast: Array<CastCredit>;
   crew: Array<CrewCredit>;
 }
 
+interface Genres {
+	movid: number;
+	id: number;
+	name: string;
+	rating: number;
+}
+
+interface Directors {
+	movid: number;
+	id: number;
+	name: string;
+	rating: number;
+}
+
+interface Actors {
+	movid: number;
+	id: number;
+	name: string;
+	rating: number;
+}
 
 // Schema
-const movielistSchema = new Schema({
+const movielistSchema = new Schema <MovieListInfo> ({
 	email: {
 		type: String,
 		required: [true, 'email is missing'],
@@ -167,7 +180,7 @@ const movielistSchema = new Schema({
 		id: Number,
 		name: String,
 		rating: Number
-	}],
+	}]
 });
 
 const Movielist = mongoose.model('movielist', movielistSchema);

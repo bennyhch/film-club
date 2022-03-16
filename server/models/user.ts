@@ -1,5 +1,4 @@
 'use strict';
-import {Document, Model, model, Types, Query} from 'mongoose';
 import mongoose from './index.js';
 const Schema = mongoose.Schema;
 

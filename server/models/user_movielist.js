@@ -1,11 +1,14 @@
 'use strict';
-const mongoose = require('./index.js');
-const Schema = mongoose.Schema;
-const movielistSchema = new Schema({
+exports.__esModule = true;
+var index_js_1 = require("./index.js");
+var Schema = index_js_1["default"].Schema;
+;
+// Schema
+var movielistSchema = new Schema({
     email: {
         type: String,
         required: [true, 'email is missing'],
-        unique: true,
+        unique: true
     },
     movielist: [{
             inWatchlist: Boolean,
@@ -21,7 +24,7 @@ const movielistSchema = new Schema({
             budget: Number,
             genres: [{
                     id: Number,
-                    name: String,
+                    name: String
                 }],
             homepage: String,
             id: Number,
@@ -78,7 +81,7 @@ const movielistSchema = new Schema({
             id: Number,
             name: String,
             rating: Number
-        }],
+        }]
 });
-const Movielist = mongoose.model('movielist', movielistSchema);
+var Movielist = index_js_1["default"].model('movielist', movielistSchema);
 module.exports = Movielist;
