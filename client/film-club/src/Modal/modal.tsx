@@ -25,14 +25,11 @@ function Modal(props: ModalProps) {
         <p>Submit your rating below:</p>
         <button onClick={closeModal}>X</button>
         <form onSubmit={handleForm}>
-          <input
-            className="modal-input"
-            type="text"
-            name="userRating"
-            value={userRating}
-            onChange={(event) => setUserRating(event.target.value)}
-            placeholder="Enter your rating from 1 to 5..."
-            required
+          <ReactStars
+            count={5}
+            onChange={(new_rating) => setUserRating(new_rating.toString())}
+            size={32}
+            color2={'#ffd700'}
           />
         </form>
       </div>
@@ -41,3 +38,15 @@ function Modal(props: ModalProps) {
 }
 
 export default Modal;
+
+/* 
+<input
+            className="modal-input"
+            type="text"
+            name="userRating"
+            value={userRating}
+            onChange={(event) => setUserRating(event.target.value)}
+            placeholder="Enter your rating from 1 to 5..."
+            required
+          />
+*/
