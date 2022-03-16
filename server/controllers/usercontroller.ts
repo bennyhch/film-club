@@ -1,20 +1,18 @@
-"use strict";
+'use strict';
 
-import { ErrorRequestHandler, Request, Response } from "express";
+import { Request, Response } from 'express';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const user = require("../models/user");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const movielist = require("../models/user_movielist");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const bcrypt = require("bcrypt");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const moviecollection = require("../models/user_collections");
+import user from '../models/user';
+import movielist from '../models/user_movielist';
+import Moviecollection from '../models/user_collections';
+import bcrypt from 'bcrypt';
 const saltRounds = 10;
 
 const checkUser = async (userEmail: string, userPassword: string) => {
   try {
-    const filter = await user.findOne({ email: userEmail });
+    const filter: UserInfo = (await user.findOne({
+      email: userEmail,
+    })) as UserInfo;
     const match = await bcrypt.compare(userPassword, filter.password);
     if (match) {
       return filter.email;
@@ -22,12 +20,12 @@ const checkUser = async (userEmail: string, userPassword: string) => {
       return false;
     }
   } catch (e) {
-    console.error("login credentials not found");
+    console.error('login credentials not found');
     return false;
   }
 };
 
-const createUser = async (req: Request, res: Response) => {
+export const createUser = async (req: Request, res: Response) => {
   try {
     if (req.body.email && req.body.password) {
       const hashPassword = await bcrypt.hash(req.body.password, saltRounds);
@@ -38,23 +36,23 @@ const createUser = async (req: Request, res: Response) => {
       const newMovielistUser = await movielist.create({
         email: req.body.email,
       });
-      const newMovieCollectionUser = await moviecollection.create({
+      const newMovieCollectionUser = await Moviecollection.create({
         email: req.body.email,
       });
       res.status(201);
       res.send({ newUser, newMovielistUser, newMovieCollectionUser });
     } else {
-      console.error("parameter is missing");
+      console.error('parameter is missing');
       res.status(400);
-      res.send("parameter is missing");
+      res.send('parameter is missing');
     }
   } catch (e: any) {
     if (e.code === 11000) {
-      console.error("create new user is failing");
+      console.error('create new user is failing');
       res.status(500);
-      res.send("try again - email already in use");
+      res.send('try again - email already in use');
     } else {
-      console.error("create new user is failing");
+      console.error('create new user is failing');
       res.status(500);
     }
   }
@@ -64,7 +62,7 @@ const createUser = async (req: Request, res: Response) => {
 	Bug: Session is undefined at the moment.
 
 */
-const loginUser = async (req: Request, res: Response) => {
+export const loginUser = async (req: Request, res: Response) => {
   try {
     if (req.body.email && req.body.password) {
       const userEmail = req.body.email;
@@ -76,31 +74,29 @@ const loginUser = async (req: Request, res: Response) => {
         res.status(200);
         res.send({ email: userEmail, password: userPassword });
       } else {
-        console.error("login credentials not found");
+        console.error('login credentials not found');
         res.status(401);
-        res.send("login credentials not found");
+        res.send('login credentials not found');
       }
     } else {
-      console.error("parameter is missing");
+      console.error('parameter is missing');
       res.status(400);
-      res.send("parameter is missing");
+      res.send('parameter is missing');
     }
   } catch (e) {
-    console.error("login is failing");
+    console.error('login is failing');
     res.status(500);
   }
 };
 
-const logoutUser = async (req: Request, res: Response) => {
+export const logoutUser = async (req: Request, res: Response) => {
   try {
     // req.session.destroy()
     // res.clearCookie('sessionid');
     res.status(200);
-    res.send("Logout successful");
+    res.send('Logout successful');
   } catch (e) {
-    console.error("logout is failing");
+    console.error('logout is failing');
     res.status(500);
   }
 };
-
-module.exports = { createUser, loginUser, logoutUser };

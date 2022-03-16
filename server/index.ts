@@ -1,11 +1,13 @@
 "use strict";
 
-require("dotenv").config();
-const express = require("express");
+import * as dotenv from "dotenv";
+dotenv.config();
+
+import express from "express";
 const app = express();
 const port = process.env.SERVER_PORT || 3001;
-const router = require("./router");
-const cors = require("cors");
+import router from "./router";
+import cors from "cors";
 const cookieParser = require("cookie-parser");
 // const SECRETKEY = process.env.SECRETKEY || "this is not very secure";
 

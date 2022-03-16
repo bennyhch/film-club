@@ -3,18 +3,25 @@
 */
 type UserMovieCollection = Array<Movie>;
 
-type User = {
-  id: string;
+type WatchedResponse = {
+  watchedMovies: Array<Array<MovieListItem>>;
+  genres: Array<NewGenreList>;
+  directors: Array<NewDirectorList>;
+  actors: Array<NewActorList>;
+};
+
+interface UserInfo {
+  _id?: string;
   email: string;
   password: string;
-  _v: number;
-};
+  _v?: number;
+}
 
 type UserMovieList = {
   email: string;
   _id: string;
-  movielist: Array<MovieExtended>;
-  genres: Array<MovieGenreRating>;
+  movielist: Array<MovieListItem>;
+  genres: Array<Genres>;
   directors: Array<UserDirector>;
   actors: Array<UserActor>;
   __v: number;
@@ -37,63 +44,20 @@ type Movie = {
 
 // The type in the 'movielist'
 
-interface MovieExtended extends Movie {
-  backdrop_path: string;
-  belongs_to_collection: TMDBCollection;
-  budget: number;
-  genres: Array<GenreRating>;
-  homepage: string;
-  id: number;
-  imdb_id: string;
-  original_language: string;
-  original_title: string;
-  popularity: number;
-  poster_path: string;
-  release_date: string;
-  revenue: number;
-  runtime: number;
-  tagline: string;
-  title: string;
-  video: boolean;
-  vote_count: number;
-  credits: Credits;
-}
+// interface DirectorRating {
+//   movid?: number;
+//   name: string;
+//   id: number;
+//   rating: number | null;
+//   count?: number;
+// }
 
-interface GenreRating {
-  movid?: number;
-  name: string;
-  id: number;
-  rating?: number | null;
-  count?: number;
-}
-
-interface DirectorRating {
-  movid?: number;
-  name: string;
-  id: number;
-  rating: number | null;
-  count?: number;
-}
-
-interface ActorRating {
-  name: string;
-  id: number;
-  rating: number | null;
-  count: number;
-}
-
-interface Genre {
-  id: number;
-  name: string;
-}
-
-interface MovieGenreRating {
-  id: number;
-  movid: number;
-  genreId: number;
-  name: string;
-  rating: number;
-}
+// interface ActorRating {
+//   name: string;
+//   id: number;
+//   rating: number | null;
+//   count: number;
+// }
 
 interface UserDirector {
   movid: number;
@@ -124,33 +88,6 @@ interface TMDBCollection {
   backdrop_path: string;
 }
 
-interface OnLoadResponse {
-  trendingMovies: Array<APIMovieWithGenre>;
-  user: UserMovieList;
-  actors: Array<CastCredit>;
-  directors: Array<CrewCredit>;
-}
-
-// type CreditFromAPI = {
-//   adult: boolean;
-//   backdrop_path: string;
-//   genre_ids: Array<number>;
-//   original_language: string;
-//   original_title: string;
-//   poster_path: string;
-//   vote_count: number;
-//   id: number;
-//   vote_average: number;
-//   video: number;
-//   overview: string;
-//   release_date: string;
-//   title: string;
-//   popularity: number;
-//   character: string;
-//   credit_id: string;
-//   order: number;
-// };
-
 interface CrewCredit {
   id: number;
   name: string;
@@ -175,7 +112,7 @@ interface CrewCredit {
   user_rating: number;
 }
 
-interface CastCredit  {
+interface CastCredit {
   character: string;
   credit_id: string;
   release_date: string;
@@ -192,7 +129,7 @@ interface CastCredit  {
   backdrop_path: string;
   overview: string;
   poster_path: string;
-};
+}
 
 type APIMovieWithGenre = {
   adult: boolean;
@@ -211,19 +148,6 @@ type APIMovieWithGenre = {
   vote_count: number;
 };
 
-/* 
-  I have changed the genres from this:
-    [
-      [genreName]: string,
-      [genreName]: string,
-      [genreName]: string,
-      Array<APIMovieGenre>,
-      ...
-      ...
-    ]
-*/
-type GenreResponse = Array<NewGenreList>;
-
 type NewGenreList = {
   genreName: string;
   movies: Array<APIMovieWithGenre> | undefined;
@@ -238,26 +162,108 @@ type NewActorList = {
   movies: Array<CastCredit>;
 };
 
-// User also has _id and __v.
-type CreateUserReturn = {
-  newUser: User;
-  newMovielistUser: UserMovieList;
-  newMovieCollectionUser: MovieCollectionResponse;
-};
-
-type MovieCollectionResponse = {
-  email: string;
-  _id: string;
-  person?: {
-    id: number;
-    name: string;
-  };
-  moviecoll: UserMovieCollection;
-};
-
 type WatchlistResponse = {
-  watchlistMovieLists: Array<Array<MovieExtended>>;
+  watchlistMovieLists: Array<Array<MovieListItem>>;
   genreMovieLists: Array<Array<APIMovieWithGenre>>;
   actorMovieLists: Array<Array<CastCredit>>;
   directorMovieLists: Array<Array<CrewCredit>>;
 };
+
+/////////////////
+
+interface MovieListInfo {
+  email: string;
+  movielist: Array<MovieListItem>;
+  genres: Array<Genres>;
+  directors: Array<Directors>;
+  actors: Array<Actors>;
+}
+
+interface MovieListItem {
+  inWatchlist: boolean;
+  seen: boolean;
+  user_rating: number | null;
+  backdrop_path: string;
+  belongs_to_collection: Collection;
+  budget: number;
+  genres: Array<GenresMovielist>;
+  homepage: string;
+  id: number;
+  imdb_id: string;
+  original_language: string;
+  original_title: string;
+  popularity: number;
+  poster_path: string;
+  release_date: string;
+  revenue: number;
+  runtime: number;
+  tagline: string;
+  title: string;
+  video: boolean;
+  vote_average: number;
+  vote_count: number;
+  credits: Credits;
+}
+
+interface GenresMovielist {
+  id: number;
+  name: string;
+  movid?: number;
+  rating: number | null;
+}
+
+interface Collection {
+  id: number;
+  name: string;
+  poster_path: string;
+  backdrop_path: string;
+}
+
+interface CastCredit {
+  id: number;
+  known_for_department: string;
+  name: string;
+  character: string;
+  credit_id: string;
+  order: number;
+}
+interface CrewCredit {
+  id: number;
+  known_for_department: string;
+  name: string;
+  credit_id: string;
+  department: string;
+  job: string;
+}
+
+interface Credits {
+  cast: Array<CastCredit>;
+  crew: Array<CrewCredit>;
+}
+
+interface Genre {
+  id: number;
+  name: string;
+}
+
+interface Genres extends Genre {
+  movid?: number;
+  rating: number;
+  count: number;
+}
+
+interface Directors {
+  movid?: number;
+  id: number;
+  name: string;
+  rating: number | null;
+  count?: number;
+}
+
+interface Actors {
+  movid?: number;
+  id: number;
+  name: string;
+  rating: number;
+  count?: number;
+}

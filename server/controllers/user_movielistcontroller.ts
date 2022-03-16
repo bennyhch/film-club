@@ -1,31 +1,16 @@
-"use strict";
+'use strict';
 
-import e, { Request, Response } from "express";
+import e, { Request, Response } from 'express';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-require("dotenv").config();
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const user = require("../models/user");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const movielist = require("../models/user_movielist");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const axios = require("axios");
-const apiUrl = "https://api.themoviedb.org/3/";
+import movielist from '../models/user_movielist';
+import axios from 'axios';
+const apiUrl = 'https://api.themoviedb.org/3/';
 const APIKEY = process.env.API_KEY;
 
-/* 
-  TODO Refactor this into one function.
-  e.g. random number 1-10
-*/
-
-// To replace numGenTo10 etc
 function numGen(num: number) {
   return Math.floor(Math.random() * (num + 1));
 }
 
-/*
-  TODO Refactor, in built method.
-*/
 const duplicateCheck = (num: number, array: Array<number>) => {
   for (let i = 0; i < array.length; i++) {
     if (array[i] === num) return false;
@@ -33,39 +18,6 @@ const duplicateCheck = (num: number, array: Array<number>) => {
   return true;
 };
 
-/**
- *
- * @returns an array of 1,2,3[3 random numbers between 1-10][]
- */
-
-// const onLoadArray = () => {
-//   const arr = [1, 2, 3];
-//   while (arr.length < 6) {
-//     let num = numGenTo10();
-//     const check = duplicateCheck(num, arr);
-//     if (check && num !== 0) {
-//       arr.push(num);
-//     }
-//   }
-//   while (arr.length < 8) {
-//     let num = numGenTo100();
-//     const check = duplicateCheck(num, arr);
-//     if (check && num !== 0) {
-//       arr.push(num);
-//     }
-//   }
-//   while (arr.length < 10) {
-//     let num = numGenTo1000();
-//     const check = duplicateCheck(num, arr);
-//     if (check && num !== 0) {
-//       arr.push(num);
-//     }
-//   }
-//   return arr;
-// };
-
-// onLoadArray: create an array with nine elements, without any duplications,
-// [1,2,3, (3 random num from 4-10), (... from 11-100), (... from 101-1000)]
 const onLoadArray = () => {
   const random = (min: number, max: number) =>
     Math.floor(Math.random() * (max - min)) + min;
@@ -95,12 +47,12 @@ const directorCheck = async (
   arr: Array<CrewCredit>,
   movieid: number,
   userRating: number | null
-): Promise<Array<DirectorRating> | undefined> => {
+): Promise<Array<Directors> | undefined> => {
   try {
-    let directorName = "";
+    let directorName = '';
     let directorID;
     for (let i = 0; i < arr.length; i++) {
-      if (arr[i].job === "Director") {
+      if (arr[i].job === 'Director') {
         directorName = arr[i].name;
         directorID = arr[i].id;
       }
@@ -114,7 +66,7 @@ const directorCheck = async (
       },
     ];
   } catch (e) {
-    console.error(e, "directorCheck is failing");
+    console.error(e, 'directorCheck is failing');
     return undefined;
   }
 };
@@ -138,20 +90,20 @@ const actorCheck = async (
     }
     return result;
   } catch (e) {
-    console.error(e, "actorCheck is failing");
+    console.error(e, 'actorCheck is failing');
   }
 };
 
 const getMovieWithCredits = async (
   id: number
-): Promise<MovieExtended | undefined> => {
+): Promise<MovieListItem | undefined> => {
   try {
     const movie = await axios.get(
       `${apiUrl}movie/${id}?api_key=${APIKEY}&append_to_response=credits`
     );
     return movie.data;
   } catch (e) {
-    console.error(e, "getMovieWithCredits is failing");
+    console.error(e, 'getMovieWithCredits is failing');
   }
   return undefined;
 };
@@ -172,9 +124,9 @@ const getMovieWithCredits = async (
 */
 const genreSort = async (userEmail: string) => {
   try {
-    const filter: UserMovieList = await movielist.findOne({
+    const filter: MovieListInfo = (await movielist.findOne({
       email: userEmail,
-    });
+    })) as MovieListInfo;
 
     const genresNull = filter.genres;
     // Get only the genres that have a rating.
@@ -182,7 +134,7 @@ const genreSort = async (userEmail: string) => {
     if (genres.length === 0) return undefined;
 
     // Set genreArray to first user genre.
-    const genreArray: Array<GenreRating> = [
+    const genreArray: Array<Genres> = [
       {
         name: genres[0].name,
         id: genres[0].id,
@@ -225,7 +177,7 @@ const genreSort = async (userEmail: string) => {
     }
     return genreArray;
   } catch (e) {
-    console.error(e, "genreSort is failing");
+    console.error(e, 'genreSort is failing');
   }
 };
 
@@ -236,13 +188,14 @@ const genreSort = async (userEmail: string) => {
  */
 const directorSort = async (userEmail: string) => {
   try {
-    const filter: UserMovieList = await movielist.findOne({
+    const filter: MovieListInfo = (await movielist.findOne({
       email: userEmail,
-    });
+    })) as MovieListInfo;
+
     const directorsNull = filter.directors;
     const directors = directorsNull.filter((director) => director.rating);
     if (directors.length === 0) return undefined;
-    const directorArray: Array<DirectorRating> = [
+    const directorArray: Array<Directors> = [
       {
         name: directors[0].name,
         id: directors[0].id,
@@ -256,7 +209,8 @@ const directorSort = async (userEmail: string) => {
       for (let j = 0; j < len; j++) {
         if (directors[i].name === directorArray[j].name) {
           directorArray[j].rating =
-            (directorArray[j].rating as number) + directors[i].rating;
+            (directorArray[j].rating as number) +
+            (directors[i].rating as number);
           directorArray[j].count = (directorArray[j].count as number) + 1;
           if (i < directors.length - 1) {
             continue;
@@ -276,21 +230,22 @@ const directorSort = async (userEmail: string) => {
     }
     return directorArray;
   } catch (e) {
-    console.error(e, "directorSort is failing");
+    console.error(e, 'directorSort is failing');
   }
 };
 
 const actorSort = async (
   userEmail: string
-): Promise<Array<ActorRating> | undefined> => {
+): Promise<Array<Actors> | undefined> => {
   try {
-    const filter: UserMovieList = await movielist.findOne({
+    const filter: MovieListInfo = (await movielist.findOne({
       email: userEmail,
-    });
+    })) as MovieListInfo;
+
     const actorsNull = filter.actors;
     const actors = actorsNull.filter((actor) => actor.rating);
     if (actors.length === 0) return undefined;
-    const actorArray: Array<ActorRating> = [
+    const actorArray: Array<Actors> = [
       {
         name: actors[0].name,
         id: actors[0].id,
@@ -305,7 +260,7 @@ const actorSort = async (
         if (actors[i].name === actorArray[j].name) {
           actorArray[j].rating =
             (actorArray[j].rating as number) + actors[i].rating;
-          actorArray[j].count++;
+          (actorArray[j].count as number)++;
           if (i < actors.length - 1) {
             continue;
           } else {
@@ -324,7 +279,7 @@ const actorSort = async (
     }
     return actorArray;
   } catch (e) {
-    console.error(e, "actorSort is failing");
+    console.error(e, 'actorSort is failing');
   }
 };
 
@@ -339,57 +294,57 @@ const genreIDlist = [
 ];
 
 const genreIDlookup: any = {
-  28: "Action",
-  12: "Adventure",
-  16: "Animation",
-  35: "Comedy",
-  80: "Crime",
-  99: "Documentary",
-  18: "Drama",
-  10751: "Family",
-  14: "Fantasy",
-  36: "History",
-  27: "Horror",
-  10402: "Music",
-  9648: "Mystery",
-  10749: "Romance",
-  878: "Science Fiction",
-  10770: "TV Movie",
-  53: "Thriller",
-  10752: "War",
-  37: "Western",
+  28: 'Action',
+  12: 'Adventure',
+  16: 'Animation',
+  35: 'Comedy',
+  80: 'Crime',
+  99: 'Documentary',
+  18: 'Drama',
+  10751: 'Family',
+  14: 'Fantasy',
+  36: 'History',
+  27: 'Horror',
+  10402: 'Music',
+  9648: 'Mystery',
+  10749: 'Romance',
+  878: 'Science Fiction',
+  10770: 'TV Movie',
+  53: 'Thriller',
+  10752: 'War',
+  37: 'Western',
 };
 
 const directorsIDlist: any = {
-  55934: "Taika Waititi",
-  488: "Steven Spielberg",
-  1032: "Martin Scorsese",
-  138: "Quentin Tarantino",
-  578: "Ridley Scott",
-  1223: "The Coen Brothers",
-  525: "Christopher Nolan",
-  108: "Peter Jackson",
+  55934: 'Taika Waititi',
+  488: 'Steven Spielberg',
+  1032: 'Martin Scorsese',
+  138: 'Quentin Tarantino',
+  578: 'Ridley Scott',
+  1223: 'The Coen Brothers',
+  525: 'Christopher Nolan',
+  108: 'Peter Jackson',
 };
 
 const actorsIDlist: any = {
-  287: "Brad Pitt",
-  1283: "Helena Bonham Carter",
-  71580: "Benedict Cumberbatch",
-  1136406: "Tom Holland",
-  62: "Bruce Willis",
-  6193: "Leo DiCaprio",
-  3896: "Liam Neeson",
-  31: "Tom Hanks",
-  2888: "Will Smith",
-  505710: "Zendaya",
-  18918: "Dwayne Johnson",
-  10859: "Ryan Reynolds",
-  1245: "Scarlett Johansson",
-  139: "Uma Thurman",
-  204: "Kate Winslet",
-  1813: "Anne Hathaway",
-  83002: "Jessica Chastain",
-  18973: "Mila Kunis",
+  287: 'Brad Pitt',
+  1283: 'Helena Bonham Carter',
+  71580: 'Benedict Cumberbatch',
+  1136406: 'Tom Holland',
+  62: 'Bruce Willis',
+  6193: 'Leo DiCaprio',
+  3896: 'Liam Neeson',
+  31: 'Tom Hanks',
+  2888: 'Will Smith',
+  505710: 'Zendaya',
+  18918: 'Dwayne Johnson',
+  10859: 'Ryan Reynolds',
+  1245: 'Scarlett Johansson',
+  139: 'Uma Thurman',
+  204: 'Kate Winslet',
+  1813: 'Anne Hathaway',
+  83002: 'Jessica Chastain',
+  18973: 'Mila Kunis',
 };
 
 /* 
@@ -438,7 +393,7 @@ const onLoadArrayGenreNoDB = async () => {
     }
     return finalResponse;
   } catch (e) {
-    console.error(e, "onLoadArrayGenreNoDB is failing");
+    console.error(e, 'onLoadArrayGenreNoDB is failing');
   }
 };
 
@@ -469,7 +424,7 @@ const onLoadDirectorNoDB = async (): Promise<
       );
       const array: Array<CrewCredit> = apiResponse.data.crew;
       const filteredArray = array.filter(
-        (director) => director.job === "Director"
+        (director) => director.job === 'Director'
       );
       filteredArray.sort(function (a, b) {
         return b.popularity - a.popularity;
@@ -478,7 +433,7 @@ const onLoadDirectorNoDB = async (): Promise<
     }
     return finalResponse;
   } catch (e) {
-    console.error(e, "onLoadDirectorNoDB is failing");
+    console.error(e, 'onLoadDirectorNoDB is failing');
   }
   return undefined;
 };
@@ -518,7 +473,7 @@ const onLoadActorNoDB = async (): Promise<Array<NewActorList> | undefined> => {
     }
     return finalResponse;
   } catch (e) {
-    console.error(e, "onLoadDirectorNoDB is failing");
+    console.error(e, 'onLoadDirectorNoDB is failing');
   }
 };
 
@@ -541,8 +496,8 @@ interface GenreRating {
 */
 
 const onLoadArrayGenreWithDB = async (
-  array: Array<GenreRating>,
-  user: UserMovieList
+  array: Array<Genres>,
+  user: MovieListInfo
 ) => {
   try {
     const page = 1;
@@ -605,13 +560,13 @@ const onLoadArrayGenreWithDB = async (
 
     return finalResponse;
   } catch (e) {
-    console.error(e, "onLoadArrayGenreWithDB is failing");
+    console.error(e, 'onLoadArrayGenreWithDB is failing');
   }
 };
 
 const onLoadArrayDirectorWithDB = async (
-  array: Array<DirectorRating>,
-  user: UserMovieList
+  array: Array<Directors>,
+  user: MovieListInfo
 ): Promise<Array<NewDirectorList> | undefined> => {
   try {
     let directorIdArray: Array<number> = [];
@@ -671,7 +626,7 @@ const onLoadArrayDirectorWithDB = async (
       );
       const array: Array<CrewCredit> = apiResponse.data.crew;
       const filteredArray = array.filter(
-        (director) => director.job === "Director"
+        (director) => director.job === 'Director'
       );
       filteredArray.sort(function (a, b) {
         return b.popularity - a.popularity;
@@ -692,13 +647,13 @@ const onLoadArrayDirectorWithDB = async (
     }
     return finalResponse;
   } catch (e) {
-    console.error(e, "onLoadArrayActorWithDB is failing");
+    console.error(e, 'onLoadArrayActorWithDB is failing');
   }
 };
 
 const onLoadArrayActorWithDB = async (
-  array: Array<ActorRating>,
-  user: UserMovieList
+  array: Array<Actors>,
+  user: MovieListInfo
 ) => {
   try {
     let actorIdArray: Array<number> = [];
@@ -706,7 +661,7 @@ const onLoadArrayActorWithDB = async (
     const max = array;
     if (max.length >= 2) {
       max.sort(function (a, b) {
-        return b.count - a.count;
+        return (b.count as number) - (a.count as number);
       });
       const newmax = max.slice(0, 3);
       const shuffledMax = shuffle(newmax);
@@ -772,7 +727,7 @@ const onLoadArrayActorWithDB = async (
     }
     return finalResponse;
   } catch (e) {
-    console.error(e, "onLoadArrayActorWithDB is failing");
+    console.error(e, 'onLoadArrayActorWithDB is failing');
   }
 };
 
@@ -785,7 +740,7 @@ const onLoadArrayActorWithDB = async (
  *
  * @returns an array of ids of their favourite genres.
  */
-const findFaveGenre = (user: UserMovieList, max: number) => {
+const findFaveGenre = (user: MovieListInfo, max: number) => {
   const genres = user.genres;
   const faves = [];
   for (let i = 0; i < genres.length; i++) {
@@ -796,7 +751,7 @@ const findFaveGenre = (user: UserMovieList, max: number) => {
   return faves;
 };
 
-const findFaveDirector = (user: UserMovieList, max: number) => {
+const findFaveDirector = (user: MovieListInfo, max: number) => {
   const directors = user.directors;
   const faves = [];
   for (let i = 0; i < directors.length; i++) {
@@ -807,7 +762,7 @@ const findFaveDirector = (user: UserMovieList, max: number) => {
   return faves;
 };
 
-const findFaveActor = (user: UserMovieList, max: number) => {
+const findFaveActor = (user: MovieListInfo, max: number) => {
   const actors = user.actors;
   const faves = [];
   for (let i = 0; i < actors.length; i++) {
@@ -844,7 +799,7 @@ const shuffle = <T>(array: Array<T>) => {
  * cross checks api movies against user movies and modifies movies in place
  * TODO change any declaration
  */
-const checkIfInDB = (userDB: Array<MovieExtended>, array: any) => {
+const checkIfInDB = (userDB: Array<MovieListItem>, array: any) => {
   for (let i = 0; i < userDB.length; i++) {
     for (let j = 0; j < array.length; j++) {
       if (userDB[i].id === array[j].id) {
@@ -858,27 +813,13 @@ const checkIfInDB = (userDB: Array<MovieExtended>, array: any) => {
 
 ////////////////////////////////////////////////////////////////////
 
-/**
- * Whatever loads when the page first does.
- * @param {*} req
- * @param {*} res
- */
-
-/* 
-  TODO Make a response type.
-  [
-    trending,
-
-  ]
-*/
-
 export const onLoad = async (req: Request, res: Response) => {
   try {
     // Find movie list for user.
     const userEmail = req.body.email;
-    const user = await movielist.findOne({
+    const user: MovieListInfo = (await movielist.findOne({
       email: userEmail,
-    });
+    })) as MovieListInfo;
 
     // TRENDING
     // Gets a random page number to use in request. Different trending movies.
@@ -897,7 +838,7 @@ export const onLoad = async (req: Request, res: Response) => {
     // GENRES
 
     // this FLATTENS the GenreRatings into a set so that count can be reduced.
-    const genre: Array<GenreRating> | undefined =
+    const genre: Array<Genres> | undefined =
       (await genreSort(userEmail)) || undefined;
     // const genre = undefined;
     let genreIDArr;
@@ -911,7 +852,7 @@ export const onLoad = async (req: Request, res: Response) => {
 
     // DIRECTORS
 
-    const director: Array<DirectorRating> | undefined = await directorSort(
+    const director: Array<Directors> | undefined = await directorSort(
       userEmail
     );
     let directorIDArr;
@@ -937,7 +878,7 @@ export const onLoad = async (req: Request, res: Response) => {
     res.status(200);
     res.send(finalResponse);
   } catch (e) {
-    console.error(e, "onLoad is failing");
+    console.error(e, 'onLoad is failing');
     res.status(500);
   }
 };
@@ -952,10 +893,10 @@ export const onLoad = async (req: Request, res: Response) => {
 export const onLoadWatchlist = async (req: Request, res: Response) => {
   try {
     const userEmail = req.body.email;
-    const user = await movielist.findOne({ email: userEmail });
-    const a = req.params;
-    const b = a.id;
-    const userMovies: Array<MovieExtended> = user.movielist;
+    const user: MovieListInfo = (await movielist.findOne({
+      email: userEmail,
+    })) as MovieListInfo;
+    const userMovies: Array<MovieListItem> = user.movielist;
     const watchlistMovies = userMovies.filter((movie) => movie.seen === false);
     const watchedMovies = userMovies.filter((movie) => movie.seen === true);
     const finalResponse: WatchlistResponse = {} as WatchlistResponse;
@@ -969,35 +910,14 @@ export const onLoadWatchlist = async (req: Request, res: Response) => {
       finalResponse.watchlistMovieLists.push(watchlistMovies);
     }
 
-    /* 
-      TODO factor out into separate helpers.
-      Finds the user's highest rating on any film they've watched
-    */
+    let max = 0;
     if (watchedMovies.length > 0) {
-      let max = 0;
       for (let i = 0; i < watchedMovies.length; i++) {
         if ((watchedMovies[i].user_rating as number) >= max) {
           max = watchedMovies[i].user_rating as number;
         }
       }
 
-      /* 
-        Get a random bunch of movies of those genres,
-        the first page
-        sorted by popularity descending
-
-        same for directors and actors
-
-        Top three genres, directors and actors
-
-
-        TODO figure out api response types for these.
-        TODO comma sep, separate at front
-
-      */
-      /* 
-        Returns genre ids for fave genres.    
-      */
       const genres = findFaveGenre(user, max);
       const shuffleGenres = shuffle(genres);
       const faveGenres = shuffleGenres.slice(0, 2);
@@ -1044,7 +964,7 @@ export const onLoadWatchlist = async (req: Request, res: Response) => {
         finalResponse.actorMovieLists.push(array);
       }
     }
-    console.log("hello after actor");
+    console.log('hello after actor');
 
     if (watchedMovies.length === 0) {
       const arr = onLoadArray();
@@ -1052,7 +972,7 @@ export const onLoadWatchlist = async (req: Request, res: Response) => {
         const apiResponse = await axios.get(
           `${apiUrl}trending/movie/day?api_key=${APIKEY}&page=${arr[i]}`
         );
-        const shuffled: Array<MovieExtended> = shuffle(
+        const shuffled: Array<MovieListItem> = shuffle(
           apiResponse.data.results
         );
         finalResponse.watchlistMovieLists.push(shuffled);
@@ -1062,7 +982,7 @@ export const onLoadWatchlist = async (req: Request, res: Response) => {
     checkIfInDB(userMovies, finalResponse);
     res.status(200).send(JSON.stringify(finalResponse));
   } catch (e) {
-    console.error(e, "onLoadWatchlist is failing");
+    console.error(e, 'onLoadWatchlist is failing');
     res.status(500);
   }
 };
@@ -1070,13 +990,20 @@ export const onLoadWatchlist = async (req: Request, res: Response) => {
 export const onLoadWatched = async (req: Request, res: Response) => {
   try {
     const userEmail = req.body.email;
-    const user = await movielist.findOne({ email: userEmail });
-    const userMovies: Array<MovieExtended> = user.movielist;
+    const user: MovieListInfo = (await movielist.findOne({
+      email: userEmail,
+    })) as MovieListInfo;
+    const userMovies: Array<MovieListItem> = user.movielist;
     const watchedMovies = userMovies.filter((movie) => movie.seen === true);
-    const finalResponse = [];
+    const finalResponse: WatchedResponse = {
+      watchedMovies: [],
+      genres: [],
+      directors: [],
+      actors: [],
+    };
 
     if (watchedMovies.length > 0) {
-      finalResponse.push(watchedMovies);
+      finalResponse.watchedMovies.push(watchedMovies);
       let max = 0;
       for (let i = 0; i < watchedMovies.length; i++) {
         if ((watchedMovies[i].user_rating as number) >= max) {
@@ -1090,7 +1017,10 @@ export const onLoadWatched = async (req: Request, res: Response) => {
         const apiResponse = await axios.get(
           `${apiUrl}discover/movie?api_key=${APIKEY}&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_genres=${faveGenres[i]}`
         );
-        finalResponse.push(apiResponse.data.results);
+        finalResponse.genres.push({
+          genreName: genreIDlookup[faveGenres[i]],
+          movies: apiResponse.data.results,
+        });
       }
       const directors = findFaveDirector(user, max);
       const shuffleDirectors = shuffle(directors);
@@ -1099,11 +1029,15 @@ export const onLoadWatched = async (req: Request, res: Response) => {
         const apiResponse = await axios.get(
           `${apiUrl}person/${faveDirectors[i]}/movie_credits?api_key=${APIKEY}&language=en-US`
         );
-        const array: Array<CastCredit> = apiResponse.data.cast;
+        let array: Array<CrewCredit> = apiResponse.data.cast;
+        array = array.filter((crew) => crew.job === 'Director');
         array.sort(function (a, b) {
           return b.popularity - a.popularity;
         });
-        finalResponse.push(array);
+        finalResponse.directors.push({
+          directorName: array[1].name,
+          movies: array,
+        });
       }
       const actors = findFaveActor(user, max);
       const shuffleActors = shuffle(actors);
@@ -1116,14 +1050,19 @@ export const onLoadWatched = async (req: Request, res: Response) => {
         array.sort(function (a: CastCredit, b: CastCredit) {
           return b.popularity - a.popularity;
         });
-        finalResponse.push(array);
+        finalResponse.actors.push({
+          actorName: array[0].name,
+          movies: array,
+        });
       }
     }
+
+    console.log(finalResponse);
     checkIfInDB(userMovies, finalResponse);
     res.status(200);
     res.send(finalResponse);
   } catch (e) {
-    console.error(e, "onLoadWatchlist is failing");
+    console.error(e, 'onLoadWatchlist is failing');
     res.status(500);
   }
 };
@@ -1137,9 +1076,9 @@ export const addWatchlist = async (req: Request, res: Response) => {
   try {
     const id = req.body.id;
     const filter = { email: req.body.sessionid };
-    const movie: MovieExtended = (await getMovieWithCredits(
+    const movie: MovieListItem = (await getMovieWithCredits(
       id
-    )) as MovieExtended;
+    )) as MovieListItem;
     movie.inWatchlist = true;
     movie.seen = false;
     movie.user_rating = null;
@@ -1164,7 +1103,7 @@ export const addWatchlist = async (req: Request, res: Response) => {
     res.status(200);
     res.send(update);
   } catch (e) {
-    console.error(e, "addWatchlist is failing");
+    console.error(e, 'addWatchlist is failing');
     res.status(500);
   }
 };
@@ -1174,7 +1113,9 @@ export const addWatched = async (req: Request, res: Response) => {
     const movieid = req.body.id;
     const userRating = req.body.user_rating;
     const userEmail = req.body.sessionid;
-    const userList = await movielist.findOne({ email: userEmail });
+    const userList: MovieListInfo = (await movielist.findOne({
+      email: userEmail,
+    })) as MovieListInfo;
     let inDB = false;
     for (let i = 0; i < userList.movielist.length; i++) {
       if (userList.movielist[i].id === movieid) {
@@ -1207,9 +1148,9 @@ export const addWatched = async (req: Request, res: Response) => {
         { $pull: { directors: { movid: movieid } } }
       );
     }
-    const movie: MovieExtended = (await getMovieWithCredits(
+    const movie: MovieListItem = (await getMovieWithCredits(
       movieid
-    )) as MovieExtended;
+    )) as MovieListItem;
     movie.inWatchlist = false;
     movie.seen = true;
     movie.user_rating = userRating;
@@ -1237,7 +1178,7 @@ export const addWatched = async (req: Request, res: Response) => {
     res.status(200);
     res.send(update);
   } catch (e) {
-    console.error(e, "addWatched is failing");
+    console.error(e, 'addWatched is failing');
     res.status(500);
   }
 };
@@ -1273,16 +1214,7 @@ export const deleteMovie = async (req: Request, res: Response) => {
     res.status(200);
     res.send(filter);
   } catch (e) {
-    console.error(e, "deleteMovie is failing");
+    console.error(e, 'deleteMovie is failing');
     res.status(500);
   }
-};
-
-module.exports = {
-  onLoad,
-  addWatchlist,
-  addWatched,
-  deleteMovie,
-  onLoadWatchlist,
-  onLoadWatched,
 };

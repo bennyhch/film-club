@@ -2,29 +2,18 @@
 import mongoose from './index.js';
 const Schema = mongoose.Schema;
 
-
-//Typescript 
-interface Userinfo  {
-	_id?: string;
-	email: string;
-	password: string;
-	_v?:number;
-}
-
-// Schema
-const userSchema = new Schema <Userinfo> ({
-	email: {
-		type: String,
-		required: [true, 'email is missing'],
-		unique: true,
-	},
-	password: {
-		type: String,
-		required: [true, 'password is missing'],
-	},
+const userSchema = new Schema<UserInfo>({
+  email: {
+    type: String,
+    required: [true, 'email is missing'],
+    unique: true,
+  },
+  password: {
+    type: String,
+    required: [true, 'password is missing'],
+  },
 });
 
-const User = mongoose.model ('User', userSchema);
+const User = mongoose.model('User', userSchema);
 
-
-module.exports = User;
+export default User;
