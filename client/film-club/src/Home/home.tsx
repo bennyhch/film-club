@@ -1,7 +1,5 @@
 import "../App.css";
 import "./home.css";
-import Header from "../Header/header";
-import { useCookies } from "react-cookie";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const image1 = require("../images/btn-add.svg");
@@ -9,7 +7,6 @@ const image1 = require("../images/btn-add.svg");
 const image2 = require("../images/btn-added.svg");
 import Modal from "../Modal/modal";
 import { useContext, useState } from "react";
-import { HomeProps } from "../PropTypes";
 import Reel from "../Reel/Reel";
 import { MovieContext } from "../App";
 
@@ -32,12 +29,7 @@ function Home() {
     return (
       <div className="modal-container">
         {show ? (
-          <Modal
-            closeModal={closeModal}
-            addWatchedFromHome={movieContext.addWatchedFromHome}
-            addWatch={addWatch}
-            show={show}
-          />
+          <Modal show={show} closeModal={closeModal} addWatch={addWatch} />
         ) : null}
       </div>
     );

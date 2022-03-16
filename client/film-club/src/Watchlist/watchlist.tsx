@@ -59,12 +59,7 @@ function Watchlist() {
     return (
       <div className="modal-container">
         {show ? (
-          <Modal
-            closeModal={closeModal}
-            addWatch={addWatch}
-            addWatchedFromHome={movieContext.addWatchedFromHome}
-            show={show}
-          />
+          <Modal closeModal={closeModal} addWatch={addWatch} show={show} />
         ) : null}
       </div>
     );

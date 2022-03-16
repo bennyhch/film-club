@@ -4,7 +4,6 @@ import React, { createContext, useEffect, useState } from "react";
 import { mockMovie, mockMovies, mockMovieSeen } from "../mock-for-home";
 import Reel from "./Reel";
 import { MovieContext } from "../App";
-import { scryRenderedComponentsWithType } from "react-dom/test-utils";
 
 describe("Reel", () => {
   const contextValue = {

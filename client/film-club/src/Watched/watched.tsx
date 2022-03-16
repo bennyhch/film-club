@@ -125,12 +125,7 @@ function Watched() {
     return (
       <div className="modal-container">
         {show ? (
-          <Modal
-            closeModal={closeModal}
-            addWatchedFromHome={movieContext.addWatchedFromHome}
-            addWatch={addWatch}
-            show={show}
-          />
+          <Modal closeModal={closeModal} addWatch={addWatch} show={show} />
         ) : null}
       </div>
     );

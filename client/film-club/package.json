@@ -50,5 +50,8 @@
     "@typescript-eslint/parser": "^5.14.0",
     "eslint": "^8.11.0",
     "msw": "^0.39.1"
+  },
+  "prettier": {
+    "singleQuote": true
   }
 }

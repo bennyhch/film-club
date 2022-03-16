@@ -81,7 +81,6 @@ export type ModalProps = {
   closeModal: () => void;
   show: boolean;
   addWatch: Movie;
-  addWatchedFromHome: (element: Movie, userRating: number) => void;
 };
 
 export type ReelProps = {

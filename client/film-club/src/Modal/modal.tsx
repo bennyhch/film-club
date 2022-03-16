@@ -1,15 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { ModalProps } from "../PropTypes";
-import service from "../service";
 import "./modal.css";
-
+import { MovieContext } from "../App";
 function Modal(props: ModalProps) {
+  const movieContext = useContext(MovieContext);
+
   const { show, closeModal } = props;
   const [userRating, setUserRating] = useState<string>("");
 
   const handleForm = async (event: React.SyntheticEvent) => {
     event.preventDefault();
-    props.addWatchedFromHome(props.addWatch, parseInt(userRating));
+    movieContext.addWatchedFromHome(props.addWatch, parseInt(userRating));
     closeModal();
     setUserRating("");
   };
