@@ -19,7 +19,7 @@ const contextValue = {
 };
 
 test('Modal displays correctly', () => {
-  render(
+  const { container } = render(
     <MovieContext.Provider value={contextValue}>
       <Modal {...props} />
     </MovieContext.Provider>
@@ -29,4 +29,16 @@ test('Modal displays correctly', () => {
     screen.getByText('What did you think of the movie?')
   ).toBeInTheDocument();
   expect(screen.getByPlaceholderText('Enter your rating from 1 to 5...'));
+  const divs = container.getElementsByTagName('div');
+  expect(divs).toHaveLength(2);
+  expect(divs[0].classList).toContain('overlay');
+  expect(divs[1].classList).toContain('modal');
+});
+
+test('addWatchedFromHome is called correctly', () => {
+  const { container } = render(
+    <MovieContext.Provider value={contextValue}>
+      <Modal {...props} />
+    </MovieContext.Provider>
+  );
 });
