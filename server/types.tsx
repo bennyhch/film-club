@@ -175,7 +175,7 @@ interface CrewCredit {
   user_rating: number;
 }
 
-type CastCredit = {
+interface CastCredit  {
   character: string;
   credit_id: string;
   release_date: string;
