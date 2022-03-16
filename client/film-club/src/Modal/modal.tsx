@@ -8,13 +8,12 @@ function Modal(props: ModalProps) {
   const movieContext = useContext(MovieContext);
 
   const { show, closeModal } = props;
-  const [userRating, setUserRating] = useState<string>('');
 
-  const handleForm = async (event: React.SyntheticEvent) => {
-    event.preventDefault();
-    movieContext.addWatchedFromHome(props.addWatch, parseInt(userRating));
+  const handleForm = async (new_rating: number) => {
+    console.log(props.addWatch, new_rating);
+
+    movieContext.addWatchedFromHome(props.addWatch, new_rating);
     closeModal();
-    setUserRating('');
   };
 
   return (
@@ -24,14 +23,12 @@ function Modal(props: ModalProps) {
         <h1>What did you think of the movie?</h1>
         <p>Submit your rating below:</p>
         <button onClick={closeModal}>X</button>
-        <form onSubmit={handleForm}>
-          <ReactStars
-            count={5}
-            onChange={(new_rating) => setUserRating(new_rating.toString())}
-            size={32}
-            color2={'#ffd700'}
-          />
-        </form>
+        <ReactStars
+          count={5}
+          onChange={handleForm}
+          size={32}
+          color2={'#ffd700'}
+        />
       </div>
     </>
   );

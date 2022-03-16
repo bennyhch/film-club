@@ -4,7 +4,8 @@
   Check X button closes modal
 */
 
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { start } from 'repl';
 import { MovieContext } from '../App';
 import Modal from './modal';
 
@@ -28,17 +29,22 @@ test('Modal displays correctly', () => {
   expect(
     screen.getByText('What did you think of the movie?')
   ).toBeInTheDocument();
-  expect(screen.getByPlaceholderText('Enter your rating from 1 to 5...'));
   const divs = container.getElementsByTagName('div');
-  expect(divs).toHaveLength(2);
   expect(divs[0].classList).toContain('overlay');
   expect(divs[1].classList).toContain('modal');
 });
 
-test('addWatchedFromHome is called correctly', () => {
+test('addWatchedFromHome is called correctly', async () => {
   const { container } = render(
     <MovieContext.Provider value={contextValue}>
       <Modal {...props} />
     </MovieContext.Provider>
   );
+
+  const stars = container.getElementsByTagName('span');
+  console.log(stars[0]);
+
+  fireEvent.click(stars[0]);
+
+  await expect(contextValue.addWatchedFromHome.mock.calls.length).toBe(1);
 });
