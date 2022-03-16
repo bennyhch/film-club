@@ -980,7 +980,6 @@ export const onLoadWatchlist = async (req: Request, res: Response) => {
           max = watchedMovies[i].user_rating as number;
         }
       }
-
       /* 
         Get a random bunch of movies of those genres,
         the first page
