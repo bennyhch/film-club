@@ -2,11 +2,35 @@
   "root": true,
   "parser": "@typescript-eslint/parser",
   "plugins": [
-    "@typescript-eslint"
-  ],
+    "@typescript-eslint",
+    "jest"
+  ], 
+  "rules": {
+      "jest/no-disabled-tests": "warn",
+      "jest/no-focused-tests": "error",
+      "jest/no-identical-title": "error",
+      "jest/prefer-to-have-length": "warn",
+      "jest/valid-expect": "error"
+      
+    },
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended"
-  ]
+    "plugin:@typescript-eslint/recommended",
+    "react-app"
+    
+  ], 
+  "settings": {
+    "jest": {
+      "version": 27
+    }
+  },
+  "overrides": [
+      {
+        "env": {
+          "jest": true
+        }
+      }
+    ]
 }
+

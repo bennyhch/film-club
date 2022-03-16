@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 // import logo from "./images/film-club-logos_black.png";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./Login/login";
@@ -9,7 +9,11 @@ import Watchlist from "./Watchlist/watchlist";
 import Collections from "./Collections/collections";
 import service from "./service";
 import { useCookies } from "react-cookie";
+import { ContextProps, HomeProps } from "./PropTypes";
+import Header from "./Header/header";
 // import authAPI from './authAPI';
+
+export const MovieContext = createContext<ContextProps>({} as ContextProps);
 
 function App() {
   const [cookies, setCookie] = useCookies();
@@ -65,13 +69,6 @@ function App() {
       });
   }, []);
 
-  // Add to watchlist
-  /* 
-    Sends film to server.
-    Server responds with the new watchlist.
-    sets new watchlist
-    Sets genres, actors and directors, same as before.
-  */
   const addWatchlistFromHome = async (filmToAdd: Movie) => {
     // filmToAdd.sessionid = cookies.sessionid;
 
@@ -148,7 +145,6 @@ function App() {
     }
   };
 
-  // Add watched
   const addWatchedFromHome = async (element: Movie, userRating: number) => {
     // element.sessionid = cookies.sessionid;
     element.user_rating = userRating;
@@ -227,7 +223,6 @@ function App() {
     }
   };
 
-  // Delete
   const deleteMovieFromHome = async (element: Movie) => {
     // element.sessionid = cookies.sessionid;
     let newUserMovieList;
@@ -315,84 +310,43 @@ function App() {
   };
 
   return (
-    <div>
-      {/* <authAPI.Provider value={{auth, setAuth}}> */}
-      <Router>
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route
-            path="/home"
-            element={
-              <Home
-                actors={actors}
-                directors={directors}
-                genres={genres}
-                movies={movies}
-                userMovielist={userMovielist}
-                userActorlist={userActorlist}
-                userDirectorlist={userDirectorlist}
-                userGenrelist={userGenrelist}
-                deleteMovieFromHome={deleteMovieFromHome}
-                watchlistMovies={[watchlistMovies, setWatchlistMovies]}
-                watchedMovies={watchedMovies}
-                addWatchlistFromHome={addWatchlistFromHome}
-                addWatchedFromHome={addWatchedFromHome}
-              />
-            }
-          />
-          <Route
-            path="/watchlist"
-            element={
-              <Watchlist
-                actors={actors}
-                directors={directors}
-                genres={genres}
-                setGenres={setGenres}
-                setActors={setActors}
-                setDirectors={setDirectors}
-                movies={movies}
-                userMovielist={[userMovielist, setUserMovielist]}
-                userActorlist={userActorlist}
-                userDirectorlist={userDirectorlist}
-                userGenrelist={userGenrelist}
-                deleteMovieFromHome={deleteMovieFromHome}
-                watchlistMovies={watchlistMovies}
-                watchedMovies={watchedMovies}
-                addWatchlistFromHome={addWatchlistFromHome}
-                addWatchedFromHome={addWatchedFromHome}
-                setWatchlistMovies={setWatchlistMovies}
-              />
-            }
-          />
-          <Route
-            path="/watched"
-            element={
-              <Watched
-                actors={actors}
-                directors={directors}
-                genres={genres}
-                movies={movies}
-                userMovielist={userMovielist}
-                userActorlist={userActorlist}
-                userDirectorlist={userDirectorlist}
-                userGenrelist={userGenrelist}
-                deleteMovieFromHome={deleteMovieFromHome}
-                watchlistMovies={watchlistMovies}
-                watchedMovies={watchedMovies}
-                addWatchlistFromHome={addWatchlistFromHome}
-                addWatchedFromHome={addWatchedFromHome}
-                setWatchlistMovies={setWatchlistMovies}
-                setGenres={setGenres}
-                setActors={setActors}
-                setDirectors={setDirectors}
-              />
-            }
-          />
-          <Route path="/collections" element={<Collections />} />
-        </Routes>
-      </Router>
-      {/* </authAPI.Provider> */}
-    </div>
+    <MovieContext.Provider
+      value={{
+        actors,
+        directors,
+        genres,
+        movies,
+        userMovielist,
+        userActorlist,
+        userDirectorlist,
+        userGenrelist,
+        watchlistMovies,
+        watchedMovies,
+        deleteMovieFromHome,
+        addWatchlistFromHome,
+        setWatchlistMovies,
+        addWatchedFromHome,
+        setGenres,
+        setMovies,
+        setActors,
+        setDirectors,
+      }}
+    >
+      <div>
+        {/* <authAPI.Provider value={{auth, setAuth}}> */}
+        <Router>
+          <Header></Header>
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/watchlist" element={<Watchlist />} />
+            <Route path="/watched" element={<Watched />} />
+            <Route path="/collections" element={<Collections />} />
+          </Routes>
+        </Router>
+        {/* </authAPI.Provider> */}
+      </div>
+    </MovieContext.Provider>
   );
 }
 

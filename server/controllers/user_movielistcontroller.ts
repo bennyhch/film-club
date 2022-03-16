@@ -917,7 +917,23 @@ export const onLoadWatchlist = async (req: Request, res: Response) => {
           max = watchedMovies[i].user_rating as number;
         }
       }
+      /* 
+        Get a random bunch of movies of those genres,
+        the first page
+        sorted by popularity descending
 
+        same for directors and actors
+
+        Top three genres, directors and actors
+
+
+        TODO figure out api response types for these.
+        TODO comma sep, separate at front
+
+      */
+      /* 
+        Returns genre ids for fave genres.    
+      */
       const genres = findFaveGenre(user, max);
       const shuffleGenres = shuffle(genres);
       const faveGenres = shuffleGenres.slice(0, 2);
@@ -941,7 +957,10 @@ export const onLoadWatchlist = async (req: Request, res: Response) => {
         const apiResponse = await axios.get(
           `${apiUrl}person/${faveDirectors[i]}/movie_credits?api_key=${APIKEY}&language=en-US`
         );
-        const array: Array<CrewCredit> = apiResponse.data.crew;
+        let array: Array<CrewCredit> = apiResponse.data.crew;
+        array = array.filter((film) => film.job === 'Director');
+        console.log(array);
+
         array.sort(function (a, b) {
           return b.popularity - a.popularity;
         });
@@ -964,7 +983,6 @@ export const onLoadWatchlist = async (req: Request, res: Response) => {
         finalResponse.actorMovieLists.push(array);
       }
     }
-    console.log('hello after actor');
 
     if (watchedMovies.length === 0) {
       const arr = onLoadArray();

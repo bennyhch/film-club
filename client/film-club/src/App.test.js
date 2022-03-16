@@ -1,8 +1,17 @@
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import App from "./App";
+import React, { useEffect, useState } from "react";
 
-test('renders learn react link', () => {
+function mockFetch (data) {
+
+}
+
+test("Renders Headline", () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
+  const linkElement = screen.getByText(/THE HOME OF FILM FANS/i);
   expect(linkElement).toBeInTheDocument();
 });
+
+
+
+

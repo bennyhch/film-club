@@ -1,28 +1,43 @@
-import React, { useState } from "react";
-import { ModalProps } from "../PropTypes";
-import service from "../service";
-import "./modal.css";
+import React, { useState, useContext } from 'react';
+import { ModalProps } from '../PropTypes';
+import './modal.css';
+import { MovieContext } from '../App';
+import ReactStars from 'react-stars';
 
 function Modal(props: ModalProps) {
-  const { show, closeModal } = props;
-  const [userRating, setUserRating] = useState<string>("");
+  const movieContext = useContext(MovieContext);
 
-  const handleForm = async (event: React.SyntheticEvent) => {
-    event.preventDefault();
-    props.addWatchedFromHome(props.addWatch, parseInt(userRating));
+  const { show, closeModal } = props;
+
+  const handleForm = async (new_rating: number) => {
+    console.log(props.addWatch, new_rating);
+
+    movieContext.addWatchedFromHome(props.addWatch, new_rating);
     closeModal();
-    setUserRating("");
   };
 
   return (
     <>
-      <div className={show ? "overlay" : "hide"} onClick={closeModal} />
-      <div className={show ? "modal" : "hide"}>
+      <div className={show ? 'overlay' : 'hide'} onClick={closeModal} />
+      <div className={show ? 'modal' : 'hide'}>
         <h1>What did you think of the movie?</h1>
         <p>Submit your rating below:</p>
         <button onClick={closeModal}>X</button>
-        <form onSubmit={handleForm}>
-          <input
+        <ReactStars
+          count={5}
+          onChange={handleForm}
+          size={32}
+          color2={'#ffd700'}
+        />
+      </div>
+    </>
+  );
+}
+
+export default Modal;
+
+/* 
+<input
             className="modal-input"
             type="text"
             name="userRating"
@@ -31,10 +46,4 @@ function Modal(props: ModalProps) {
             placeholder="Enter your rating from 1 to 5..."
             required
           />
-        </form>
-      </div>
-    </>
-  );
-}
-
-export default Modal;
+*/

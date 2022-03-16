@@ -1,8 +1,7 @@
 import "../App.css";
 import "./watchlist.css";
-import Header from "../Header/header";
 import service from "../service";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -11,10 +10,13 @@ const image1 = require("../images/btn-add.svg") as string;
 const image2 = require("../images/btn-added.svg") as string;
 
 import Modal from "../Modal/modal";
-import { WatchlistProps } from "../PropTypes";
+import { MovieContext } from "../App";
+import Reel from "../Reel/Reel";
 
-function Watchlist(props: WatchlistProps) {
+function Watchlist() {
   const [cookies, setCookie] = useCookies();
+
+  const movieContext = useContext(MovieContext);
 
   const [movieReels, setMovieReels] = useState<Array<Movie[]>>();
   const [genreReels, setGenreReels] = useState<Array<Movie[]>>();
@@ -28,17 +30,15 @@ function Watchlist(props: WatchlistProps) {
         const genres = response.genreMovieLists;
         const directors = response.directorMovieLists;
         const actors = response.actorMovieLists;
-        /* 
-					Array of arrays coming from back end. First one will be watchlist. 
-				*/
-        props.setWatchlistMovies(response.watchlistMovieLists[0]);
+
+        movieContext.setWatchlistMovies(response.watchlistMovieLists[0]);
         setGenreReels(genres);
         setActorReels(actors);
         setDirectorReels(directors);
 
         const movieReels = [];
         for (let i = 0; i < 200; i += 25) {
-          movieReels.push(props.movies.slice(i, i + 24));
+          movieReels.push(movieContext.movies.slice(i, i + 24));
         }
         setMovieReels(movieReels);
       })
@@ -46,68 +46,6 @@ function Watchlist(props: WatchlistProps) {
         console.log(error, "error occurred on load");
       });
   }, []);
-
-  useEffect(() => {
-    const movieReels = [];
-    for (let i = 0; i < 200; i += 25) {
-      movieReels.push(props.movies.slice(i, i + 24));
-    }
-    setMovieReels(movieReels);
-  }, []);
-
-  const watchlistToggle = (element: Movie) => {
-    if (element.inWatchlist === true) {
-      return (
-        <img
-          className="infinity-button"
-          src={image2}
-          onClick={() => props.deleteMovieFromHome(element)}
-          alt="infinity"
-        />
-      );
-    } else {
-      return (
-        <img
-          className="infinity-button"
-          src={image1}
-          onClick={() => props.addWatchlistFromHome(element)}
-          alt="infinity"
-        />
-      );
-    }
-  };
-
-  const watchedToggle = (element: Movie) => {
-    if (element.seen === true) {
-      return (
-        <img
-          className="seen-button"
-          src={image2}
-          onClick={() => props.deleteMovieFromHome(element)}
-          alt="infinity"
-        />
-      );
-    } else {
-      return (
-        <img
-          className="seen-button"
-          src={image1}
-          onClick={() => openModal(element)}
-          alt="infinity"
-        />
-      );
-    }
-  };
-
-  const ratingToggle = (element: Movie) => {
-    if (element.seen === true) {
-      return <p className="rating-text">Your rating: {element.user_rating}</p>;
-    } else {
-      return (
-        <p className="rating-text">Public rating: {element.vote_average}</p>
-      );
-    }
-  };
 
   const [addWatch, setAddWatch] = useState<Movie>({} as Movie);
   const [show, setShow] = useState(false);
@@ -117,139 +55,57 @@ function Watchlist(props: WatchlistProps) {
   };
   const closeModal = () => setShow(false);
 
-  return (
-    <div className="App">
-      <Header></Header>
+  const renderModal = () => {
+    return (
       <div className="modal-container">
         {show ? (
-          <Modal
-            closeModal={closeModal}
-            addWatch={addWatch}
-            addWatchedFromHome={props.addWatchedFromHome}
-            show={show}
-          />
+          <Modal closeModal={closeModal} addWatch={addWatch} show={show} />
         ) : null}
       </div>
-      {props.watchlistMovies ? (
+    );
+  };
+
+  return (
+    <div className="App">
+      {renderModal()}
+
+      {movieContext.watchlistMovies && (
         <div className="infinity">
           <h3 className="infinity-title">Your Want-To-Watch List:</h3>
-          <div className="movielist-container">
-            <ul className="infinity-movies">
-              {props.watchlistMovies.map((el, index) => (
-                <li key={index}>
-                  <img
-                    className="movie-image"
-                    src={"https://image.tmdb.org/t/p/w300" + el.poster_path}
-                    alt="Not found."
-                  />
-                  <p className="movie-title-text">{el.title}</p>
-                  <p className="watchlist-text">Watchlist</p>
-                  <p className="watched-text">Watched</p>
-                  {watchlistToggle(el)}
-                  {watchedToggle(el)}
-                  {ratingToggle(el)}
-                </li>
-              ))}
-            </ul>
-          </div>
+          <Reel openModal={openModal} movies={movieContext.watchlistMovies} />
         </div>
-      ) : null}
+      )}
+
+      <h3 className="infinity-title">Based on your Fave Genres</h3>
       {genreReels &&
         genreReels.map((genre) => {
           return (
             <div className="infinity">
-              <h3 className="infinity-title">Based on your Fave Genres</h3>
-              <div className="movielist-container">
-                <ul className="infinity-movies">
-                  {genre.map((movie, index) => {
-                    return (
-                      <li key={index}>
-                        <img
-                          className="movie-image"
-                          src={
-                            "https://image.tmdb.org/t/p/w300" +
-                            movie.poster_path
-                          }
-                          alt="Not found."
-                        />
-                        <p className="movie-title-text">{movie.title}</p>
-                        <p className="watchlist-text">Watchlist</p>
-                        <p className="watched-text">Watched</p>
-                        {watchlistToggle(movie)}
-                        {watchedToggle(movie)}
-                        {ratingToggle(movie)}
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
+              <Reel openModal={openModal} movies={genre} />
             </div>
           );
         })}
+
+      <h3 className="infinity-title">Based on your Fave Actors</h3>
       {actorReels &&
         actorReels.map((list, index) => {
           return (
             <div className="infinity" key={index}>
-              <h3 className="infinity-title">Based on your Fave Actors</h3>
-              <div className="movielist-container">
-                <ul className="infinity-movies">
-                  {list.map((movie, ind) => {
-                    return (
-                      <li key={ind}>
-                        <img
-                          className="movie-image"
-                          src={
-                            "https://image.tmdb.org/t/p/w300" +
-                            movie.poster_path
-                          }
-                          alt="Not found."
-                        />
-                        <p className="movie-title-text">{movie.title}</p>
-                        <p className="watchlist-text">Watchlist</p>
-                        <p className="watched-text">Watched</p>
-                        {watchlistToggle(movie)}
-                        {watchedToggle(movie)}
-                        {ratingToggle(movie)}
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
+              <Reel openModal={openModal} movies={list} />
             </div>
           );
         })}
+
+      <h3 className="infinity-title">Based on your Fave Directors</h3>
       {directorReels &&
         directorReels.map((list, index) => {
           return (
             <div className="infinity" key={index}>
-              <h3 className="infinity-title">Based on your Fave Directors</h3>
-              <div className="movielist-container">
-                <ul className="infinity-movies">
-                  {list.map((movie, ind) => {
-                    return (
-                      <li key={ind}>
-                        <img
-                          className="movie-image"
-                          src={
-                            "https://image.tmdb.org/t/p/w300" +
-                            movie.poster_path
-                          }
-                          alt="Not found."
-                        />
-                        <p className="movie-title-text">{movie.title}</p>
-                        <p className="watchlist-text">Watchlist</p>
-                        <p className="watched-text">Watched</p>
-                        {watchlistToggle(movie)}
-                        {watchedToggle(movie)}
-                        {ratingToggle(movie)}
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
+              <Reel openModal={openModal} movies={list} />
             </div>
           );
         })}
+
       <div className="infinity">
         <h3 className="infinity-title">
           Fill your watchlist with films you want to see. Here are a few you
@@ -257,27 +113,7 @@ function Watchlist(props: WatchlistProps) {
         </h3>
         {movieReels &&
           movieReels.map((reel, index) => {
-            return (
-              <div className="movielist-container" key={index}>
-                <ul className="infinity-movies">
-                  {reel.map((el, index) => (
-                    <li key={index}>
-                      <img
-                        className="movie-image"
-                        src={"https://image.tmdb.org/t/p/w300" + el.poster_path}
-                        alt="Not found."
-                      />
-                      <p className="movie-title-text">{el.title}</p>
-                      <p className="watchlist-text">Watchlist</p>
-                      <p className="watched-text">Watched</p>
-                      {watchlistToggle(el)}
-                      {watchedToggle(el)}
-                      {ratingToggle(el)}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            );
+            return <Reel openModal={openModal} movies={reel} key={index} />;
           })}
       </div>
     </div>
